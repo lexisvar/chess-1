@@ -3,7 +3,6 @@ define(function(require) {
 	var time = require("lib/time");
 	var Piece = require("chess/Piece");
 	var Position = require("chess/Position");
-	var PiecesTaken = require("chess/PiecesTaken");
 	var Chess = require("chess/Chess");
 	var Move = require("chess/Move");
 	var Fen = require("chess/Fen");
@@ -39,7 +38,6 @@ define(function(require) {
 		this._position = new Position(this._options.startingFen);
 		this._startingPosition = new Position(this._options.startingFen);
 		this._history = [];
-		this._piecesTaken = new PiecesTaken();
 		
 		this._checkTimeTimeout = null;
 		this._clocks = [];
