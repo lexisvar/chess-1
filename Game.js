@@ -96,10 +96,6 @@ define(function(require) {
 	Game.prototype.getHistory = function() {
 		return this._history.getShallowCopy();
 	}
-	
-	Game.prototype.getOptions = function() {
-		return this._options;
-	}
 
 	Game.prototype.move = function(from, to, promoteTo) {
 		if(this._state === Game.states.IN_PROGRESS) {
