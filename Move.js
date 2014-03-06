@@ -270,9 +270,7 @@ define(function(require) {
 			}
 		}
 
-		disambiguationString = disambiguation.file+disambiguation.rank;
-
-		//if neither rank nor file is the same, specify file
+		disambiguationString = disambiguation.file + disambiguation.rank;
 
 		if(piecesInRange.length > 1 && disambiguationString === "") {
 			disambiguationString = Chess.fileFromSquare(this._from);
