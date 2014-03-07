@@ -180,9 +180,19 @@ define(function(require) {
 			oppColour = Chess.getOppColour(colour);
 			
 			if(this._clocks[colour] <= 0) {
-				var result = (this._position.playerCanMate(oppColour) ? Result.win(oppColour) : Result.DRAW);
+				var result, resultType;
 				
-				this._gameOver(result, Result.types.TIMEOUT);
+				if(this._position.playerCanMate(oppColour)) {
+					result = Result.win(oppColour);
+					resultType = Result.types.TIMEOUT;
+				}
+				
+				else {
+					result = Result.DRAW;
+					resultType = Result.types.STALEMATE_INSUFFICIENT_MATERIAL;
+				}
+				
+				this._gameOver(result, resultType);
 			}
 		}
 	}
