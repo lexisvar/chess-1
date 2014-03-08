@@ -24,8 +24,8 @@ define(function(require) {
 		}
 	}
 	
-	Position.prototype.getBoard = function() {
-		return this._board.getCopy();
+	Position.prototype.getBoardArray = function() {
+		return this._board.getBoardArray();
 	}
 	
 	Position.prototype.getSquare = function(square) {
