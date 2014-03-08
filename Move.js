@@ -28,6 +28,7 @@ define(function(require) {
 
 		this._label = new MoveLabel();
 		this._isCastling = false;
+		this._isPromotion = false;
 
 		this._isUnobstructed = (
 			!this._positionBefore.moveIsBlocked(this._from, this._to)
@@ -151,6 +152,8 @@ define(function(require) {
 			}
 
 			if(this._isValid) {
+				this._isPromotion = isPromotion;
+				
 				if(isCapturing) {
 					this._label.disambiguation = Chess.fileFromSquare(this._from);
 					this._label.sign = MoveLabel.SIGN_CAPTURE;
@@ -301,6 +304,10 @@ define(function(require) {
 
 	Move.prototype.isCastling = function() {
 		return this._isCastling;
+	}
+	
+	Move.prototype.isPromotion = function() {
+		return this._isPromotion;
 	}
 
 	Move.prototype.isLegal = function() {
