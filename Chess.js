@@ -12,12 +12,6 @@ define(function(require) {
 			return (colour === Piece.BLACK ? Piece.WHITE : Piece.BLACK);
 		},
 
-		getSquareColour: function(square) {
-			var coords = Chess.coordsFromSquare(square);
-
-			return (coords.x % 2 === coords.y % 2 ? Piece.BLACK : Piece.WHITE);
-		},
-
 		getRelativeSquare: function(square, colour) {
 			return (colour === Piece.BLACK ? 63 - square : square);
 		},
