@@ -128,6 +128,10 @@ define(function(require) {
 			return move;
 		}
 	}
+	
+	Game.prototype.resign = function(colour) {
+		this._gameOver(Result.win(Chess.getOppColour(colour)), Result.types.RESIGNATION);
+	}
 
 	Game.prototype.undoLastMove = function() {
 		this._history.pop();
