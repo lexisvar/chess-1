@@ -8,10 +8,6 @@ define(function(require) {
 		KING_HOME_SQUARE_WHITE: 4,
 		KING_HOME_SQUARE_BLACK: 60,
 
-		getOppColour: function(colour) {
-			return (colour === Piece.BLACK ? Piece.WHITE : Piece.BLACK);
-		},
-
 		getRelativeSquare: function(square, colour) {
 			return (colour === Piece.BLACK ? 63 - square : square);
 		},

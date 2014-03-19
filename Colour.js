@@ -21,6 +21,10 @@ define(function(require) {
 
 		getName: function(colour) {
 			return this._nameFromCode[this.getCode(colour)];
+		},
+		
+		getOpposite: function(colour) {
+			return (colour === Piece.BLACK ? Piece.WHITE : Piece.BLACK);
 		}
 	};
 
