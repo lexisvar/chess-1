@@ -148,7 +148,7 @@ define(function(require) {
 	Position.prototype.getPawnAttackers = function(square, colour) {
 		var attackers = [];
 		var piece = Piece.getPiece(Piece.PAWN, colour);
-		var playerColour = Chess.getOppColour(colour);
+		var playerColour = Colour.getOpposite(colour);
 		var relSquare = Chess.getRelativeSquare(square, playerColour);
 		var relCoords = Chess.coordsFromSquare(relSquare);
 		var xDiffs = [-1, 1];
@@ -240,7 +240,7 @@ define(function(require) {
 	Position.prototype.playerIsInCheck = function(colour) {
 		return (this.getAllAttackers(
 			this._board.getKingPosition(colour),
-			Chess.getOppColour(colour)
+			Colour.getOpposite(colour)
 		).length > 0);
 	}
 

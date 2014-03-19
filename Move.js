@@ -1,5 +1,6 @@
 define(function(require) {
 	var Chess = require("chess/Chess");
+	var Colour = require("chess/Colour");
 	var Piece = require("chess/Piece");
 	var MoveLabel = require("chess/MoveLabel");
 	var Fen = require("chess/Fen");
@@ -19,7 +20,7 @@ define(function(require) {
 		this._capturedPiece = null;
 
 		this._colour = this._positionBefore.getActiveColour();
-		this._oppColour = Chess.getOppColour(this._colour);
+		this._oppColour = Colour.getOpposite(this._colour);
 
 		this._fromCoords = Chess.coordsFromSquare(this._from);
 		this._toCoords = Chess.coordsFromSquare(this._to);

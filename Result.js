@@ -1,6 +1,6 @@
 define(function(require) {
 	var Piece = require("chess/Piece");
-	var Chess = require("chess/Chess");
+	var Colour = require("chess/Colour");
 	
 	function Result(white, black, result, type) {
 		this._players = [];
@@ -23,7 +23,7 @@ define(function(require) {
 		
 		if(this._result !== Result.DRAW) {
 			var winningColour = Result.getWinningColour(this._result);
-			var losingColour = Chess.getOppColour(winningColour);
+			var losingColour = Colour.getOpposite(winningColour);
 			
 			var replacements = {
 				"winner": this._players[winningColour],

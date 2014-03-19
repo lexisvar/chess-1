@@ -3,7 +3,7 @@ define(function(require) {
 	var time = require("lib/time");
 	var Piece = require("chess/Piece");
 	var Position = require("chess/Position");
-	var Chess = require("chess/Chess");
+	var Colour = require("chess/Colour");
 	var Move = require("chess/Move");
 	var Fen = require("chess/Fen");
 	require("lib/Array.getShallowCopy");
@@ -101,7 +101,7 @@ define(function(require) {
 		if(this._state === Game.states.IN_PROGRESS) {
 			var move = new Move(this._position, from, to, promoteTo);
 			var colour = move.getColour();
-			var oppColour = Chess.getOppColour(colour);
+			var oppColour = Colour.getOpposite(colour);
 	
 			if(move.isLegal()) {
 				this._position = move.getPositionAfter();
@@ -130,7 +130,7 @@ define(function(require) {
 	}
 	
 	Game.prototype.resign = function(colour) {
-		this._gameOver(Result.win(Chess.getOppColour(colour)), Result.types.RESIGNATION);
+		this._gameOver(Result.win(Colour.getOpposite(colour)), Result.types.RESIGNATION);
 	}
 
 	Game.prototype.undoLastMove = function() {
@@ -181,7 +181,7 @@ define(function(require) {
 		
 		for(var i = 0; i < colours.length; i++) {
 			colour = colours[i];
-			oppColour = Chess.getOppColour(colour);
+			oppColour = Colour.getOpposite(colour);
 			
 			if(this._clocks[colour] <= 0) {
 				var result, resultType;
