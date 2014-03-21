@@ -8,59 +8,6 @@ define(function(require) {
 		KING_HOME_SQUARE_WHITE: 4,
 		KING_HOME_SQUARE_BLACK: 60,
 
-		getRelativeSquare: function(square, colour) {
-			return (colour === Piece.BLACK ? 63 - square : square);
-		},
-
-		xFromSquare: function(square) {
-			return (square % 8);
-		},
-
-		yFromSquare: function(square) {
-			return ((square - Chess.xFromSquare(square)) / 8);
-		},
-
-		fileFromSquare: function(square) {
-			return Chess.FILES.charAt(Chess.xFromSquare(square));
-		},
-
-		rankFromSquare: function(square) {
-			return Chess.RANKS.charAt(Chess.yFromSquare(square));
-		},
-
-		squareFromAlgebraic: function(algebraicSquare) {
-			return Chess.squareFromCoords({
-				x: Chess.FILES.indexOf(algebraicSquare.charAt(0)),
-				y: Chess.RANKS.indexOf(algebraicSquare.charAt(1))
-			});
-		},
-
-		algebraicFromSquare: function(square) {
-			return Chess.fileFromSquare(square) + Chess.rankFromSquare(square);
-		},
-
-		coordsFromSquare: function(square) {
-			var x = square % 8;
-			var y = (square - x) / 8;
-
-			return {
-				x: x,
-				y: y
-			};
-		},
-
-		squareFromCoords: function(coords) {
-			return (coords.y * 8) + coords.x;
-		},
-
-		squaresAreOnSameFile: function(squareA, squareB) {
-			return Chess.xFromSquare(squareA) === Chess.xFromSquare(squareB);
-		},
-
-		squaresAreOnSameRank: function(squareA, squareB) {
-			return Chess.yFromSquare(squareA) === Chess.yFromSquare(squareB);
-		},
-
 		isRegularMove: function(type, fromCoords, toCoords) {
 			var diff = {
 				x: Math.abs(fromCoords.x - toCoords.x),
