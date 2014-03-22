@@ -1,6 +1,7 @@
 define(function(require) {
 	var Chess = require("chess/Chess");
 	var Piece = require("chess/Piece");
+	var Square = require("./Square");
 
 	function Board() {
 		this._board = [];
@@ -20,7 +21,7 @@ define(function(require) {
 	}
 
 	Board.prototype.setSquare = function(square, piece) {
-		this._board[square] = piece;
+		this._board[square.squareNo] = piece;
 
 		if(Piece.getType(piece) === Piece.KING) {
 			this._kingPositions[Piece.getColour(piece)] = square;
@@ -28,7 +29,7 @@ define(function(require) {
 	}
 
 	Board.prototype.getSquare = function(square) {
-		return this._board[square];
+		return this._board[square.squareNo];
 	}
 	
 	Board.prototype.getKingPosition = function(colour) {
@@ -36,9 +37,9 @@ define(function(require) {
 	}
 
 	Board.prototype.setBoardArray = function(board) {
-		for(var square = 0; square < 64; square++) {
-			this.setSquare(square, board[square]);
-		}
+		Square.forEach((function(square) {
+			this.setSquare(square, board[square.squareNo]);
+		}).bind(this));
 	}
 
 	Board.prototype.getBoardArray = function() {
