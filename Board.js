@@ -15,11 +15,11 @@ define(function(require) {
 	}
 
 	Board.prototype.move = function(from, to) {
-		this.setSquare(to, this.getSquare(from));
-		this.setSquare(from, Piece.NONE);
+		this.setPiece(to, this.getPiece(from));
+		this.setPiece(from, Piece.NONE);
 	}
 
-	Board.prototype.setSquare = function(square, piece) {
+	Board.prototype.setPiece = function(square, piece) {
 		this._board[square.squareNo] = piece;
 
 		if(Piece.getType(piece) === Piece.KING) {
@@ -27,7 +27,7 @@ define(function(require) {
 		}
 	}
 
-	Board.prototype.getSquare = function(square) {
+	Board.prototype.getPiece = function(square) {
 		return this._board[square.squareNo];
 	}
 	
@@ -37,7 +37,7 @@ define(function(require) {
 
 	Board.prototype.setBoardArray = function(board) {
 		Square.forEach((function(square) {
-			this.setSquare(square, board[square.squareNo]);
+			this.setPiece(square, board[square.squareNo]);
 		}).bind(this));
 	}
 
