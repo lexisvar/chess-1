@@ -69,9 +69,7 @@ define(function(require) {
 				x: Chess.xFromSquare(capturerTo),
 				y: Chess.yFromSquare(capturerFrom)
 			});
-		},
-
-		
+		}
 	};
 
 	return Chess;
