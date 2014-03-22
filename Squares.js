@@ -56,6 +56,10 @@ define(function(require) {
 		
 		forEach: function(callback) {
 			squares.forEach(callback);
+		},
+		
+		between: function(squareA, squareB) {
+			
 		}
 	};
 });
