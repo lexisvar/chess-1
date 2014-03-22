@@ -1,7 +1,7 @@
 define(function(require) {
-	var CastlingRights = require("chess/CastlingRights");
-	var Chess = require("chess/Chess");
-	var MoveLabel = require("chess/MoveLabel");
+	var CastlingRights = require("./CastlingRights");
+	var Chess = require("./Chess");
+	var MoveLabel = require("./MoveLabel");
 
 	function CastlingDetails(from, to) {
 		this.isValid = false;

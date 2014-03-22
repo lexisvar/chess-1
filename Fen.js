@@ -1,5 +1,5 @@
 define(function(require) {
-	var Piece = require("chess/Piece");
+	var Piece = require("./Piece");
 
 	function Fen(fenString) {
 		fenString = fenString || Fen.STARTING_FEN;

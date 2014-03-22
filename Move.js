@@ -1,11 +1,11 @@
 define(function(require) {
-	var Chess = require("chess/Chess");
-	var Colour = require("chess/Colour");
-	var Piece = require("chess/Piece");
-	var MoveLabel = require("chess/MoveLabel");
-	var Fen = require("chess/Fen");
-	var CastlingDetails = require("chess/CastlingDetails");
 	var time = require("lib/time");
+	var Chess = require("./Chess");
+	var Colour = require("./Colour");
+	var Piece = require("./Piece");
+	var MoveLabel = require("./MoveLabel");
+	var Fen = require("./Fen");
+	var CastlingDetails = require("./CastlingDetails");
 
 	function Move(positionBefore, from, to, promoteTo) {
 		this._positionBefore = positionBefore;

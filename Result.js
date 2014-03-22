@@ -1,6 +1,6 @@
 define(function(require) {
-	var Piece = require("chess/Piece");
-	var Colour = require("chess/Colour");
+	var Piece = require("./Piece");
+	var Colour = require("./Colour");
 	
 	function Result(white, black, result, type) {
 		this._players = [];

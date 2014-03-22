@@ -1,11 +1,11 @@
 define(function(require) {
-	var Fen = require("chess/Fen");
-	var CastlingRights = require("chess/CastlingRights");
-	var Board = require("chess/Board");
-	var Colour = require("chess/Colour");
-	var Chess = require("chess/Chess");
-	var Piece = require("chess/Piece");
-	var Move = require("chess/Move");
+	var Fen = require("./Fen");
+	var CastlingRights = require("./CastlingRights");
+	var Board = require("./Board");
+	var Colour = require("./Colour");
+	var Chess = require("./Chess");
+	var Piece = require("./Piece");
+	var Move = require("./Move");
 
 	function Position(fen) {
 		this._board = new Board();

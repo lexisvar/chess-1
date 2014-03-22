@@ -1,6 +1,5 @@
 define(function(require) {
-	var Chess = require("chess/Chess");
-	var Piece = require("chess/Piece");
+	var Piece = require("./Piece");
 	var Squares = require("./Squares");
 
 	function Board() {

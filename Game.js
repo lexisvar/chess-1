@@ -1,12 +1,12 @@
 define(function(require) {
 	var Event = require("lib/Event");
 	var time = require("lib/time");
-	var Piece = require("chess/Piece");
-	var Position = require("chess/Position");
-	var Colour = require("chess/Colour");
-	var Move = require("chess/Move");
-	var Fen = require("chess/Fen");
 	require("lib/Array.getShallowCopy");
+	var Piece = require("./Piece");
+	var Position = require("./Position");
+	var Colour = require("./Colour");
+	var Move = require("./Move");
+	var Fen = require("./Fen");
 
 	function Game(options) {
 		this._state = Game.states.IN_PROGRESS;
