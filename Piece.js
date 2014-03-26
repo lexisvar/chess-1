@@ -1,61 +1,62 @@
 define(function(require) {
-	function Piece(piece) {
-		this.type = Piece.getType(piece);
-		this.colour = Piece.getColour(piece);
+	var Colour = require("./Colour");
+	
+	function Piece(type, colour) {
+		this.fenString = (colour === Colour.white ? type : type.toLowerCase());
+		this.type = type;
+		this.colour = colour;
+		this.value = Piece.values[this.type];
+	}
+	
+	Piece.prototype.toString = function() {
+		return this.fenString;
+	}
+	
+	Piece.types = {
+		PAWN: Fen.PAWN,
+		KNIGHT: Fen.KNIGHT,
+		BISHOP: Fen.BISHOP,
+		ROOK: Fen.ROOK,
+		QUEEN: Fen.QUEEN,
+		KING: Fen.KING
+	};
+	
+	Piece.typesByFen = {};
+	
+	Piece.typesByFen[Fen.PAWN] = Piece.types.PAWN;
+	Piece.typesByFen[Fen.KNIGHT] = Piece.types.KNIGHT;
+	Piece.typesByFen[Fen.BISHOP] = Piece.types.BISHOP;
+	Piece.typesByFen[Fen.ROOK] = Piece.types.ROOK;
+	Piece.typesByFen[Fen.QUEEN] = Piece.types.QUEEN;
+	Piece.typesByFen[Fen.KING] = Piece.types.KING;
+	
+	Piece.values = {};
+
+	Piece.values[Piece.types.PAWN] = 1;
+	Piece.values[Piece.types.KNIGHT] = 3;
+	Piece.values[Piece.types.BISHOP] = 3;
+	Piece.values[Piece.types.ROOK] = 5;
+	Piece.values[Piece.types.QUEEN] = 9;
+	
+	var pieces = {};
+	var type;
+	
+	for(var p in Piece.types) {
+		type = Piece.types[p];
+		pieces[type] = {};
+		
+		Colour.forEach(function(colour) {
+			pieces[type][colour] = new Piece(type, colour);
+		});
 	}
 
-	Piece.prototype.valueOf = function() {
-		return Piece.getPiece(this.type, this.colour);
-	}
-
-	Piece.getType = function(piece) {
-		return piece & Piece._BITWISE_TYPE;
-	}
-
-	Piece.getColour = function(piece) {
-		return piece >> Piece._BITWISE_COLOUR;
-	}
-
-	Piece.getPiece = function(type, colour) {
-		return (colour << Piece._BITWISE_COLOUR) | type;
-	}
-
-	Piece.WHITE = 0;
-	Piece.BLACK = 1;
-
-	Piece.NONE = 0x0;
-
-	Piece.PAWN = 0x1;
-	Piece.KNIGHT = 0x2;
-	Piece.BISHOP = 0x3;
-	Piece.ROOK = 0x4;
-	Piece.QUEEN = 0x5;
-	Piece.KING = 0x6;
-
-	Piece.WHITE_PAWN = 0x1;
-	Piece.WHITE_KNIGHT = 0x2;
-	Piece.WHITE_BISHOP = 0x3;
-	Piece.WHITE_ROOK = 0x4;
-	Piece.WHITE_QUEEN = 0x5;
-	Piece.WHITE_KING = 0x6;
-
-	Piece.BLACK_PAWN = 0x9;
-	Piece.BLACK_KNIGHT = 0xA;
-	Piece.BLACK_BISHOP = 0xB;
-	Piece.BLACK_ROOK = 0xC;
-	Piece.BLACK_QUEEN = 0xD;
-	Piece.BLACK_KING = 0xE;
-
-	Piece._BITWISE_TYPE = ~8;
-	Piece._BITWISE_COLOUR = 3;
-
-	Piece.values = [];
-
-	Piece.values[Piece.PAWN] = 1;
-	Piece.values[Piece.KNIGHT] = 3;
-	Piece.values[Piece.BISHOP] = 3;
-	Piece.values[Piece.ROOK] = 5;
-	Piece.values[Piece.QUEEN] = 9;
-
-	return Piece;
+	return {
+		get: function(type, colour) {
+			return pieces[type][colour];
+		},
+		
+		fromFen: function(fenString) {
+			return piecesByFenString[fenString];
+		}
+	};
 });

@@ -67,7 +67,7 @@ define(function(require) {
 
 				else {
 					for(var k = 0; k < parseInt(ch); k++) {
-						board.push(Piece.NONE);
+						board.push(Piece.none);
 					}
 				}
 			}
@@ -95,16 +95,16 @@ define(function(require) {
 			for(var j = 0; j < 8; j++) {
 				piece = ranks[i][j];
 
-				if(piece === Piece.NONE) {
+				if(piece === Piece.none) {
 					emptySquares++;
 				}
 
-				if(emptySquares > 0 && (piece !== Piece.NONE || j === 7)) {
+				if(emptySquares > 0 && (piece !== Piece.none || j === 7)) {
 					fenRank += emptySquares;
 					emptySquares = 0;
 				}
 
-				if(piece !== Piece.NONE) {
+				if(piece !== Piece.none) {
 					fenRank += Fen.getPieceChar(piece);
 				}
 			}

@@ -3,9 +3,9 @@ define(function(require) {
 	var CastlingRights = require("./CastlingRights");
 	var Board = require("./Board");
 	var Colour = require("./Colour");
-	var Chess = require("./Chess");
 	var Piece = require("./Piece");
 	var Move = require("./Move");
+	var Square = require("./Square");
 
 	function Position(fen) {
 		this._board = new Board();
@@ -103,7 +103,7 @@ define(function(require) {
 		}
 
 		else {
-			this._epTarget = Chess.squareFromAlgebraic(fen.epTarget);
+			this._epTarget = Square.fromAlgebraic(fen.epTarget);
 		}
 
 		this._fiftymoveClock = parseInt(fen.fiftymoveClock);
@@ -265,7 +265,7 @@ define(function(require) {
 		for(var square = 0; square < 64; square++) {
 			piece = new Piece(this._board.getSquare(square));
 
-			if(piece.type !== Piece.NONE && piece.type !== Piece.KING) {
+			if(piece.type !== Piece.none && piece.type !== Piece.KING) {
 				if(
 					piece.colour === colour
 					&& (piece.type === Piece.PAWN || piece.type === Piece.ROOK || piece.type === Piece.QUEEN)
@@ -299,7 +299,7 @@ define(function(require) {
 		for(var square = 0; square < 64; square++) {
 			piece = this._board.getSquare(square);
 
-			if(piece !== Piece.NONE && Piece.getColour(piece) === colour) {
+			if(piece !== Piece.none && Piece.getColour(piece) === colour) {
 				legalMoves += this.getLegalMovesFromSquare(square).length;
 			}
 		}
@@ -311,7 +311,7 @@ define(function(require) {
 		var legalMoves = [];
 		var piece, reachableSquares;
 
-		if(this._board.getSquare(square) !== Piece.NONE) {
+		if(this._board.getSquare(square) !== Piece.none) {
 			piece = new Piece(this._board.getSquare(square));
 			reachableSquares = Chess.getReachableSquares(piece.type, square, piece.colour);
 
@@ -329,7 +329,7 @@ define(function(require) {
 		var squares = Chess.getSquaresBetween(from, to);
 
 		for(var i = 0; i < squares.length; i++) {
-			if(this._board.getSquare(squares[i]) !== Piece.NONE) {
+			if(this._board.getSquare(squares[i]) !== Piece.none) {
 				return true;
 			}
 		}
