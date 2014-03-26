@@ -1,6 +1,6 @@
 define(function(require) {
 	var Piece = require("./Piece");
-	var Squares = require("./Squares");
+	var Square = require("./Square");
 	var Colour = require("./Colour");
 
 	function Board() {
