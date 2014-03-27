@@ -1,27 +1,31 @@
 define(function(require) {
 	var Fen = require("./Fen");
 	var Chess = require("./Chess");
+	var PieceType = require("./PieceType");
 	var Piece = require("./Piece");
+	var Colour = require("./Colour");
 
 	function CastlingRights() {
-		this._rightsByFile = [];
-		this._rightsByFile[Piece.WHITE] = [];
-		this._rightsByFile[Piece.BLACK] = [];
+		this._rightsByFile = {};
+		this._rightsByFile[Colour.white] = [];
+		this._rightsByFile[Colour.black] = [];
 
 		this.reset();
 	}
 
-	CastlingRights.KINGSIDE = 0;
-	CastlingRights.QUEENSIDE = 1;
+	CastlingRights.KINGSIDE = "K";
+	CastlingRights.QUEENSIDE = "Q";
 
-	CastlingRights._fileFromSide = [];
-	CastlingRights._fileFromSide[CastlingRights.KINGSIDE] = 7;
-	CastlingRights._fileFromSide[CastlingRights.QUEENSIDE] = 0;
+	var files = {
+		"K": 7,
+		"Q": 0
+	};
 
 	CastlingRights.prototype.reset = function() {
 		for(var file = 0; file < 8; file++) {
-			this._rightsByFile[Piece.WHITE][file] = false;
-			this._rightsByFile[Piece.BLACK][file] = false;
+			Colour.forEach((function(colour) {
+				this._rightsByFile[colour][file] = false;
+			}).bind(this));
 		}
 	}
 
@@ -30,7 +34,7 @@ define(function(require) {
 	}
 
 	CastlingRights.prototype.setBySide = function(colour, side, allow) {
-		this._rightsByFile[colour][CastlingRights._fileFromSide[side]] = allow;
+		this._rightsByFile[colour][files[side]] = allow;
 	}
 
 	CastlingRights.prototype.getByFile = function(colour, file) {
@@ -38,33 +42,28 @@ define(function(require) {
 	}
 
 	CastlingRights.prototype.getBySide = function(colour, side) {
-		return this._rightsByFile[colour][CastlingRights._fileFromSide[side]];
+		return this._rightsByFile[colour][files[side]];
 	}
 
 	CastlingRights.prototype.setFenString = function(fenString) {
 		this.reset();
 
 		if(fenString !== Fen.NONE) {
-			var fenChars = fenString.split("");
 			var fenChar, fenCharLower, fenCharUpper;
-			var colour, file, side;
-			var sides = {};
+			var colour, file;
 
-			sides[Fen.getPieceChar(Piece.WHITE_KING)] = CastlingRights.KINGSIDE;
-			sides[Fen.getPieceChar(Piece.WHITE_QUEEN)] = CastlingRights.QUEENSIDE;
-
-			for(var i = 0; i < fenChars.length; i++) {
-				fenChar = fenChars[i];
+			for(var i = 0; i < fenString.length; i++) {
+				fenChar = fenString.charAt(i);
 				fenCharLower = fenChar.toLowerCase();
 				fenCharUpper = fenChar.toUpperCase();
-				colour = (fenChar === fenCharUpper ? Piece.WHITE : Piece.BLACK);
+				colour = (fenChar === fenCharUpper ? Colour.white : Colour.black);
 
-				if(fenCharUpper in sides) {
-					file = CastlingRights._fileFromSide[sides[fenCharUpper]];
+				if(fenCharUpper in files) {
+					file = files[fenCharUpper];
 				}
 
 				else {
-					file = Chess.FILES.indexOf(fenCharLower);
+					file = "abcdefgh".indexOf(fenCharLower);
 				}
 
 				this.setByFile(colour, file, true);
@@ -73,19 +72,15 @@ define(function(require) {
 	}
 
 	CastlingRights.prototype.getFenStringByFile = function() {
-		var colours = [Piece.WHITE, Piece.BLACK];
-		var colour;
 		var fenString = "";
 
-		for(var i = 0; i < colours.length; i++) {
-			colour = colours[i];
-
+		Colour.forEach((function(colour) {
 			for(var file = 0; file < 8; file++) {
 				if(this.getByFile(colour, file)) {
 					fenString += CastlingRights._getFileChar(colour, file);
 				}
 			}
-		}
+		}).bind(this));
 
 		if(fenString === "") {
 			fenString = Fen.NONE;
@@ -95,7 +90,7 @@ define(function(require) {
 	}
 
 	CastlingRights.prototype.getFenStringBySide = function() {
-		var colours = [Piece.WHITE, Piece.BLACK];
+		var colours = [Colour.white, Colour.black];
 		var sides = [CastlingRights.KINGSIDE, CastlingRights.QUEENSIDE];
 		var colour, side;
 		var fenString = "";
@@ -129,9 +124,9 @@ define(function(require) {
 	}
 
 	CastlingRights._getFileChar = function(colour, file) {
-		var fenChar = Chess.FILES.charAt(file);
+		var fenChar = "abcdefgh".charAt(file);
 
-		if(colour === Piece.WHITE) {
+		if(colour === Colour.white) {
 			fenChar = fenChar.toUpperCase();
 		}
 
