@@ -1,23 +1,31 @@
 define(function(require) {
-	var Fen = require("./Fen");
-	
 	function Colour(fenString) {
 		this.fenString = fenString;
-		this.name = (this.fenString === Fen.WHITE ? "white" : "black");
+		
+		this.name = ({
+			"w": "white",
+			"b": "black"
+		})[fenString];
 	}
 	
 	Colour.prototype.toString = function() {
 		return this.fenString;
 	}
-
-	var white = new Colour(Fen.WHITE);
-	var black = new Colour(Fen.BLACK);
 	
-	white.opposite = black;
-	black.opposite = white;
+	var colours = {
+		"w": new Colour("w"),
+		"b": new Colour("b")
+	};
+	
+	colours["w"].opposite = colours["b"];
+	colours["b"].opposite = colours["w"];
 
 	return {
-		white: white,
-		black: black
+		white: colours["w"],
+		black: colours["b"],
+		
+		fromFenString: function(fenString) {
+			return colours[fenString];
+		}
 	};
 });

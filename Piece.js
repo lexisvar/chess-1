@@ -1,61 +1,38 @@
 define(function(require) {
 	var Colour = require("./Colour");
+	var PieceType = require("./PieceType");
 	
 	function Piece(type, colour) {
-		this.fenString = (colour === Colour.white ? type : type.toLowerCase());
 		this.type = type;
 		this.colour = colour;
-		this.value = Piece.values[this.type];
+		this.fenString = this.type.fenStrings[colour];
+		this.value = this.type.value;
 	}
 	
 	Piece.prototype.toString = function() {
 		return this.fenString;
 	}
 	
-	Piece.types = {
-		PAWN: Fen.PAWN,
-		KNIGHT: Fen.KNIGHT,
-		BISHOP: Fen.BISHOP,
-		ROOK: Fen.ROOK,
-		QUEEN: Fen.QUEEN,
-		KING: Fen.KING
-	};
-	
-	Piece.typesByFen = {};
-	
-	Piece.typesByFen[Fen.PAWN] = Piece.types.PAWN;
-	Piece.typesByFen[Fen.KNIGHT] = Piece.types.KNIGHT;
-	Piece.typesByFen[Fen.BISHOP] = Piece.types.BISHOP;
-	Piece.typesByFen[Fen.ROOK] = Piece.types.ROOK;
-	Piece.typesByFen[Fen.QUEEN] = Piece.types.QUEEN;
-	Piece.typesByFen[Fen.KING] = Piece.types.KING;
-	
-	Piece.values = {};
-
-	Piece.values[Piece.types.PAWN] = 1;
-	Piece.values[Piece.types.KNIGHT] = 3;
-	Piece.values[Piece.types.BISHOP] = 3;
-	Piece.values[Piece.types.ROOK] = 5;
-	Piece.values[Piece.types.QUEEN] = 9;
-	
 	var pieces = {};
-	var type;
+	var piecesByFenString = {};
+	var piece;
 	
-	for(var p in Piece.types) {
-		type = Piece.types[p];
+	PieceType.forEach(function(type) {
 		pieces[type] = {};
 		
 		Colour.forEach(function(colour) {
-			pieces[type][colour] = new Piece(type, colour);
+			piece = new Piece(type, colour);
+			pieces[type][colour] = piece;
+			piecesByFenString[piece.fenString] = piece;
 		});
-	}
+	});
 
 	return {
 		get: function(type, colour) {
 			return pieces[type][colour];
 		},
 		
-		fromFen: function(fenString) {
+		fromFenString: function(fenString) {
 			return piecesByFenString[fenString];
 		}
 	};

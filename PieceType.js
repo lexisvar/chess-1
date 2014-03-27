@@ -41,6 +41,12 @@ define(function(require) {
 		
 		fromSanString: function(sanString) {
 			return types[sanString];
+		},
+		
+		forEach: function(callback) {
+			for(var sanString in types) {
+				callback(types[sanString]);
+			}
 		}
 	};
 });
