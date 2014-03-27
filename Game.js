@@ -2,7 +2,6 @@ define(function(require) {
 	var Event = require("lib/Event");
 	var time = require("lib/time");
 	require("lib/Array.getShallowCopy");
-	var Piece = require("./Piece");
 	var Position = require("./Position");
 	var Colour = require("./Colour");
 	var Move = require("./Move");
@@ -40,9 +39,9 @@ define(function(require) {
 		this._history = [];
 		
 		this._checkTimeTimeout = null;
-		this._clocks = [];
-		this._clocks[Piece.WHITE] = this._options.initialTime;
-		this._clocks[Piece.BLACK] = this._options.initialTime;
+		this._clocks = {};
+		this._clocks[Colour.white] = this._options.initialTime;
+		this._clocks[Colour.black] = this._options.initialTime;
 	}
 	
 	Game.states = {
@@ -111,7 +110,7 @@ define(function(require) {
 				}
 	
 				else {
-					if(!this._position.playerCanMate(Piece.WHITE) && !this._position.playerCanMate(Piece.BLACK)) {
+					if(!this._position.playerCanMate(Colour.white) && !this._position.playerCanMate(Colour.black)) {
 						this._gameOver(Result.DRAW, Result.types.STALEMATE_INSUFFICIENT_MATERIAL);
 					}
 	
@@ -176,18 +175,12 @@ define(function(require) {
 	}
 	
 	Game.prototype._checkForTimeouts = function() {
-		var colours = [Piece.WHITE, Piece.BLACK];
-		var colour, oppColour;
-		
-		for(var i = 0; i < colours.length; i++) {
-			colour = colours[i];
-			oppColour = Colour.getOpposite(colour);
-			
+		Colour.forEach((function(colour) {
 			if(this._clocks[colour] <= 0) {
 				var result, resultType;
 				
-				if(this._position.playerCanMate(oppColour)) {
-					result = Result.win(oppColour);
+				if(this._position.playerCanMate(colour.opposite)) {
+					result = Result.win(colour.opposite);
 					resultType = Result.types.TIMEOUT;
 				}
 				
@@ -198,7 +191,7 @@ define(function(require) {
 				
 				this._gameOver(result, resultType);
 			}
-		}
+		}).bind(this));
 	}
 
 	Game.prototype._calculateTime = function() {

@@ -3,6 +3,7 @@ define(function(require) {
 	var CastlingRights = require("./CastlingRights");
 	var Board = require("./Board");
 	var Colour = require("./Colour");
+	var PieceType = require("./PieceType");
 	var Piece = require("./Piece");
 	var Move = require("./Move");
 	var Square = require("./Square");
@@ -28,12 +29,12 @@ define(function(require) {
 		return this._board.getBoardArray();
 	}
 	
-	Position.prototype.getSquare = function(square) {
-		return this._board.getSquare(square);
+	Position.prototype.getPiece = function(square) {
+		return this._board.getPiece(square);
 	}
 	
-	Position.prototype.setSquare = function(square, piece) {
-		this._board.setSquare(square, piece);
+	Position.prototype.setPiece = function(square, piece) {
+		this._board.setPiece(square, piece);
 	}
 	
 	Position.prototype.getActiveColour = function() {
@@ -132,7 +133,7 @@ define(function(require) {
 	}
 
 	Position.prototype.getAttackers = function(pieceType, square, colour) {
-		if(pieceType === Piece.PAWN) {
+		if(pieceType === PieceType.pawn) {
 			return this.getPawnAttackers(square, colour);
 		}
 
@@ -147,7 +148,7 @@ define(function(require) {
 
 	Position.prototype.getPawnAttackers = function(square, colour) {
 		var attackers = [];
-		var piece = Piece.getPiece(Piece.PAWN, colour);
+		var piece = Piece.getPiece(PieceType.pawn, colour);
 		var playerColour = Colour.getOpposite(colour);
 		var relSquare = Chess.getRelativeSquare(square, playerColour);
 		var relCoords = Chess.coordsFromSquare(relSquare);
@@ -166,7 +167,7 @@ define(function(require) {
 					y: y
 				}), playerColour);
 
-				if(this._board.getSquare(candidateSquare) === piece) {
+				if(this._board.getPiece(candidateSquare) === piece) {
 					attackers.push(candidateSquare);
 				}
 			}
@@ -194,7 +195,7 @@ define(function(require) {
 							y: y
 						});
 
-						if(this._board.getSquare(candidateSquare) === piece) {
+						if(this._board.getPiece(candidateSquare) === piece) {
 							attackers.push(candidateSquare);
 						}
 					}
@@ -207,14 +208,14 @@ define(function(require) {
 
 	Position.prototype.getRegularAttackers = function(pieceType, square, colour) {
 		var attackers = [];
-		var piece = Piece.getPiece(pieceType, colour);
-		var candidateSquares = Chess.getReachableSquares(pieceType, square, colour);
+		var piece = Piece.get(pieceType, colour);
+		var candidateSquares = Board.getReachableSquares(pieceType, square, colour);
 		var candidateSquare;
 
 		for(var i = 0; i < candidateSquares.length; i++) {
 			candidateSquare = candidateSquares[i];
 
-			if(this._board.getSquare(candidateSquare) === piece && !this.moveIsBlocked(square, candidateSquare)) {
+			if(this._board.getPiece(candidateSquare) === piece && !this.moveIsBlocked(square, candidateSquare)) {
 				attackers.push(candidateSquare);
 			}
 		}
@@ -224,7 +225,7 @@ define(function(require) {
 
 	Position.prototype.getAllAttackers = function(square, colour) {
 		var attackers = [];
-		var pieceTypes = [Piece.PAWN, Piece.KNIGHT, Piece.BISHOP, Piece.ROOK, Piece.QUEEN, Piece.KING];
+		var pieceTypes = [PieceType.pawn, PieceType.knight, PieceType.bishop, Piece.ROOK, Piece.QUEEN, Piece.KING];
 
 		for(var i = 0; i < pieceTypes.length; i++) {
 			attackers = attackers.concat(this.getAttackers(pieceTypes[i], square, colour));
@@ -240,7 +241,7 @@ define(function(require) {
 	Position.prototype.playerIsInCheck = function(colour) {
 		return (this.getAllAttackers(
 			this._board.getKingPosition(colour),
-			Colour.getOpposite(colour)
+			colour.opposite
 		).length > 0);
 	}
 
@@ -249,46 +250,46 @@ define(function(require) {
 	}
 
 	Position.prototype.playerCanMate = function(colour) {
-		var pieces = [];
-		var bishops = [];
-		var knights = [];
+		var pieces = {};
+		var bishops = {};
+		var knights = {};
 
-		pieces[Piece.KNIGHT] = 0;
-		pieces[Piece.BISHOP] = 0;
-		bishops[Piece.WHITE] = 0;
-		bishops[Piece.BLACK] = 0;
-		knights[Piece.WHITE] = 0;
-		knights[Piece.BLACK] = 0;
+		pieces[PieceType.knight] = 0;
+		pieces[PieceType.bishop] = 0;
+		bishops[Colour.white] = 0;
+		bishops[Colour.black] = 0;
+		knights[Colour.white] = 0;
+		knights[Colour.black] = 0;
 
 		var piece;
 
 		for(var square = 0; square < 64; square++) {
-			piece = new Piece(this._board.getSquare(square));
+			piece = new Piece(this._board.getPiece(square));
 
-			if(piece.type !== Piece.none && piece.type !== Piece.KING) {
+			if(piece.type !== null && piece.type !== Piece.KING) {
 				if(
 					piece.colour === colour
-					&& (piece.type === Piece.PAWN || piece.type === Piece.ROOK || piece.type === Piece.QUEEN)
+					&& ([PieceType.pawn, PieceType.rook, PieceType.queen].indexOf(piece.type) !== -1)
 				) {
 					return true;
 				}
 
-				if(piece.type === Piece.BISHOP) {
+				if(piece.type === PieceType.bishop) {
 					bishops[piece.colour]++;
-					pieces[Piece.BISHOP]++;
+					pieces[PieceType.bishop]++;
 				}
 
-				if(piece.type === Piece.KNIGHT) {
+				if(piece.type === PieceType.knight) {
 					knights[piece.colour]++;
-					pieces[Piece.KNIGHT]++;
+					pieces[PieceType.knight]++;
 				}
 			}
 		}
 
 		return (
-			(bishops[Piece.WHITE] > 0 && bishops[Piece.BLACK] > 0)
-			|| (pieces[Piece.BISHOP] > 0 && pieces[Piece.KNIGHT] > 0)
-			|| (pieces[Piece.KNIGHT] > 2 && knights[colour] > 0)
+			(bishops[Colour.white] > 0 && bishops[Colour.black] > 0)
+			|| (pieces[PieceType.bishop] > 0 && pieces[PieceType.knight] > 0)
+			|| (pieces[PieceType.knight] > 2 && knights[colour] > 0)
 		);
 	}
 
@@ -297,9 +298,9 @@ define(function(require) {
 		var piece;
 
 		for(var square = 0; square < 64; square++) {
-			piece = this._board.getSquare(square);
+			piece = this._board.getPiece(square);
 
-			if(piece !== Piece.none && Piece.getColour(piece) === colour) {
+			if(piece !== null && piece.colour === colour) {
 				legalMoves += this.getLegalMovesFromSquare(square).length;
 			}
 		}
@@ -309,11 +310,11 @@ define(function(require) {
 
 	Position.prototype.getLegalMovesFromSquare = function(square) {
 		var legalMoves = [];
-		var piece, reachableSquares;
+		var piece = this._board.getPiece(square);
+		var reachableSquares;
 
-		if(this._board.getSquare(square) !== Piece.none) {
-			piece = new Piece(this._board.getSquare(square));
-			reachableSquares = Chess.getReachableSquares(piece.type, square, piece.colour);
+		if(piece !== null) {
+			reachableSquares = Board.getReachableSquares(piece.type, square, piece.colour);
 
 			for(var i = 0; i < reachableSquares.length; i++) {
 				if((new Move(this, square, reachableSquares[i])).isLegal()) {
@@ -326,10 +327,10 @@ define(function(require) {
 	}
 
 	Position.prototype.moveIsBlocked = function(from, to) {
-		var squares = Chess.getSquaresBetween(from, to);
+		var squares = /*FIXME*/Chess.getPiecesBetween(from, to);
 
 		for(var i = 0; i < squares.length; i++) {
-			if(this._board.getSquare(squares[i]) !== Piece.none) {
+			if(this._board.getPiece(squares[i]) !== null) {
 				return true;
 			}
 		}

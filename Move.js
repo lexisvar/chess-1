@@ -1,6 +1,7 @@
 define(function(require) {
 	var time = require("lib/time");
 	var Colour = require("./Colour");
+	var PieceType = require("./PieceType");
 	var Piece = require("./Piece");
 	var MoveLabel = require("./MoveLabel");
 	var Fen = require("./Fen");
@@ -47,11 +48,11 @@ define(function(require) {
 
 	Move.prototype._check = function() {
 		if(this._piece !== null && this._piece.colour === this._colour) {
-			if(this._piece.type === Piece.types.PAWN) {
+			if(this._piece.type === PieceType.pawn) {
 				this._checkPawnMove();
 			}
 
-			else if(this._piece.type === Piece.types.KING) {
+			else if(this._piece.type === PieceType.king) {
 				this._checkKingMove();
 			}
 
@@ -68,7 +69,7 @@ define(function(require) {
 
 				this._positionAfter.setActiveColour(this._colour.opposite);
 
-				if(this._capturedPiece !== null || this._piece.type === Piece.types.PAWN) {
+				if(this._capturedPiece !== null || this._piece.type === PieceType.pawn) {
 					this._positionAfter.resetFiftymoveClock();
 				}
 
@@ -76,17 +77,17 @@ define(function(require) {
 					this._positionAfter.incrementFiftymoveClock();
 				}
 
-				if(this._piece.type !== Piece.types.PAWN || !Board.isDoublePawnMove(this._relFrom, this._relTo)) {
+				if(this._piece.type !== PieceType.pawn || !Board.isDoublePawnMove(this._relFrom, this._relTo)) {
 					this._positionAfter.setEpTarget(null);
 				}
 
-				if(this._piece.type === Piece.types.KING || this._isCastling) {
+				if(this._piece.type === PieceType.king || this._isCastling) {
 					for(file = 0; file < 8; file++) {
 						this._positionAfter.setCastlingRightsByFile(this._colour, file, false);
 					}
 				}
 
-				else if(this._piece.type === Piece.types.ROOK) {
+				else if(this._piece.type === PieceType.rook) {
 					this._positionAfter.setCastlingRightsByFile(this._colour, this._from.coords.x, false);
 				}
 			}
@@ -96,16 +97,16 @@ define(function(require) {
 	Move.prototype._checkRegularMove = function() {
 		if(Chess.isRegularMove(this._piece.type, this._fromCoords, this._toCoords) && this._isUnobstructed) {
 			this._isValid = true;
-			this._positionAfter.setSquare(this._from, Piece.none);
-			this._positionAfter.setSquare(this._to, this._positionBefore.getSquare(this._from));
+			this._positionAfter.setPiece(this._from, null);
+			this._positionAfter.setPiece(this._to, this._positionBefore.getSquare(this._from));
 			this._label.piece = this._piece.fenType;
 			this._label.to = Chess.algebraicFromSquare(this._to);
 
-			if(this._piece.type !== Piece.types.KING) {
+			if(this._piece.type !== PieceType.king) {
 				this._label.disambiguation = this._getDisambiguationString();
 			}
 
-			if(this._targetPiece.type !== Piece.none && this._targetPiece.colour === this._colour.opposite) {
+			if(this._targetPiece !== null && this._targetPiece.colour === this._colour.opposite) {
 				this._label.sign = MoveLabel.SIGN_CAPTURE;
 				this._capturedPiece = this._positionBefore.getSquare(this._to);
 			}
@@ -113,8 +114,8 @@ define(function(require) {
 	}
 
 	Move.prototype._checkPawnMove = function() {
-		if(this._piece.type === Piece.types.PAWN && this._isUnobstructed) {
-			var isCapturing = Chess.isPawnCapture(this._relFrom, this._relTo);
+		if(this._piece.type === PieceType.pawn && this._isUnobstructed) {
+			var isCapturing = Board.isPawnCapture(this._relFrom, this._relTo);
 			var isEnPassant = false;
 			var isDouble = false;
 			var isPromotion = false;
@@ -123,19 +124,19 @@ define(function(require) {
 			if(Chess.isPawnPromotion(this._relTo)) {
 				isPromotion = true;
 
-				if([Piece.types.KNIGHT, Piece.types.BISHOP, Piece.types.ROOK, Piece.types.QUEEN].indexOf(this._promoteTo) !== -1) {
+				if([PieceType.knight, PieceType.bishop, PieceType.rook, PieceType.queen].indexOf(this._promoteTo) !== -1) {
 					isValidPromotion = true;
 				}
 			}
 
 			if(isValidPromotion || !isPromotion) {
-				if(this._targetPiece.type === Piece.none) {
-					if(Chess.isDoublePawnMove(this._relFrom, this._relTo)) {
+				if(this._targetPiece.type === null) {
+					if(Board.isDoublePawnMove(this._relFrom, this._relTo)) {
 						this._isValid = true;
 						isDouble = true;
 					}
 
-					else if(Chess.isPawnMove(this._relFrom, this._relTo)) {
+					else if(Board.isPawnMove(this._relFrom, this._relTo)) {
 						this._isValid = true;
 					}
 
@@ -154,12 +155,12 @@ define(function(require) {
 				this._isPromotion = isPromotion;
 				
 				if(isCapturing) {
-					this._label.disambiguation = Chess.fileFromSquare(this._from);
+					this._label.disambiguation = this._from.file;
 					this._label.sign = MoveLabel.SIGN_CAPTURE;
 
 					if(isEnPassant) {
-						this._positionAfter.setSquare(Chess.getEpPawn(this._from, this._to), Piece.none);
-						this._capturedPiece = Piece.getPiece(Piece.types.PAWN, this._colour.opposite);
+						this._positionAfter.setPiece(Chess.getEpPawn(this._from, this._to), null);
+						this._capturedPiece = Piece.getPiece(PieceType.pawn, this._colour.opposite);
 					}
 
 					else {
@@ -168,19 +169,19 @@ define(function(require) {
 				}
 
 				if(isDouble) {
-					this._positionAfter.setEpTarget(Chess.getRelativeSquare(this._relTo - 8, this._colour));
+					this._positionAfter.setEpTarget(/*FIXME*/Chess.getRelativeSquare(this._relTo - 8, this._colour));
 				}
 
-				this._label.to = Chess.algebraicFromSquare(this._to);
-				this._positionAfter.setSquare(this._from, Piece.none);
+				this._label.to = this._to.algebraic;
+				this._positionAfter.setPiece(this._from, null);
 
 				if(isPromotion) {
-					this._positionAfter.setSquare(this._to, Piece.getPiece(promoteTo, this._colour));
-					this._label.special = MoveLabel.SIGN_PROMOTE + Fen.getPieceChar(Piece.getPiece(promoteTo, Colour.white));
+					this._positionAfter.setPiece(this._to, Piece.get(promoteTo, this._colour));
+					this._label.special = MoveLabel.SIGN_PROMOTE + promoteTo.fenStrings[Colour.white];
 				}
 
 				else {
-					this._positionAfter.setSquare(this._to, this._positionBefore.getSquare(this._from));
+					this._positionAfter.setSqsetPieceuare(this._to, this._positionBefore.getPiece(this._from));
 				}
 			}
 		}
@@ -195,7 +196,7 @@ define(function(require) {
 	}
 
 	Move.prototype._checkCastlingMove = function() {
-		if(this._piece.type === Piece.types.KING && this._isUnobstructed && !this._positionBefore.playerIsInCheck(this._colour)) {
+		if(this._piece.type === PieceType.king && this._isUnobstructed && !this._positionBefore.playerIsInCheck(this._colour)) {
 			var castling = new CastlingDetails(this._from, this._to);
 
 			if(castling.isValid && this._positionBefore.getCastlingRightsBySide(this._colour, castling.side)) {
@@ -214,10 +215,10 @@ define(function(require) {
 					this._isValid = true;
 					this._isCastling = true;
 					this._label.special = castling.sign;
-					this._positionAfter.setSquare(this._from, Piece.none);
-					this._positionAfter.setSquare(this._to, Piece.getPiece(Piece.types.KING, this._colour));
-					this._positionAfter.setSquare(castling.rookStartPos, Piece.none);
-					this._positionAfter.setSquare(castling.rookEndPos, Piece.getPiece(Piece.types.ROOK, this._colour));
+					this._positionAfter.setPiece(this._from, null);
+					this._positionAfter.setPiece(this._to, Piece.getPiece(PieceType.king, this._colour));
+					this._positionAfter.setPiece(castling.rookStartPos, null);
+					this._positionAfter.setPiece(castling.rookEndPos, Piece.getPiece(Piece.types.ROOK, this._colour));
 				}
 			}
 		}
@@ -262,12 +263,12 @@ define(function(require) {
 			square = piecesInRange[i];
 
 			if(square !== this._from) {
-				if(Chess.xFromSquare(square) === Chess.xFromSquare(this._from)) {
-					disambiguation.file = Chess.fileFromSquare(this._from);
+				if(square.file === this._from.file) {
+					disambiguation.file = this._from.file;
 				}
 
-				if(Chess.yFromSquare(square) === Chess.yFromSquare(this._from)) {
-					disambiguation.rank = Chess.rankFromSquare(this._from);
+				if(square.rank === this._from.rank) {
+					disambiguation.rank = this._from.rank;
 				}
 			}
 		}
@@ -275,7 +276,7 @@ define(function(require) {
 		disambiguationString = disambiguation.file + disambiguation.rank;
 
 		if(piecesInRange.length > 1 && disambiguationString === "") {
-			disambiguationString = Chess.fileFromSquare(this._from);
+			disambiguationString = this._from.file;
 		}
 
 		return disambiguationString;

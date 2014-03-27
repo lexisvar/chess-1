@@ -1,5 +1,6 @@
 define(function(require) {
 	var Piece = require("./Piece");
+	var PieceType = require("./PieceType");
 	var Square = require("./Square");
 	var Colour = require("./Colour");
 
@@ -23,7 +24,7 @@ define(function(require) {
 	Board.prototype.setPiece = function(square, piece) {
 		this._board[square.squareNo] = piece;
 
-		if(piece.type === Piece.types.KING) {
+		if(piece.type === PieceType.king) {
 			this._kingPositions[piece.colour] = square;
 		}
 	}
@@ -286,8 +287,8 @@ define(function(require) {
 						}
 					}
 					
-					var kingHomeSquare = (colour === Piece.BLACK ? 60 : 4);
-					var castlingSquares = (colour === Piece.BLACK ? [58, 62] : [2, 6]);
+					var kingHomeSquare = (colour === Colour.black ? 60 : 4);
+					var castlingSquares = (colour === Colour.black ? [58, 62] : [2, 6]);
 
 					if(from === kingHomeSquare) {
 						squares = squares.concat(castlingSquares);
