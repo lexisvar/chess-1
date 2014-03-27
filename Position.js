@@ -10,7 +10,7 @@ define(function(require) {
 	function Position(fen) {
 		this._board = new Board();
 		this._castlingRights = new CastlingRights();
-		this._activeColour = Piece.WHITE;
+		this._activeColour = Colour.white;
 		this._epTarget = null;
 		this._fiftymoveClock = 0;
 		this._fullmove = 1;
@@ -95,7 +95,7 @@ define(function(require) {
 	Position.prototype.setFen = function(fenString) {
 		var fen = new Fen(fenString);
 
-		this._activeColour = Colour.getCode(fen.active);
+		this._activeColour = Colour.fromFenString(fen.active);
 		this._castlingRights.setFenString(fen.castlingRights);
 
 		if(fen.epTarget === Fen.NONE) {
