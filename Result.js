@@ -1,5 +1,4 @@
 define(function(require) {
-	var Piece = require("./Piece");
 	var Colour = require("./Colour");
 	
 	function Result(white, black, result, type) {
