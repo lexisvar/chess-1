@@ -4,7 +4,7 @@ define(function(require) {
 	function Fen(fenString) {
 		fenString = fenString || Fen.STARTING_FEN;
 
-		var array = fenString.split(" ");
+		var array = fenString.split(/\s+/);
 
 		this.position = array[0];
 		this.active = array[1];
@@ -17,7 +17,7 @@ define(function(require) {
 			this.fiftymoveClock = array[4];
 		}
 
-		if(array.length>5) {
+		if(array.length > 5) {
 			this.fullmove = array[5];
 		}
 	}
@@ -42,32 +42,22 @@ define(function(require) {
 	Fen.BLACK_CASTLE_KS = "k";
 	Fen.BLACK_CASTLE_QS = "q";
 
-	Fen.getPieceCode = function(piece) {
-		return Fen._pieceCodes[piece];
-	}
-
-	Fen.getPieceChar = function(piece) {
-		return Fen._pieceChars[piece];
-	}
-
 	Fen.boardArrayFromFenPosition = function(fenPosition) {
 		var board = [];
 		var ranks = fenPosition.split("/").reverse();
-		var rank, ch;
+		var fenChar;
 
 		for(i = 0; i < 8; i++) {
-			rank = ranks[i].split("");
+			for(var j = 0; j < ranks[i].length; j++) {
+				fenChar = ranks[i].charAt(j);
 
-			for(var j = 0; j < rank.length; j++) {
-				ch = rank[j];
-
-				if(ch in Fen._pieceCodes) {
-					board.push(Fen.getPieceCode(ch));
+				if(fenChar.match(/[pnbrqk]/i)) {
+					board.push(Piece.fromFenString(fenChar));
 				}
 
-				else {
-					for(var k = 0; k < parseInt(ch); k++) {
-						board.push(Piece.none);
+				else if(fenChar.match(/\d/)) {
+					for(var k = 0; k < parseInt(fenChar); k++) {
+						board.push(null);
 					}
 				}
 			}
@@ -95,17 +85,17 @@ define(function(require) {
 			for(var j = 0; j < 8; j++) {
 				piece = ranks[i][j];
 
-				if(piece === Piece.none) {
+				if(piece === null) {
 					emptySquares++;
 				}
 
-				if(emptySquares > 0 && (piece !== Piece.none || j === 7)) {
+				if(emptySquares > 0 && (piece !== null || j === 7)) {
 					fenRank += emptySquares;
 					emptySquares = 0;
 				}
 
-				if(piece !== Piece.none) {
-					fenRank += Fen.getPieceChar(piece);
+				if(piece !== null) {
+					fenRank += piece.fenString;
 				}
 			}
 
@@ -114,35 +104,6 @@ define(function(require) {
 
 		return fenRanks.join("/");
 	}
-
-	Fen._pieceChars = [];
-	Fen._pieceChars[Piece.WHITE_PAWN] = "P";
-	Fen._pieceChars[Piece.WHITE_KNIGHT] = "N";
-	Fen._pieceChars[Piece.WHITE_BISHOP] = "B";
-	Fen._pieceChars[Piece.WHITE_ROOK] = "R";
-	Fen._pieceChars[Piece.WHITE_QUEEN] = "Q";
-	Fen._pieceChars[Piece.WHITE_KING] = "K";
-	Fen._pieceChars[Piece.BLACK_PAWN] = "p";
-	Fen._pieceChars[Piece.BLACK_KNIGHT] = "n";
-	Fen._pieceChars[Piece.BLACK_BISHOP] = "b";
-	Fen._pieceChars[Piece.BLACK_ROOK] = "r";
-	Fen._pieceChars[Piece.BLACK_QUEEN] = "q";
-	Fen._pieceChars[Piece.BLACK_KING] = "k";
-
-	Fen._pieceCodes = {
-		"P": Piece.WHITE_PAWN,
-		"N": Piece.WHITE_KNIGHT,
-		"B": Piece.WHITE_BISHOP,
-		"R": Piece.WHITE_ROOK,
-		"Q": Piece.WHITE_QUEEN,
-		"K": Piece.WHITE_KING,
-		"p": Piece.BLACK_PAWN,
-		"n": Piece.BLACK_KNIGHT,
-		"b": Piece.BLACK_BISHOP,
-		"r": Piece.BLACK_ROOK,
-		"q": Piece.BLACK_QUEEN,
-		"k": Piece.BLACK_KING
-	};
 
 	return Fen;
 });
