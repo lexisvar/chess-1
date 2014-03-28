@@ -1,45 +1,36 @@
-var ClockTimeDisplay={
-	/*
-	get short display string for basic time controls, e.g. "10m" or "10/5"
-	*/
-
-	encode: function(style, initial, increment) {
-		var isIncrementStyle=in_array(style, [
-			TIMING_FISCHER,
-			TIMING_FISCHER_AFTER,
-			TIMING_BRONSTEIN_DELAY,
-			TIMING_SIMPLE_DELAY
-		]);
-
-		var defUnitsMain=!isIncrementStyle;
-		var str=TimeParser.encode(initial, defUnitsMain, "m");
-
-		if(isIncrementStyle) {
-			str+="/"+TimeParser.encode(increment, false, "s");
-		}
-
-		return str;
-	},
-
-	/*
-	get display string with full details, e.g. "10h/1 Bronstein Delay + 2m @ 300 moves"
-	*/
-
-	encodeFull: function(style, initial, increment, overtime, overtimeIncrement, overtimeCutoff) {
-		var str=DbEnums[TIMING][TIMING_NONE].description;
-
-		if(style!==TIMING_NONE) {
-			str=ClockTimeDisplay.encode(style, initial, increment);
-
-			if(style!==TIMING_SUDDEN_DEATH) {
-				str+=" "+DbEnums[TIMING][style].description;
+define(function(require) {
+	require("lib/Array.contains");
+	var TimeParser = require("./TimeParser");
+	var TimingStyle = require("./TimingStyle");
+	
+	return {
+		encode: function(timingStyle, initialTime, increment) {
+			var showDefaultUnits = !isIncrementStyle;
+			var str = TimeParser.encode(initialTime, showDefaultUnits, "m");
+	
+			if(timingStyle.isIncrementStyle) {
+				str += "/" + TimeParser.encode(increment, false, "s");
 			}
-
-			if(overtime) {
-				str+=" + "+TimeParser.encode(overtimeIncrement, true)+" @ "+overtimeCutoff+" moves";
+	
+			return str;
+		},
+	
+		encodeFull: function(timingStyle, initialTime, increment, isOvertime, overtimeIncrement, overtimeCutoff) {
+			var display = TimingStyle.noTimer.description;
+	
+			if(timingStyle !== TimingStyle.noTimer) {
+				display = this.encode(timingStyle, initialTime, increment);
+	
+				if(timingStyle !== TimingStyle.suddenDeath) {
+					display += " " + timingStyle.description;
+				}
+	
+				if(isOvertime) {
+					display += " + " + TimeParser.encode(overtimeIncrement, true) + " @ " + overtimeCutoff + " moves";
+				}
 			}
+	
+			return display;
 		}
-
-		return str;
-	}
-};
+	};
+});
