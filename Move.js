@@ -6,7 +6,7 @@ define(function(require) {
 	var MoveLabel = require("./MoveLabel");
 	var Fen = require("./Fen");
 	var CastlingDetails = require("./CastlingDetails");
-	var Squares = require("./Squares");
+	var Square = require("./Square");
 	var Board = require("./Board");
 
 	function Move(positionBefore, from, to, promoteTo) {
@@ -23,8 +23,8 @@ define(function(require) {
 
 		this._colour = this._positionBefore.getActiveColour();
 		
-		this._relFrom = Squares.fromRelativeSquareNo(this._from.squareNo, this._colour);
-		this._relTo = Squares.fromRelativeSquareNo(this._to.squareNo, this._colour);
+		this._relFrom = Square.fromRelativeSquareNo(this._from.squareNo, this._colour);
+		this._relTo = Square.fromRelativeSquareNo(this._to.squareNo, this._colour);
 
 		this._label = new MoveLabel();
 		this._isCastling = false;
@@ -330,9 +330,7 @@ define(function(require) {
 	}
 
 	Move.prototype.getFullLabel = function() {
-		var dots = (this._colour === Colour.white ? "." : "...");
-		
-		return this.getFullmove() + dots + " " + this.getLabel();
+		return this.getFullmove() + (this._colour === Colour.white ? "." : "...") + " " + this.getLabel();
 	}
 	
 	Move.prototype.getCapturedPiece = function() {
