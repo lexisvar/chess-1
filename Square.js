@@ -1,18 +1,16 @@
 define(function(require) {
 	var Colour = require("./Colour");
+	var Coords = require("./Coords");
+	
+	var files = "abcdefgh";
+	var ranks = "12345678";
 	
 	function Square(squareNo, coordsX, coordsY, algebraic) {
 		this.algebraic = algebraic;
 		this.squareNo = squareNo;
-		
-		this.coords = {
-			x: coordsX,
-			y: coordsY
-		};
-		
-		this.file = "abcdefgh".charAt(coordsX);
-		this.rank = "12345678".charAt(coordsY);
-		
+		this.coords = new Coords(coordsX, coordsY);
+		this.file = files.charAt(coordsX);
+		this.rank = ranks.charAt(coordsY);
 		this.isPromotionRank = (this.rank === "1" || this.rank === "8");
 	}
 	
@@ -28,7 +26,7 @@ define(function(require) {
 		for(var y = 0; y < 8; y++) {
 			squareNo = y * 8 + x;
 			algebraicSquare = files.charAt(x) + ranks.charAt(y);
-			square = new Square(squareNo);
+			square = new Square(squareNo, x, y, algebraicSquare);
 			
 			squares[squareNo] = square;
 			squaresByCoords[x][y] = square;
