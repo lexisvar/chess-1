@@ -7,9 +7,9 @@ define(function(require) {
 	function Board() {
 		this._board = [];
 
-		for(var i = 0; i < 64; i++) {
-			this._board.push(null);
-		}
+		Square.forEach((function(square) {
+			this._board[square.squareNo] = null;
+		}).bind(this));
 
 		this._kingPositions = [];
 		this._kingPositions[Colour.white] = null;
