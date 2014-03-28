@@ -26,6 +26,12 @@ define(function(require) {
 		
 		fromFenString: function(fenString) {
 			return colours[fenString];
+		},
+		
+		forEach: function(callback) {
+			for(var fenString in colours) {
+				callback(colours[fenString]);
+			}
 		}
 	};
 });
