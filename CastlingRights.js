@@ -1,47 +1,60 @@
 define(function(require) {
 	var Fen = require("./Fen");
-	var PieceType = require("./PieceType");
-	var Piece = require("./Piece");
 	var Colour = require("./Colour");
+	
+	var files = "abcdefgh".split("");
+	var ranks = "12345678".split("");
 
-	function CastlingRights() {
-		this._rightsByFile = {};
-		this._rightsByFile[Colour.white] = [];
-		this._rightsByFile[Colour.black] = [];
-
-		this.reset();
-	}
-
-	CastlingRights.KINGSIDE = "K";
-	CastlingRights.QUEENSIDE = "Q";
-
-	var files = {
-		"K": 7,
-		"Q": 0
+	var sanToFile = {
+		"K": "h",
+		"Q": "a"
 	};
-
-	CastlingRights.prototype.reset = function() {
-		for(var file = 0; file < 8; file++) {
-			Colour.forEach((function(colour) {
-				this._rightsByFile[colour][file] = false;
-			}).bind(this));
+	
+	var fileToSan = {
+		"a": "Q",
+		"h": "K"
+	};
+	
+	function CastlingRight(colour, file) {
+		this.colour = colour;
+		this.file = file;
+		this.sanSide = null;
+		this.fenChar = null;
+		this.isAllowed = false;
+		
+		if(file in fileToSan) {
+			this.sanSide = fileToSan[file];
+		}
+		
+		this.xFenChar = (colour === Colour.white ? file.toUpperCase() : file);
+		
+		if(this.sanSide !== null) {
+			this.fenChar = (colour === Colour.white ? this.sanSide : this.sanSide.toLowerCase());
 		}
 	}
 
-	CastlingRights.prototype.setByFile = function(colour, file, allow) {
-		this._rightsByFile[colour][file] = allow;
+	function CastlingRights() {
+		this._rights = {};
+
+		Colour.forEach((function(colour) {
+			this._rights[colour] = {};
+			
+			files.forEach((function(file) {
+				this._rights[colour][file] = new CastlingRight(colour, file);
+			}).bind(this));
+		}).bind(this));
 	}
 
-	CastlingRights.prototype.setBySide = function(colour, side, allow) {
-		this._rightsByFile[colour][files[side]] = allow;
+	CastlingRights.prototype.set = function(colour, fileOrSan, allow) {
+		var file = (fileOrSan in sanToFile ?  sanToFile[fileOrSan] : fileOrSan);
+		
+		this._rights[colour][file].isAllowed = allow;
 	}
 
-	CastlingRights.prototype.getByFile = function(colour, file) {
-		return this._rightsByFile[colour][file];
-	}
-
-	CastlingRights.prototype.getBySide = function(colour, side) {
-		return this._rightsByFile[colour][files[side]];
+	CastlingRights.prototype.get = function(colour, fileOrSan) {
+		var file = (fileOrSan in sanToFile ?  sanToFile[fileOrSan] : fileOrSan);
+		
+		return this._rights[colour][file].isAllowed;
 	}
 
 	CastlingRights.prototype.setFenString = function(fenString) {
@@ -57,79 +70,50 @@ define(function(require) {
 				fenCharUpper = fenChar.toUpperCase();
 				colour = (fenChar === fenCharUpper ? Colour.white : Colour.black);
 
-				if(fenCharUpper in files) {
-					file = files[fenCharUpper];
-				}
+				file = (fenCharUpper in sanToFile ? sanToFile[fenCharUpper] : fenCharLower);
 
-				else {
-					file = "abcdefgh".indexOf(fenCharLower);
-				}
-
-				this.setByFile(colour, file, true);
+				this.set(colour, file, true);
 			}
 		}
 	}
 
-	CastlingRights.prototype.getFenStringByFile = function() {
-		var fenString = "";
+	CastlingRights.prototype.getXFenString = function() {
+		var xFenString = "";
 
-		Colour.forEach((function(colour) {
-			for(var file = 0; file < 8; file++) {
-				if(this.getByFile(colour, file)) {
-					fenString += CastlingRights._getFileChar(colour, file);
+		for(var colour in this._rights) {
+			for(var file in this._rights[colour]) {
+				if(this._rights[colour][file].isAllowed) {
+					xFenString += this._rights[colour][file].xFenChar;
 				}
 			}
-		}).bind(this));
+		}
+		
+		if(xFenString === "") {
+			xFenString = Fen.NONE;
+		}
 
+		return xFenString;
+	}
+
+	CastlingRights.prototype.getFenString = function() {
+		var fenString = "";
+		var right;
+
+		for(var colour in this._rights) {
+			for(var file in this._rights[colour]) {
+				right = this._rights[colour][file];
+				
+				if(right.isAllowed && right.sanSide !== null) {
+					fenString += right.fenChar;
+				}
+			}
+		}
+		
 		if(fenString === "") {
 			fenString = Fen.NONE;
 		}
 
 		return fenString;
-	}
-
-	CastlingRights.prototype.getFenStringBySide = function() {
-		var colours = [Colour.white, Colour.black];
-		var sides = [CastlingRights.KINGSIDE, CastlingRights.QUEENSIDE];
-		var colour, side;
-		var fenString = "";
-
-		for(var i = 0; i < colours.length; i++) {
-			colour = colours[i];
-
-			for(var j = 0; j < sides.length; j++) {
-				side = sides[j];
-
-				if(this.getBySide(colour, side)) {
-					fenString += CastlingRights._getSideChar(colour, side);
-				}
-			}
-		}
-
-		if(fenString === "") {
-			fenString = Fen.NONE;
-		}
-
-		return fenString;
-	}
-
-	CastlingRights._getSideChar = function(colour, side) {
-		var pieceTypes = []
-
-		pieceTypes[CastlingRights.KINGSIDE] = Piece.KING;
-		pieceTypes[CastlingRights.QUEENSIDE] = Piece.QUEEN;
-
-		return Fen.getPieceChar(Piece.getPiece(pieceTypes[side], colour));
-	}
-
-	CastlingRights._getFileChar = function(colour, file) {
-		var fenChar = "abcdefgh".charAt(file);
-
-		if(colour === Colour.white) {
-			fenChar = fenChar.toUpperCase();
-		}
-
-		return fenChar;
 	}
 
 	return CastlingRights;
