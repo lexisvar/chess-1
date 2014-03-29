@@ -12,7 +12,7 @@ define(function(require) {
 			this._board[square.squareNo] = null;
 		}).bind(this));
 
-		this._kingPositions = [];
+		this._kingPositions = {};
 		this._kingPositions[Colour.white] = null;
 		this._kingPositions[Colour.black] = null;
 	}
@@ -64,13 +64,12 @@ define(function(require) {
 		return Square.fromCoords(new Coords(from.coords.y, to.coords.x));
 	}
 	
-	/*
-	Position.prototype.getAttackers = function(pieceType, square, colour) {
+	Board.prototype.getAttackers = function(pieceType, square, colour) {
 		if(pieceType === PieceType.pawn) {
 			return this.getPawnAttackers(square, colour);
 		}
 
-		else if(pieceType === Piece.KING) {
+		else if(pieceType === PieceType.king) {
 			return this.getKingAttackers(square, colour);
 		}
 
@@ -79,7 +78,7 @@ define(function(require) {
 		}
 	}
 
-	Position.prototype.getPawnAttackers = function(square, colour) {
+	Board.prototype.getPawnAttackers = function(square, colour) {
 		var attackers = [];
 		var piece = Piece.get(PieceType.pawn, colour);
 		var candidateSquare;
@@ -100,7 +99,7 @@ define(function(require) {
 		return attackers;
 	}
 
-	Position.prototype.getKingAttackers = function(square, colour) {
+	Board.prototype.getKingAttackers = function(square, colour) {
 		var attackers = [];
 		var piece = Piece.get(PieceType.king, colour);
 		var coords, candidateSquare;
@@ -112,7 +111,7 @@ define(function(require) {
 				if(coords.isOnBoard) {
 					candidateSquare = Square.fromCoords(coords);
 
-					if(this._board.getPiece(candidateSquare) === piece) {
+					if(this._board.getPiece(candidateSquare) === piece && candidateSquare !== square) {
 						attackers.push(candidateSquare);
 					}
 				}
@@ -122,7 +121,7 @@ define(function(require) {
 		return attackers;
 	}
 
-	Position.prototype.getRegularAttackers = function(pieceType, square, colour) {
+	Board.prototype.getRegularAttackers = function(pieceType, square, colour) {
 		var attackers = [];
 		var piece = Piece.get(pieceType, colour);
 		var candidateSquares = Board.getReachableSquares(pieceType, square, colour);
@@ -139,7 +138,7 @@ define(function(require) {
 		return attackers;
 	}
 
-	Position.prototype.getAllAttackers = function(square, colour) {
+	Board.prototype.getAllAttackers = function(square, colour) {
 		var attackers = [];
 		
 		PieceType.forEach((function(pieceType) {
@@ -151,14 +150,14 @@ define(function(require) {
 	
 	
 
-	Position.prototype.playerIsInCheck = function(colour) {
-		return (this.getAllAttackers(this._board.getKingPosition(colour), colour.opposite).length > 0);
+	Board.prototype.playerIsInCheck = function(colour) {
+		return (this.getAllAttackers(this.getKingPosition(colour), colour.opposite).length > 0);
 	}
 	
 	
 	
 
-	Position.prototype.moveIsBlocked = function(from, to) {
+	Board.prototype.moveIsBlocked = function(from, to) {
 		var squares = Chess.getSquaressBetween(from, to);
 
 		for(var i = 0; i < squares.length; i++) {
@@ -169,70 +168,8 @@ define(function(require) {
 
 		return false;
 	}
-	*/
 	
 	/*
-	Square.prototype.isBishopMoveFrom = function(square) {
-		
-	}
-	
-	Square.prototype.isRookMoveFrom = function(square) {
-		
-	}
-	
-	Square.prototype.isPromotionRank = function() {
-		
-	}
-	
-	Square.prototype.getReachableSquares = function(piece) {
-		
-		TODO
-		
-		use better Piece object interface here once it's done
-		
-	}
-	
-	Square.prototype._generateReachableSquares = function() {
-		this.reachableSquares = {};
-		
-		Piece.forEachType((function(pieceType) {
-			this.reachableSquares[pieceType] = {};
-			
-			Colour.forEach((function(colour) {
-				this.reachableSquares[pieceType][colour] = [];
-			}).bind(this));
-		}).bind(this));
-		
-		Colour.forEach((function() {
-			case Piece.PAWN: {
-					var relFrom = Chess.getRelativeSquare(from, colour);
-
-					if(relFrom < 16) {
-						squares.push(Chess.getRelativeSquare(relFrom + 16, colour));
-					}
-
-					var relCoords = Chess.coordsFromSquare(relFrom);
-					var x, y;
-
-					for(var xDiff = -1; xDiff < 2; xDiff++) {
-						x = relCoords.x + xDiff;
-						y = relCoords.y + 1;
-
-						if(x > -1 && x < 8 && y > -1 && y < 8) {
-							squares.push(Chess.getRelativeSquare(Chess.squareFromCoords({
-								x: x,
-								y: y
-							}), colour));
-						}
-					}
-
-					break;
-			this.reachableSquares[Piece.types.KNIGHT][colour].push();
-		}).bind(this));
-		
-		
-		
-	}
 	
 	_between: function(squareA, squareB, inclusive) {
 			var squares = [];
@@ -279,13 +216,6 @@ define(function(require) {
 			return Squares._between(squareA, squareB, true);
 		},
 		
-		getEpTarget: function(capturerFrom, capturerTo) {
-			return Squares.fromCoords({
-				x: capturerTo.coords.x,
-				y: capturerFrom.coords.y
-			});
-		},
-		
 		getKingHomeSquare: function(colour) {
 			var homeSquares = {};
 			
@@ -298,15 +228,37 @@ define(function(require) {
 	
 	/*
 
-		getReachableSquares: function(type, from, colour) {
+		getReachableSquares: function(piece, from) {
 			var fromCoords = Chess.coordsFromSquare(from);
 			var squares = [];
 
 			switch(type) {
-				
+				case PieceType.pawn: {
+					var relFrom = Chess.getRelativeSquare(from, colour);
+
+					if(relFrom < 16) {
+						squares.push(Chess.getRelativeSquare(relFrom + 16, colour));
+					}
+
+					var relCoords = Chess.coordsFromSquare(relFrom);
+					var x, y;
+
+					for(var xDiff = -1; xDiff < 2; xDiff++) {
+						x = relCoords.x + xDiff;
+						y = relCoords.y + 1;
+
+						if(x > -1 && x < 8 && y > -1 && y < 8) {
+							squares.push(Chess.getRelativeSquare(Chess.squareFromCoords({
+								x: x,
+								y: y
+							}), colour));
+						}
+					}
+
+					break;
 				}
 
-				case Piece.KNIGHT: {
+				case PieceType.knight: {
 					var xDiffs = [-1, -1, 1, 1, -2, -2, 2, 2];
 					var yDiffs = [-2, 2, -2, 2, 1, -1, 1, -1];
 					var x, y;
@@ -326,7 +278,7 @@ define(function(require) {
 					break;
 				}
 
-				case Piece.BISHOP: {
+				case PieceType.bishop: {
 					var diffs = [1, -1];
 					var coords;
 
@@ -355,7 +307,7 @@ define(function(require) {
 					break;
 				}
 
-				case Piece.ROOK: {
+				case PieceType.rook: {
 					var squareOnSameRank, squareOnSameFile;
 
 					for(var n = 0; n < 8; n++) {
@@ -374,16 +326,16 @@ define(function(require) {
 					break;
 				}
 
-				case Piece.QUEEN: {
-					var rookSquares = Chess.getReachableSquares(Piece.ROOK, from, colour);
-					var bishopSquares = Chess.getReachableSquares(Piece.BISHOP, from, colour);
+				case PieceType.queen: {
+					var rookSquares = Chess.getReachableSquares(PieceType.rook, from, colour);
+					var bishopSquares = Chess.getReachableSquares(PieceType.bishop, from, colour);
 
 					squares = rookSquares.concat(bishopSquares);
 
 					break;
 				}
 
-				case Piece.KING: {
+				case PieceType.king: {
 					var x, y;
 
 					for(var xDiff = -1; xDiff < 2; xDiff++) {
@@ -416,64 +368,6 @@ define(function(require) {
 
 			return squares;
 		}
-	*/
-	
-	/*
-	isRegularMove: function(type, fromCoords, toCoords) {
-			var diff = {
-				x: Math.abs(fromCoords.x - toCoords.x),
-				y: Math.abs(fromCoords.y - toCoords.y)
-			};
-
-			if(diff.x === 0 && diff.y === 0) {
-				return false;
-			}
-
-			switch(type) {
-				case Piece.PAWN: {
-					return false;
-				}
-
-				case Piece.KNIGHT: {
-					return ((diff.x === 2 && diff.y === 1) || (diff.x === 1 && diff.y === 2));
-				}
-
-				case Piece.BISHOP: {
-					return (diff.x === diff.y);
-				}
-
-				case Piece.ROOK: {
-					return (diff.x === 0 || diff.y === 0);
-				}
-
-				case Piece.QUEEN: {
-					return (diff.x === diff.y || (diff.x === 0 || diff.y === 0));
-				}
-
-				case Piece.KING: {
-					return ((diff.x === 1 || diff.x === 0) && (diff.y === 1 || diff.y === 0));
-				}
-			}
-		},
-
-		isPawnMove: function(relFrom, relTo) {
-			return (relTo - relFrom === 8);
-		},
-
-		isDoublePawnMove: function(relFrom, relTo) {
-			return (relFrom > 7 && relFrom < 16 && relTo - relFrom === 16);
-		},
-
-		isPawnCapture: function(relFrom , relTo) {
-			var fromCoords = Chess.coordsFromSquare(relFrom);
-			var toCoords = Chess.coordsFromSquare(relTo);
-
-			return (toCoords.y - fromCoords.y === 1 && Math.abs(toCoords.x - fromCoords.x) === 1);
-		},
-
-		isPawnPromotion: function(relTo) {
-			return (relTo > 55);
-		},
 	*/
 
 	return Board;
