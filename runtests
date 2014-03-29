@@ -1,0 +1,22 @@
+#!/usr/bin/js
+
+var requirejs = require("requirejs");
+var fs = require("fs");
+
+requirejs.config({
+	nodeRequire: require,
+	paths: {
+		"lib": "/var/www/lib/js"
+	},
+	map: {
+		"*": {
+			"chess": "lib/chess"
+		}
+	}
+});
+
+var tests = fs.readdirSync("./test").map(function(filename) {
+	return "./test/" + filename;
+});
+
+requirejs(tests);
