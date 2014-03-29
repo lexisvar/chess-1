@@ -3,6 +3,7 @@ define(function(require) {
 	var PieceType = require("./PieceType");
 	var Square = require("./Square");
 	var Colour = require("./Colour");
+	var Coords = require("./Coords");
 
 	function Board() {
 		this._board = [];
@@ -58,6 +59,96 @@ define(function(require) {
 	Board.prototype.getEpTarget = function(from, to) {
 		return Square.fromSquareNo(to.squareNo - ((to.squareNo - from.squareNo) / 2));
 	}
+	
+	Board.prototype.getEpPawn = function(from, to) {
+		return Square.fromCoords(new Coords(from.coords.y, to.coords.x));
+	}
+	
+	/*
+	Position.prototype.getAttackers = function(pieceType, square, colour) {
+		if(pieceType === PieceType.pawn) {
+			return this.getPawnAttackers(square, colour);
+		}
+
+		else if(pieceType === Piece.KING) {
+			return this.getKingAttackers(square, colour);
+		}
+
+		else {
+			return this.getRegularAttackers(pieceType, square, colour);
+		}
+	}
+
+	Position.prototype.getPawnAttackers = function(square, colour) {
+		var attackers = [];
+		var piece = Piece.get(PieceType.pawn, colour);
+		var candidateSquare;
+		var coords;
+
+		for(var x = -1; x <= 1; x += 2) {
+			coords = square.adjusted[colour].coords.add(x, -1);
+			
+			if(coords.isOnBoard) {
+				candidateSquare = Square.fromCoords(coords).adjusted[colour];
+
+				if(this._board.getPiece(candidateSquare) === piece) {
+					attackers.push(candidateSquare);
+				}
+			}
+		}
+
+		return attackers;
+	}
+
+	Position.prototype.getKingAttackers = function(square, colour) {
+		var attackers = [];
+		var piece = Piece.get(PieceType.king, colour);
+		var coords, candidateSquare;
+
+		for(var x = -1; x <= 1; x++) {
+			for(var y = -1; y <= 1; y++) {
+				coords = square.coords.add(x, y);
+				
+				if(coords.isOnBoard) {
+					candidateSquare = Square.fromCoords(coords);
+
+					if(this._board.getPiece(candidateSquare) === piece) {
+						attackers.push(candidateSquare);
+					}
+				}
+			}
+		}
+
+		return attackers;
+	}
+
+	Position.prototype.getRegularAttackers = function(pieceType, square, colour) {
+		var attackers = [];
+		var piece = Piece.get(pieceType, colour);
+		var candidateSquares = Board.getReachableSquares(pieceType, square, colour);
+		var candidateSquare;
+
+		for(var i = 0; i < candidateSquares.length; i++) {
+			candidateSquare = candidateSquares[i];
+
+			if(this._board.getPiece(candidateSquare) === piece && !this._board.moveIsBlocked(square, candidateSquare)) {
+				attackers.push(candidateSquare);
+			}
+		}
+
+		return attackers;
+	}
+
+	Position.prototype.getAllAttackers = function(square, colour) {
+		var attackers = [];
+		
+		PieceType.forEach((function(pieceType) {
+			attackers = attackers.concat(this.getAttackers(pieceType, square, colour));
+		}).bind(this));
+
+		return attackers;
+	}
+	*/
 	
 	/*
 	Square.prototype.isBishopMoveFrom = function(square) {
