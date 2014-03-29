@@ -209,5 +209,9 @@ define(function(require) {
 		return legalMoves;
 	}
 
+	Position.prototype.moveIsBlocked = function(from, to) {
+		return this._board.moveIsBlocked(from, to);
+	}
+
 	return Position;
 });
