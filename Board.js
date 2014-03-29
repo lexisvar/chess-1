@@ -148,8 +148,6 @@ define(function(require) {
 		return attackers;
 	}
 	
-	
-
 	Board.prototype.playerIsInCheck = function(colour) {
 		return (this.getAllAttackers(this.getKingPosition(colour), colour.opposite).length > 0);
 	}
@@ -211,7 +209,7 @@ define(function(require) {
 		return false;
 	}
 	
-	Board.prototype.getSquaresBetween = function(a, b, inclusive) {
+	Board.getSquaresBetween = function(a, b, inclusive) {
 		var squares = [];
 
 		var lower = Math.min(a.squareNo, b.squareNo);
