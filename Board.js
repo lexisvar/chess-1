@@ -148,6 +148,27 @@ define(function(require) {
 
 		return attackers;
 	}
+	
+	
+
+	Position.prototype.playerIsInCheck = function(colour) {
+		return (this.getAllAttackers(this._board.getKingPosition(colour), colour.opposite).length > 0);
+	}
+	
+	
+	
+
+	Position.prototype.moveIsBlocked = function(from, to) {
+		var squares = Chess.getSquaressBetween(from, to);
+
+		for(var i = 0; i < squares.length; i++) {
+			if(this._board.getPiece(squares[i]) !== null) {
+				return true;
+			}
+		}
+
+		return false;
+	}
 	*/
 	
 	/*
