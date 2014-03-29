@@ -136,13 +136,13 @@ define(function(require) {
 		var legalMoves = 0;
 		var piece;
 
-		for(var square = 0; square < 64; square++) {
+		Square.forEach((function(square) {
 			piece = this._board.getPiece(square);
 
 			if(piece !== null && piece.colour === colour) {
 				legalMoves += this.getLegalMovesFromSquare(square).length;
 			}
-		}
+		}).bind(this));
 
 		return legalMoves;
 	}
