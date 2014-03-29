@@ -13,7 +13,7 @@ define(function(require) {
 		this._positionBefore = positionBefore;
 		this._from = from;
 		this._to = to;
-		this._promoteTo = promoteTo || Piece.types.QUEEN;
+		this._promoteTo = promoteTo || PieceType.queen;
 		this._positionAfter = this._positionBefore.getCopy();
 		this._time = time();
 
@@ -22,9 +22,8 @@ define(function(require) {
 		this._capturedPiece = null;
 
 		this._colour = this._positionBefore.getActiveColour();
-		
-		this._relFrom = Square.fromRelativeSquareNo(this._from.squareNo, this._colour);
-		this._relTo = Square.fromRelativeSquareNo(this._to.squareNo, this._colour);
+		this._fromRelative = this._from.adjusted[this._colour];
+		this._toRelative = this._to.adjusted[this._colour];
 
 		this._label = new MoveLabel();
 		this._isCastling = false;
@@ -77,30 +76,30 @@ define(function(require) {
 					this._positionAfter.incrementFiftymoveClock();
 				}
 
-				if(this._piece.type !== PieceType.pawn || !Board.isDoublePawnMove(this._relFrom, this._relTo)) {
+				if(this._piece.type !== PieceType.pawn || !Board.isDoublePawnMove(this._from, this._to, this._colour)) {
 					this._positionAfter.setEpTarget(null);
 				}
 
 				if(this._piece.type === PieceType.king || this._isCastling) {
-					for(file = 0; file < 8; file++) {
-						this._positionAfter.setCastlingRightsByFile(this._colour, file, false);
-					}
+					"abcdefgh".split("").forEach((function(file) {
+						this._positionAfter.setCastlingRights(this._colour, file, false);
+					}).bind(this));
 				}
 
 				else if(this._piece.type === PieceType.rook) {
-					this._positionAfter.setCastlingRightsByFile(this._colour, this._from.coords.x, false);
+					this._positionAfter.setCastlingRights(this._colour, this._from.file, false);
 				}
 			}
 		}
 	}
 
 	Move.prototype._checkRegularMove = function() {
-		if(Chess.isRegularMove(this._piece.type, this._fromCoords, this._toCoords) && this._isUnobstructed) {
+		if(this._isRegularShape() && this._isUnobstructed) {
 			this._isValid = true;
 			this._positionAfter.setPiece(this._from, null);
 			this._positionAfter.setPiece(this._to, this._positionBefore.getSquare(this._from));
-			this._label.piece = this._piece.fenType;
-			this._label.to = Chess.algebraicFromSquare(this._to);
+			this._label.piece = this._piece.type.sanString;
+			this._label.to = this._to.algebraic;
 
 			if(this._piece.type !== PieceType.king) {
 				this._label.disambiguation = this._getDisambiguationString();
@@ -108,40 +107,76 @@ define(function(require) {
 
 			if(this._targetPiece !== null && this._targetPiece.colour === this._colour.opposite) {
 				this._label.sign = MoveLabel.SIGN_CAPTURE;
-				this._capturedPiece = this._positionBefore.getSquare(this._to);
+				this._capturedPiece = this._targetPiece;
+			}
+		}
+	}
+	
+	Move.prototype._isRegularShape = function() {
+		var diff = {
+			x: Math.abs(this._from.coords.x - this._to.coords.x),
+			y: Math.abs(this._from.coords.y - this._to.coords.y)
+		};
+
+		if(diff.x === 0 && diff.y === 0) {
+			return false;
+		}
+
+		switch(this._piece.type) {
+			case PieceType.pawn: {
+				return false;
+			}
+
+			case PieceType.knight: {
+				return ((diff.x === 2 && diff.y === 1) || (diff.x === 1 && diff.y === 2));
+			}
+
+			case PieceType.bishop: {
+				return (diff.x === diff.y);
+			}
+
+			case PieceType.rook: {
+				return (diff.x === 0 || diff.y === 0);
+			}
+
+			case PieceType.queen: {
+				return (diff.x === diff.y || (diff.x === 0 || diff.y === 0));
+			}
+
+			case PieceType.king: {
+				return ((diff.x === 1 || diff.x === 0) && (diff.y === 1 || diff.y === 0));
 			}
 		}
 	}
 
 	Move.prototype._checkPawnMove = function() {
 		if(this._piece.type === PieceType.pawn && this._isUnobstructed) {
-			var isCapturing = Board.isPawnCapture(this._relFrom, this._relTo);
+			var isCapturing = this._isPawnCaptureShape();
 			var isEnPassant = false;
 			var isDouble = false;
 			var isPromotion = false;
 			var isValidPromotion = false;
 
-			if(Chess.isPawnPromotion(this._relTo)) {
+			if(this._to.isPromotionRank) {
 				isPromotion = true;
-
-				if([PieceType.knight, PieceType.bishop, PieceType.rook, PieceType.queen].indexOf(this._promoteTo) !== -1) {
-					isValidPromotion = true;
-				}
+				isValidPromotion = this._promoteTo.isValidPromotion;
 			}
 
 			if(isValidPromotion || !isPromotion) {
 				if(this._targetPiece.type === null) {
-					if(Board.isDoublePawnMove(this._relFrom, this._relTo)) {
+					if(this._isDoublePawnShape()) {
 						this._isValid = true;
+						
 						isDouble = true;
 					}
 
-					else if(Board.isPawnMove(this._relFrom, this._relTo)) {
+					else if(Board.isPawnMove(this._from, this._to, this._colour)) {
 						this._isValid = true;
 					}
 
-					else if(isCapturing && this._to === this._positionBefore.epTarget) {
+					else if(isCapturing && this._to === this._positionBefore.getEpTarget()) {
 						this._isValid = true;
+						
 						isEnPassant = true;
 					}
 				}
@@ -159,8 +194,8 @@ define(function(require) {
 					this._label.sign = MoveLabel.SIGN_CAPTURE;
 
 					if(isEnPassant) {
-						this._positionAfter.setPiece(Chess.getEpPawn(this._from, this._to), null);
-						this._capturedPiece = Piece.getPiece(PieceType.pawn, this._colour.opposite);
+						this._positionAfter.setPiece(Board.getEpPawn(this._from, this._to), null);
+						this._capturedPiece = Piece.get(PieceType.pawn, this._colour.opposite);
 					}
 
 					else {
@@ -169,22 +204,43 @@ define(function(require) {
 				}
 
 				if(isDouble) {
-					this._positionAfter.setEpTarget(/*FIXME*/Chess.getRelativeSquare(this._relTo - 8, this._colour));
+					this._positionAfter.setEpTarget(Board.getEpTarget(this._from, this._to));
 				}
 
 				this._label.to = this._to.algebraic;
 				this._positionAfter.setPiece(this._from, null);
 
 				if(isPromotion) {
-					this._positionAfter.setPiece(this._to, Piece.get(promoteTo, this._colour));
-					this._label.special = MoveLabel.SIGN_PROMOTE + promoteTo.fenStrings[Colour.white];
+					this._positionAfter.setPiece(this._to, Piece.get(this._promoteTo, this._colour));
+					this._label.special = MoveLabel.SIGN_PROMOTE + this._promoteTo.sanString;
 				}
 
 				else {
-					this._positionAfter.setSqsetPieceuare(this._to, this._positionBefore.getPiece(this._from));
+					this._positionAfter.setPiece(this._to, this._positionBefore.getPiece(this._from));
 				}
 			}
 		}
+	}
+	
+	Move.prototype._isPawnShape = function() {
+		return (
+			this._toRelative.coords.y - this._fromRelative.coords.y === 1
+			&& this._to.coords.x - this._from.coords.x === 0
+		);
+	}
+	
+	Move.prototype._isPawnCaptureShape = function() {
+		return (
+			this._toRelative.coords.y - this._fromRelative.coords.y === 1
+			&& Math.abs(this._to.coords.x - this._from.coords.x) === 1
+		);
+	}
+	
+	Move.prototype._isDoublePawnShape = function() {
+		return (
+			this._toRelative.coords.y - this._fromRelative.coords.y === 2
+			&& this._to.coords.x - this._from.coords.x === 0
+		);
 	}
 
 	Move.prototype._checkKingMove = function() {
@@ -196,12 +252,16 @@ define(function(require) {
 	}
 
 	Move.prototype._checkCastlingMove = function() {
+		/*
+		FIXME need to check whether the rook is actually present here
+		*/
+		
 		if(this._piece.type === PieceType.king && this._isUnobstructed && !this._positionBefore.playerIsInCheck(this._colour)) {
 			var castling = new CastlingDetails(this._from, this._to);
 
-			if(castling.isValid && this._positionBefore.getCastlingRightsBySide(this._colour, castling.side)) {
+			if(castling.isValid && this._positionBefore.getCastlingRights(this._colour, castling.rookStartPos.file)) {
 				var throughCheck = false;
-				var between = Chess.getSquaresBetween(this._from, this._to);
+				var between = Board.getSquaresBetween(this._from, this._to);
 
 				for(var i = 0; i < between.length; i++) {
 					if(this._positionBefore.getAllAttackers(between[i], this._colour.opposite).length > 0) {
@@ -216,9 +276,9 @@ define(function(require) {
 					this._isCastling = true;
 					this._label.special = castling.sign;
 					this._positionAfter.setPiece(this._from, null);
-					this._positionAfter.setPiece(this._to, Piece.getPiece(PieceType.king, this._colour));
+					this._positionAfter.setPiece(this._to, Piece.get(PieceType.king, this._colour));
 					this._positionAfter.setPiece(castling.rookStartPos, null);
-					this._positionAfter.setPiece(castling.rookEndPos, Piece.getPiece(Piece.types.ROOK, this._colour));
+					this._positionAfter.setPiece(castling.rookEndPos, Piece.get(Piece.types.ROOK, this._colour));
 				}
 			}
 		}
