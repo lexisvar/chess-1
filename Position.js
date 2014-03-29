@@ -132,50 +132,6 @@ define(function(require) {
 		return (this.playerIsInCheck(colour) && this.countLegalMoves(colour) === 0);
 	}
 
-	Position.prototype.playerCanMate = function(colour) {
-		var pieces = {};
-		var bishops = {};
-		var knights = {};
-
-		pieces[PieceType.knight] = 0;
-		pieces[PieceType.bishop] = 0;
-		bishops[Colour.white] = 0;
-		bishops[Colour.black] = 0;
-		knights[Colour.white] = 0;
-		knights[Colour.black] = 0;
-
-		var piece;
-
-		for(var square = 0; square < 64; square++) {
-			piece = new Piece(this._board.getPiece(square));
-
-			if(piece.type !== null && piece.type !== Piece.KING) {
-				if(
-					piece.colour === colour
-					&& ([PieceType.pawn, PieceType.rook, PieceType.queen].indexOf(piece.type) !== -1)
-				) {
-					return true;
-				}
-
-				if(piece.type === PieceType.bishop) {
-					bishops[piece.colour]++;
-					pieces[PieceType.bishop]++;
-				}
-
-				if(piece.type === PieceType.knight) {
-					knights[piece.colour]++;
-					pieces[PieceType.knight]++;
-				}
-			}
-		}
-
-		return (
-			(bishops[Colour.white] > 0 && bishops[Colour.black] > 0)
-			|| (pieces[PieceType.bishop] > 0 && pieces[PieceType.knight] > 0)
-			|| (pieces[PieceType.knight] > 2 && knights[colour] > 0)
-		);
-	}
-
 	Position.prototype.countLegalMoves = function(colour) {
 		var legalMoves = 0;
 		var piece;
@@ -207,6 +163,14 @@ define(function(require) {
 		}
 
 		return legalMoves;
+	}
+	
+	Position.prototype.getAttackers = function(pieceType, square, colour) {
+		return this._board.getAttackers(pieceType, square, colour);
+	}
+
+	Position.prototype.playerCanMate = function(colour) {
+		return this._board.playerCanMate(colour);
 	}
 
 	Position.prototype.moveIsBlocked = function(from, to) {
