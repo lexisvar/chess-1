@@ -114,12 +114,13 @@ define(function(require) {
 	for(var description in tests) {
 		try {
 			tests[description](new CastlingRights());
+			console.log("\033[0;32mpassed:\033[0m " + description);
 			passed++;
 		} catch(error) {
-			console.log("test failed: " + description + ": " + error.message);
+			console.log("\033[0;31mfailed:\033[0m " + description + ": " + error.message);
 			failed++;
 		}
 	}
 	
-	console.log(passed + " passed, " + failed + " failed");
+	console.log("\033[1m" + passed + " passed, " + failed + " failed\033[0m");
 });
