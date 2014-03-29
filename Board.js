@@ -55,6 +55,10 @@ define(function(require) {
 		return board;
 	}
 	
+	Board.prototype.getEpTarget = function(from, to) {
+		return Square.fromSquareNo(to.squareNo - ((to.squareNo - from.squareNo) / 2));
+	}
+	
 	/*
 	Square.prototype.isBishopMoveFrom = function(square) {
 		
