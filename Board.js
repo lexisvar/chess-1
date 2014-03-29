@@ -56,11 +56,11 @@ define(function(require) {
 		return board;
 	}
 	
-	Board.prototype.getEpTarget = function(from, to) {
+	Board.getEpTarget = function(from, to) {
 		return Square.fromSquareNo(to.squareNo - ((to.squareNo - from.squareNo) / 2));
 	}
 	
-	Board.prototype.getEpPawn = function(from, to) {
+	Board.getEpPawn = function(from, to) {
 		return Square.fromCoords(new Coords(from.coords.y, to.coords.x));
 	}
 	
