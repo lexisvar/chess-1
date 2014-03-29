@@ -9,5 +9,9 @@ define(function(require) {
 		return new Coords(this.x + x, this.y + y);
 	}
 	
+	Coords.prototype.equals = function(coords) {
+		return (this.x === coords.x && this.y === coords.y);
+	}
+	
 	return Coords;
 });
