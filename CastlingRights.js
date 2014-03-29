@@ -1,6 +1,5 @@
 define(function(require) {
 	var Fen = require("./Fen");
-	var Chess = require("./Chess");
 	var PieceType = require("./PieceType");
 	var Piece = require("./Piece");
 	var Colour = require("./Colour");

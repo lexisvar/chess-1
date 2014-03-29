@@ -1,6 +1,5 @@
 define(function(require) {
 	var CastlingRights = require("./CastlingRights");
-	var Chess = require("./Chess");
 	var MoveLabel = require("./MoveLabel");
 
 	function CastlingDetails(from, to) {
