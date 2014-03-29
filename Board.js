@@ -211,62 +211,47 @@ define(function(require) {
 		return false;
 	}
 	
-	/*
-	
-	_between: function(squareA, squareB, inclusive) {
-			var squares = [];
+	Board.prototype.getSquaresBetween = function(a, b, inclusive) {
+		var squares = [];
 
-			var lower = Math.min(squareA.squareNo, squareB.squareNo);
-			var upper = Math.max(squareA.squareNo, squareB.squareNo);
+		var lower = Math.min(a.squareNo, b.squareNo);
+		var upper = Math.max(a.squareNo, b.squareNo);
 
-			squareA = Squares.fromSquareNo(lower);
-			squareB = Squares.fromSquareNo(upper);
+		a = Squares.fromSquareNo(lower);
+		b = Squares.fromSquareNo(upper);
 
-			var difference = squareB.squareNo - squareA.squareNo;
-			var distanceInSquares = 0;
-			var increment;
-
-			if(squareA.isBishopMoveFrom(squareB)) {
-				distanceInSquares = Math.abs(squareA.coords.x - squareB.coords.x);
-			}
-
-			else if(squareA.isRookMoveFrom(squareB)) {
-				distanceInSquares = (difference > 7 ? difference / 8 : difference);
-			}
-
-			if(distanceInSquares > 0) {
-				increment = difference / distanceInSquares;
-				
-				for(var squareNo = squareA.squareNo + increment; squareNo < squareB.squareNo; squareNo += increment) {
-					squares.push(Squares.fromSquareNo(squareNo));
-				}
-				
-				if(inclusive) {
-					squares.push(squareA);
-					squares.push(squareB);
-				}
-			}
-			
-			return squares;
-		},
+		var coordsDifference = {
+			x: b.coords.x - a.coords.x,
+			y: b.coords.y - a.coords.y
+		};
 		
-		between: function(squareA, squareB) {
-			return Squares._between(squareA, squareB, false);
-		},
-		
-		betweenInclusive: function(squareA, squareB) {
-			return Squares._between(squareA, squareB, true);
-		},
-		
-		getKingHomeSquare: function(colour) {
-			var homeSquares = {};
-			
-			homeSquares[Fen.WHITE] = 4;
-			homeSquares[Fen.BLACK] = 60;
-			
-			return Squares.fromSquareNo(homeSquares[colour.fenString]);
+		var difference = b.squareNo - a.squareNo;
+		var distanceInSquares = 0;
+		var increment;
+
+		if(coordsDifference.x === coordsDifference.y) {
+			distanceInSquares = coordsDifference.x;
 		}
-	*/
+
+		else if(coordsDifference.x === 0 || coordsDifference.y === 0) {
+			distanceInSquares = (difference > 7 ? difference / 8 : difference);
+		}
+
+		if(distanceInSquares > 0) {
+			increment = difference / distanceInSquares;
+			
+			for(var squareNo = a.squareNo + increment; squareNo < b.squareNo; squareNo += increment) {
+				squares.push(Squares.fromSquareNo(squareNo));
+			}
+			
+			if(inclusive) {
+				squares.push(a);
+				squares.push(b);
+			}
+		}
+		
+		return squares;
+	}
 	
 	/*
 
