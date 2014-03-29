@@ -75,7 +75,7 @@ define(function(require) {
 					this._positionAfter.incrementFiftymoveClock();
 				}
 
-				if(this._piece.type !== PieceType.pawn || !Board.isDoublePawnMove(this._from, this._to, this._colour)) {
+				if(this._piece.type !== PieceType.pawn || !this._isDoublePawnShape()) {
 					this._positionAfter.setEpTarget(null);
 				}
 
@@ -224,7 +224,7 @@ define(function(require) {
 	Move.prototype._isPawnShape = function() {
 		return (
 			this._toRelative.coords.y - this._fromRelative.coords.y === 1
-			&& this._to.coords.x - this._from.coords.x === 0
+			&& this._to.coords.x === this._from.coords.x
 		);
 	}
 	
@@ -237,8 +237,9 @@ define(function(require) {
 	
 	Move.prototype._isDoublePawnShape = function() {
 		return (
-			this._toRelative.coords.y - this._fromRelative.coords.y === 2
-			&& this._to.coords.x - this._from.coords.x === 0
+			this._fromRelative.coords.y === 1
+			&& this._toRelative.coords.y === 3
+			&& this._to.coords.x === this._from.coords.x
 		);
 	}
 
