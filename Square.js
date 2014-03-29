@@ -37,7 +37,7 @@ define(function(require) {
 	}
 	
 	squares.forEach(function(square) {
-		square.adjusted[Colours.black] = squares[63 - square.squareNo];
+		square.adjusted[Colour.black] = squares[63 - square.squareNo];
 	});
 	
 	return {
