@@ -251,149 +251,125 @@ define(function(require) {
 		return squares;
 	}
 	
-	/*
+	Board.getReachableSquares = function(pieceType, from, colour) {
+		var squares = [];
 
-		getReachableSquares: function(piece, from) {
-			var fromCoords = Chess.coordsFromSquare(from);
-			var squares = [];
+		switch(type) {
+			case PieceType.pawn: {
+				var fromRelative = from.adjusted[colour];
 
-			switch(type) {
-				case PieceType.pawn: {
-					var relFrom = Chess.getRelativeSquare(from, colour);
+				if(fromRelative.coords.y === 1) {
+					squares.push(Square.fromSquareNo(fromRelative.squareNo + 16).adjusted[colour]);
+				}
+				
+				var coords;
 
-					if(relFrom < 16) {
-						squares.push(Chess.getRelativeSquare(relFrom + 16, colour));
+				for(var x = -1; x < 2; x++) {
+					coords = fromRelative.coords.add(x, fromRelative.coords.y + 1);
+
+					if(coords.isOnBoard) {
+						squares.push(Square.fromCoords(coords).adjusted[colour]);
 					}
-
-					var relCoords = Chess.coordsFromSquare(relFrom);
-					var x, y;
-
-					for(var xDiff = -1; xDiff < 2; xDiff++) {
-						x = relCoords.x + xDiff;
-						y = relCoords.y + 1;
-
-						if(x > -1 && x < 8 && y > -1 && y < 8) {
-							squares.push(Chess.getRelativeSquare(Chess.squareFromCoords({
-								x: x,
-								y: y
-							}), colour));
-						}
-					}
-
-					break;
 				}
 
-				case PieceType.knight: {
-					var xDiffs = [-1, -1, 1, 1, -2, -2, 2, 2];
-					var yDiffs = [-2, 2, -2, 2, 1, -1, 1, -1];
-					var x, y;
-
-					for(var i = 0; i < 8; i++) {
-						x = fromCoords.x + xDiffs[i];
-						y = fromCoords.y + yDiffs[i];
-
-						if(x > -1 && x < 8 && y > -1 && y < 8) {
-							squares.push(Chess.squareFromCoords({
-								x: x,
-								y: y
-							}));
-						}
-					}
-
-					break;
-				}
-
-				case PieceType.bishop: {
-					var diffs = [1, -1];
-					var coords;
-
-					for(var ix = 0; ix < diffs.length; ix++) {
-						for(var iy = 0; iy < diffs.length; iy++) {
-							coords = {
-								x: fromCoords.x,
-								y: fromCoords.y
-							};
-
-							while(true) {
-								coords.x += diffs[ix];
-								coords.y += diffs[iy];
-
-								if(coords.x > -1 && coords.x < 8 && coords.y > -1 && coords.y < 8) {
-									squares.push(Chess.squareFromCoords(coords));
-								}
-
-								else {
-									break;
-								}
-							}
-						}
-					}
-
-					break;
-				}
-
-				case PieceType.rook: {
-					var squareOnSameRank, squareOnSameFile;
-
-					for(var n = 0; n < 8; n++) {
-						squareOnSameRank = (fromCoords.y * 8) + n;
-						squareOnSameFile = fromCoords.x + (n * 8);
-
-						if(squareOnSameRank !== from) {
-							squares.push(squareOnSameRank);
-						}
-
-						if(squareOnSameFile !== from) {
-							squares.push(squareOnSameFile);
-						}
-					}
-
-					break;
-				}
-
-				case PieceType.queen: {
-					var rookSquares = Chess.getReachableSquares(PieceType.rook, from, colour);
-					var bishopSquares = Chess.getReachableSquares(PieceType.bishop, from, colour);
-
-					squares = rookSquares.concat(bishopSquares);
-
-					break;
-				}
-
-				case PieceType.king: {
-					var x, y;
-
-					for(var xDiff = -1; xDiff < 2; xDiff++) {
-						x = fromCoords.x + xDiff;
-
-						if(x > -1 && x < 8) {
-							for(var yDiff = -1; yDiff < 2; yDiff++) {
-								y = fromCoords.y + yDiff;
-
-								if(y > -1 && y < 8) {
-									squares.push(Chess.squareFromCoords({
-										x: x,
-										y: y
-									}));
-								}
-							}
-						}
-					}
-					
-					var kingHomeSquare = (colour === Colour.black ? 60 : 4);
-					var castlingSquares = (colour === Colour.black ? [58, 62] : [2, 6]);
-
-					if(from === kingHomeSquare) {
-						squares = squares.concat(castlingSquares);
-					}
-
-					break;
-				}
+				break;
 			}
 
-			return squares;
+			case PieceType.knight: {
+				var xDiffs = [-1, -1, 1, 1, -2, -2, 2, 2];
+				var yDiffs = [-2, 2, -2, 2, 1, -1, 1, -1];
+				var coords;
+
+				for(var i = 0; i < 8; i++) {
+					coords = from.coords.add(xDiffs[i], yDiffs[i]);
+
+					if(coords.isOnBoard) {
+						squares.push(Square.fromCoords(coords));
+					}
+				}
+
+				break;
+			}
+
+			case PieceType.bishop: {
+				var directions = [[-1, 1], [1, 1], [1, -1], [-1, -1]];
+				var coords;
+				
+				directions.forEach(function(coordPair) {
+					coords = from.coords;
+					
+					while(true) {
+						coords = coords.add(coordPair[0], coordPair[1]);
+						
+						if(coords.isOnBoard) {
+							squares.push(Square.fromCoords(coords));
+						}
+						
+						else {
+							break;
+						}
+					}
+				});
+				
+				break;
+			}
+
+			case PieceType.rook: {
+				var squareOnSameRank, squareOnSameFile;
+
+				for(var n = 0; n < 8; n++) {
+					squareOnSameRank = Square.fromCoords(new Coords(n, from.coords.y));
+					squareOnSameFile = Square.fromCoords(new Coords(from.coords.x, n));
+
+					if(squareOnSameRank !== from) {
+						squares.push(squareOnSameRank);
+					}
+
+					if(squareOnSameFile !== from) {
+						squares.push(squareOnSameFile);
+					}
+				}
+
+				break;
+			}
+
+			case PieceType.queen: {
+				var rookSquares = Board.getReachableSquares(PieceType.rook, from, colour);
+				var bishopSquares = Board.getReachableSquares(PieceType.bishop, from, colour);
+
+				squares = rookSquares.concat(bishopSquares);
+
+				break;
+			}
+
+			case PieceType.king: {
+				var coords, candidateSquare;
+		
+				for(var x = -1; x <= 1; x++) {
+					for(var y = -1; y <= 1; y++) {
+						coords = square.coords.add(x, y);
+						
+						if(coords.isOnBoard && !coords.equals(from.coords)) {
+							squares.push(Square.fromCoords(coords));
+						}
+					}
+				}
+				
+				var kingHomeSquare = Square.fromAlgebraic(colour === Colour.black ? "e8" : "e1");
+
+				if(from === kingHomeSquare) {
+					squares = squares.concat([
+						Square.fromCoords(from.coords.x - 2, from.coords.y),
+						Square.fromCoords(from.coords.x + 2, from.coords.y)
+					]);
+				}
+
+				break;
+			}
 		}
-	*/
+
+		return squares;
+	}
 
 	return Board;
 });
