@@ -252,35 +252,28 @@ define(function(require) {
 	}
 
 	Move.prototype._checkCastlingMove = function() {
-		/*
-		FIXME need to check whether the rook is actually present here
-		*/
+		var file = (this._to.squareNo < this._from.squareNo ? "a" : "h");
+		var rookOriginX = (file === "a" ? 0 : 7);
+		var rookDestinationX = (file === "a" ? 3 : 5);
+		var rookOrigin = Square.fromCoords(new Coords(rookOriginX, this._from.coords.y));
+		var rookDestination = Square.fromCoords(new Coords(rookDestinationX, this._from.coords.y));
 		
-		if(this._piece.type === PieceType.king && this._isUnobstructed && !this._positionBefore.playerIsInCheck(this._colour)) {
-			var castling = new CastlingDetails(this._from, this._to);
-
-			if(castling.isValid && this._positionBefore.getCastlingRights(this._colour, castling.rookStartPos.file)) {
-				var throughCheck = false;
-				var between = Board.getSquaresBetween(this._from, this._to);
-
-				for(var i = 0; i < between.length; i++) {
-					if(this._positionBefore.getAllAttackers(between[i], this._colour.opposite).length > 0) {
-						throughCheck = true;
-
-						break;
-					}
-				}
-
-				if(!this._positionBefore.moveIsBlocked(this._from, castling.rookStartPos) && !throughCheck) {
-					this._isValid = true;
-					this._isCastling = true;
-					this._label.special = castling.sign;
-					this._positionAfter.setPiece(this._from, null);
-					this._positionAfter.setPiece(this._to, Piece.get(PieceType.king, this._colour));
-					this._positionAfter.setPiece(castling.rookStartPos, null);
-					this._positionAfter.setPiece(castling.rookEndPos, Piece.get(Piece.types.ROOK, this._colour));
-				}
-			}
+		if(
+			this._piece.type === PieceType.king
+			&& Math.abs(this._to.coords.x - this._from.coords.x) === 2
+			&& !this._positionBefore.moveIsBlocked(this._from, rookOrigin)
+			&& this._positionBefore.getCastlingRights(this._colour, file)
+			&& this._position.getPiece(rookOrigin) === Piece.get(PieceType.rook, this._colour)
+			&& !this._positionBefore.playerIsInCheck(this._colour)
+			&& this._positionBefore.getAllAttackers(rookDestination, this._colour.opposite).length === 0
+		) {
+			this._isValid = true;
+			this._isCastling = true;
+			this._label.special = (file === "a" ? MoveLabel.SIGN_CASTLE_QS : MoveLabel.SIGN_CASTLE_KS);
+			this._positionAfter.setPiece(this._from, null);
+			this._positionAfter.setPiece(this._to, Piece.get(PieceType.king, this._colour));
+			this._positionAfter.setPiece(rookOrigin, null);
+			this._positionAfter.setPiece(rookDestination, Piece.get(PieceType.rook, this._colour));
 		}
 	}
 
