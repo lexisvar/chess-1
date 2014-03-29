@@ -11,8 +11,8 @@ define(function(require) {
 	};
 	
 	var fileToSan = {
-		"a": "Q",
-		"h": "K"
+		"h": "K",
+		"a": "Q"
 	};
 	
 	function CastlingRight(colour, file) {
@@ -100,7 +100,7 @@ define(function(require) {
 		var right;
 
 		for(var colour in this._rights) {
-			for(var file in this._rights[colour]) {
+			for(var file in fileToSan) {
 				right = this._rights[colour][file];
 				
 				if(right.isAllowed && right.sanSide !== null) {
