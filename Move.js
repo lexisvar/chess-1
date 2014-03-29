@@ -5,7 +5,6 @@ define(function(require) {
 	var Piece = require("./Piece");
 	var MoveLabel = require("./MoveLabel");
 	var Fen = require("./Fen");
-	var CastlingDetails = require("./CastlingDetails");
 	var Square = require("./Square");
 	var Board = require("./Board");
 
