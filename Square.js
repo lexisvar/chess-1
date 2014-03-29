@@ -12,6 +12,8 @@ define(function(require) {
 		this.file = files.charAt(coordsX);
 		this.rank = ranks.charAt(coordsY);
 		this.isPromotionRank = (this.rank === "1" || this.rank === "8");
+		this.adjusted = {};
+		this.adjusted[Colour.white] = this;
 	}
 	
 	var squares = [];
@@ -34,11 +36,11 @@ define(function(require) {
 		}
 	}
 	
+	squares.forEach(function(square) {
+		square.adjusted[Colours.black] = squares[63 - square.squareNo];
+	});
+	
 	return {
-		fromRelativeSquareNo: function(squareNo, viewedAs) {
-			return squares[viewedAs === Colour.black ? 63 - squareNo : squareNo];
-		},
-		
 		fromSquareNo: function(squareNo) {
 			return squares[squareNo];
 		},
