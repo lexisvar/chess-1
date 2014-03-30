@@ -165,6 +165,10 @@ define(function(require) {
 		return legalMoves;
 	}
 	
+	Position.prototype.getAllAttackers = function(square, colour) {
+		return this._board.getAllAttackers(square, colour);
+	}
+	
 	Position.prototype.getAttackers = function(pieceType, square, colour) {
 		return this._board.getAttackers(pieceType, square, colour);
 	}
