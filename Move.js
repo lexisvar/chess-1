@@ -264,7 +264,7 @@ define(function(require) {
 			&& Math.abs(this._to.coords.x - this._from.coords.x) === 2
 			&& !this._positionBefore.moveIsBlocked(this._from, rookOrigin)
 			&& this._positionBefore.getCastlingRights(this._colour, file)
-			&& this._position.getPiece(rookOrigin) === Piece.get(PieceType.rook, this._colour)
+			&& this._positionBefore.getPiece(rookOrigin) === Piece.get(PieceType.rook, this._colour)
 			&& !this._positionBefore.playerIsInCheck(this._colour)
 			&& this._positionBefore.getAllAttackers(rookDestination, this._colour.opposite).length === 0
 		) {
