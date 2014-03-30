@@ -8,6 +8,10 @@ define(function(require, exports, module) {
 	
 	console.log("\033[1m" + module.id + "\033[0m");
 	
+	Square.forEach(function(square) {
+		global[square.algebraic] = square;
+	});
+	
 	var tests = {
 		"white can move from d2 to d4 at the beginning of a standard game":
 		
@@ -18,6 +22,22 @@ define(function(require, exports, module) {
 			test.equal(game.getPosition().getActiveColour(), Colour.black);
 			test.equal(game.getPosition().getFiftymoveClock(), 0);
 			test.equal(game.getPosition().getEpTarget(), Square.fromAlgebraic("d3"));
+		},
+		
+		"e4, e5, Bc4, a6, Qf3, a5, Qxf7 is mate for black":
+		
+		function(game) {
+			test.equal(game.getPosition().countLegalMoves(Colour.white), 20);
+			game.move(e2, e4).isMate();
+			game.getPosition();
+			game.move(e7, e5);
+			game.move(f1, c4);
+			game.move(a7, a6);
+			game.move(d1, f3);
+			game.move(a6, a5);
+			var move = game.move(f3, f7);
+			
+			test.equal(move.isMate(), true);
 		}
 	};
 	
@@ -31,6 +51,7 @@ define(function(require, exports, module) {
 			passed++;
 		} catch(error) {
 			console.log("\033[0;31mfailed:\033[0m " + description + ": " + error.message);
+			throw error;
 			failed++;
 		}
 	}
