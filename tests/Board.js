@@ -5,6 +5,7 @@ define(function(require, exports, module) {
 	var PieceType = require("../PieceType");
 	var Piece = require("../Piece");
 	var Colour = require("../Colour");
+	var Fen = require("../Fen");
 	
 	console.log("\033[1m" + module.id + "\033[0m");
 	
@@ -29,15 +30,62 @@ define(function(require, exports, module) {
 		
 		function() {
 			test.deepEqual(Board.getSquaresBetween(c1, a3), [b2]);
+		},
+		
+		"getSquaresBetween e2 and e5 is [e3, e4]":
+		
+		function() {
+			test.deepEqual(Board.getSquaresBetween(e2, e5), [e3, e4]);
+		},
+		
+		"getSquaresBetween a4 and h4 is [b4, c4, d4, e4, f4, g4]":
+		
+		function() {
+			test.deepEqual(Board.getSquaresBetween(a4, h4), [b4, c4, d4, e4, f4, g4]);
+		},
+		
+		"getSquaresBetween b6 and c8 is []":
+		
+		function() {
+			test.deepEqual(Board.getSquaresBetween(b6, c8), []);
+		},
+		
+		"rook moves jumping over pawns in start position are blocked":
+		
+		function(board) {
+			test.equal(board.moveIsBlocked(a1, a3), true);
+			test.equal(board.moveIsBlocked(h1, h3), true);
+			test.equal(board.moveIsBlocked(a8, a6), true);
+			test.equal(board.moveIsBlocked(h8, h6), true);
+		},
+		
+		"e2e4 is not blocked":
+		
+		function(board) {
+			test.equal(board.moveIsBlocked(e2, e4), false);
+		},
+		
+		"knight moves are not blocked":
+		
+		function(board) {
+			test.equal(board.moveIsBlocked(b1, c3), false);
+			test.equal(board.moveIsBlocked(b1, a3), false);
+			test.equal(board.moveIsBlocked(g1, f3), false);
+			test.equal(board.moveIsBlocked(g1, h3), false);
 		}
 	};
 	
 	var passed = 0;
 	var failed = 0;
 	
+	var fen = new Fen();
+	var board;
+	
 	for(var description in tests) {
 		try {
-			tests[description](new Board());
+			board = new Board();
+			board.setBoardArray(Fen.boardArrayFromFenPosition(fen.position));
+			tests[description](board);
 			console.log("\033[0;32mpassed:\033[0m " + description);
 			passed++;
 		} catch(error) {
