@@ -1,7 +1,9 @@
-define(function(require) {
+define(function(require, exports, module) {
 	var test = require("chai").assert;
 	var CastlingRights = require("../CastlingRights");
 	var Colour = require("../Colour");
+	
+	console.log("\033[1m" + module.id + "\033[0m");
 	
 	var tests = {
 		"a-file allowed for white has fen string 'Q'":
@@ -123,4 +125,5 @@ define(function(require) {
 	}
 	
 	console.log("\033[1m" + passed + " passed, " + failed + " failed\033[0m");
+	console.log("");
 });
