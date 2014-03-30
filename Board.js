@@ -219,14 +219,14 @@ define(function(require) {
 		b = Square.fromSquareNo(upper);
 
 		var coordsDifference = {
-			x: b.coords.x - a.coords.x,
-			y: b.coords.y - a.coords.y
+			x: Math.abs(b.coords.x - a.coords.x),
+			y: Math.abs(b.coords.y - a.coords.y)
 		};
 		
 		var difference = b.squareNo - a.squareNo;
 		var distanceInSquares = 0;
 		var increment;
-
+		
 		if(coordsDifference.x === coordsDifference.y) {
 			distanceInSquares = coordsDifference.x;
 		}
@@ -264,8 +264,8 @@ define(function(require) {
 				
 				var coords;
 
-				for(var x = -1; x < 2; x++) {
-					coords = fromRelative.coords.add(x, fromRelative.coords.y + 1);
+				for(var x = -1; x <= 1; x++) {
+					coords = fromRelative.coords.add(x, 1);
 
 					if(coords.isOnBoard) {
 						squares.push(Square.fromCoords(coords).adjusted[colour]);
@@ -347,7 +347,7 @@ define(function(require) {
 		
 				for(var x = -1; x <= 1; x++) {
 					for(var y = -1; y <= 1; y++) {
-						coords = square.coords.add(x, y);
+						coords = from.coords.add(x, y);
 						
 						if(coords.isOnBoard && !coords.equals(from.coords)) {
 							squares.push(Square.fromCoords(coords));
@@ -359,8 +359,8 @@ define(function(require) {
 
 				if(from === kingHomeSquare) {
 					squares = squares.concat([
-						Square.fromCoords(from.coords.x - 2, from.coords.y),
-						Square.fromCoords(from.coords.x + 2, from.coords.y)
+						Square.fromCoords(from.coords.add(-2, 0)),
+						Square.fromCoords(from.coords.add(2, 0))
 					]);
 				}
 
