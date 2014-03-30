@@ -3,8 +3,8 @@ define(function(require) {
 	
 	function Result(result, type, white, black) {
 		this.winner = null;
+		this.isDraw = true;
 		this.scores = {};
-		this.result = result;
 		this.type = type;
 		this.description = Result.descriptions[this.type];
 		
@@ -21,6 +21,7 @@ define(function(require) {
 			playerNames[Colour.black] = black;
 			
 			this.winner = result;
+			this.isDraw = false;
 			this.scores[this.winner] = 1;
 			this.scores[this.winner.opposite] = 0;
 			this.summary = this.scores[Colour.white] + "-" + this.scores[Colour.black];
