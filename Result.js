@@ -1,7 +1,7 @@
 define(function(require) {
 	var Colour = require("./Colour");
 	
-	function Result(result, type, white, black) {
+	function Result(result, type) {
 		this.winner = null;
 		this.isDraw = true;
 		this.scores = {};
@@ -15,11 +15,6 @@ define(function(require) {
 		}
 		
 		else {
-			var playerNames = {};
-			
-			playerNames[Colour.white] = white;
-			playerNames[Colour.black] = black;
-			
 			this.winner = result;
 			this.isDraw = false;
 			this.scores[this.winner] = 1;
@@ -27,8 +22,8 @@ define(function(require) {
 			this.summary = this.scores[Colour.white] + "-" + this.scores[Colour.black];
 			
 			var replacements = {
-				"winner": playerNames[this.winner],
-				"loser": playerNames[this.winner.opposite]
+				"winner": this.winner.name,
+				"loser": this.winner.opposite.name
 			};
 			
 			for(var placeholder in replacements) {
@@ -53,6 +48,7 @@ define(function(require) {
 		THREEFOLD: "threefold",
 		TIMEOUT: "timeout",
 		INSUFFICIENT: "insufficient material",
+		NO_MOVES: "stalemate",
 		DRAW_AGREED: "draw agreed"
 	};
 	
