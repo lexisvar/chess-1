@@ -1,72 +1,49 @@
 define(function(require) {
 	var Colour = require("./Colour");
 	
-	function Result(white, black, result, type) {
-		this._players = [];
-		this._players[Piece.WHITE] = white;
-		this._players[Piece.BLACK] = black;
-		this._result = result;
-		this._type = type;
+	function Result(result, type, white, black) {
+		this.winner = null;
+		this.scores = {};
+		this.result = result;
+		this.type = type;
+		this.description = Result.descriptions[this.type];
+		
+		if(result === Result.DRAW) {
+			this.summary = "\u00bd-\u00bd";
+			this.scores[Colour.white] = 0.5;
+			this.scores[Colour.black] = 0.5;
+		}
+		
+		else {
+			var playerNames = {};
+			
+			playerNames[Colour.white] = white;
+			playerNames[Colour.black] = black;
+			
+			this.winner = result;
+			this.scores[this.winner] = 1;
+			this.scores[this.winner.opposite] = 0;
+			this.summary = this.scores[Colour.white] + "-" + this.scores[Colour.black];
+			
+			var replacements = {
+				"winner": playerNames[this.winner],
+				"loser": playerNames[this.winner.opposite]
+			};
+			
+			for(var placeholder in replacements) {
+				this.description = this.description.replace(
+					new RegExp("\\[" + placeholder + "\\]", "g"),
+					replacements[placeholder]
+				);
+			}
+		}
 	}
 	
 	Result.prototype.toString = function() {
-		return this.getTally();
+		return this.summary;
 	}
 	
-	Result.prototype.getTally = function() {
-		return Result.getTally(this._result);
-	}
-	
-	Result.prototype.getDescription = function() {
-		var description = Result._descriptions[this._type];
-		
-		if(this._result !== Result.DRAW) {
-			var winningColour = Result.getWinningColour(this._result);
-			var losingColour = Colour.getOpposite(winningColour);
-			
-			var replacements = {
-				"winner": this._players[winningColour],
-				"loser": this._players[losingColour]
-			};
-			
-			var regex;
-			
-			for(var placeholder in replacements) {
-				regex = new RegExp("\\[" + placeholder + "\\]", "g");
-				description = description.replace(regex, replacements[placeholder]);
-			}
-		}
-		
-		return description;
-	}
-
-	Result.getWinningColour = function(result) {
-		return Result._winningColours[result];
-	};
-
-	Result.win = function(colour) {
-		return Result._winResults[colour];
-	};
-
-	Result.getScore = function(result, colour) {
-		if(result === Result.DRAW) {
-			return Result.score.DRAW;
-		}
-
-		else {
-			return (colour === Result.getWinningColour(result) ? Result.score.WIN : Result.score.LOSS);
-		}
-	};
-	
-	Result.getTally = function(result) {
-		return Result._tallies[result];
-	};
-	
-	Result.score = {
-		WIN: 1,
-		DRAW: 0.5,
-		LOSS: 0
-	};
+	Result.DRAW = "draw";
 	
 	Result.types = {
 		CHECKMATE: "checkmate",
@@ -78,32 +55,25 @@ define(function(require) {
 		DRAW_AGREED: "draw agreed"
 	};
 	
-	Result._descriptions = {};
+	Result.descriptions = {};
 	
-	Result._descriptions[Result.types.CHECKMATE] = "[winner] won by checkmate";
-	Result._descriptions[Result.types.RESIGNATION] = "[loser] resigned";
-	Result._descriptions[Result.types.FIFTYMOVE] = "Fifty move rule";
-	Result._descriptions[Result.types.THREEFOLD] = "Threefold repetition";
-	Result._descriptions[Result.types.TIMEOUT] = "[loser] forfeit on time";
-	Result._descriptions[Result.types.INSUFFICIENT] = "Insufficient mating material";
-	Result._descriptions[Result.types.DRAW_AGREED] = "Draw agreed";
+	Result.descriptions[Result.types.CHECKMATE] = "[winner] won by checkmate";
+	Result.descriptions[Result.types.RESIGNATION] = "[loser] resigned";
+	Result.descriptions[Result.types.FIFTYMOVE] = "Fifty move rule";
+	Result.descriptions[Result.types.THREEFOLD] = "Threefold repetition";
+	Result.descriptions[Result.types.TIMEOUT] = "[loser] forfeit on time";
+	Result.descriptions[Result.types.INSUFFICIENT] = "Insufficient mating material";
+	Result.descriptions[Result.types.DRAW_AGREED] = "Draw agreed";
 	
-	Result.WHITE = "white";
-	Result.BLACK = "black";
-	Result.DRAW = "draw";
-	
-	Result._tallies = {};
-	Result._tallies[Result.WHITE] = "1-0";
-	Result._tallies[Result.BLACK] = "0-1";
-	Result._tallies[Result.DRAW] = "\u00bd-\u00bd";
-	
-	Result._winResults = [];
-	Result._winResults[Piece.WHITE] = Result.WHITE;
-	Result._winResults[Piece.BLACK] = Result.BLACK;
-	
-	Result._winningColours = {};
-	Result._winningColours[Result.WHITE] = Piece.WHITE;
-	Result._winningColours[Result.BLACK] = Piece.BLACK;
-	
-	return Result;
+	return {
+		win: function(colour, type, white, black) {
+			return new Result(colour, type, white, black);
+		},
+		
+		draw: function(type) {
+			return new Result(Result.DRAW, type);
+		},
+		
+		types: Result.types
+	};
 });
