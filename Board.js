@@ -61,7 +61,7 @@ define(function(require) {
 	}
 	
 	Board.getEpPawn = function(from, to) {
-		return Square.fromCoords(new Coords(from.coords.y, to.coords.x));
+		return Square.fromCoords(new Coords(to.coords.x, from.coords.y));
 	}
 	
 	Board.prototype.getAttackers = function(pieceType, square, colour) {

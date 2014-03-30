@@ -72,6 +72,12 @@ define(function(require, exports, module) {
 			test.equal(board.moveIsBlocked(b1, a3), false);
 			test.equal(board.moveIsBlocked(g1, f3), false);
 			test.equal(board.moveIsBlocked(g1, h3), false);
+		},
+		
+		"en passant pawn is e4 for ep capture from d4 to e3":
+		
+		function() {
+			test.equal(Board.getEpPawn(d4, e3), e4);
 		}
 	};
 	
