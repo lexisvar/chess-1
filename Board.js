@@ -198,10 +198,10 @@ define(function(require) {
 	
 
 	Board.prototype.moveIsBlocked = function(from, to) {
-		var squares = Chess.getSquaressBetween(from, to);
+		var squares = Board.getSquaresBetween(from, to);
 
 		for(var i = 0; i < squares.length; i++) {
-			if(this._board.getPiece(squares[i]) !== null) {
+			if(this._board[squares[i].squareNo] !== null) {
 				return true;
 			}
 		}
@@ -215,8 +215,8 @@ define(function(require) {
 		var lower = Math.min(a.squareNo, b.squareNo);
 		var upper = Math.max(a.squareNo, b.squareNo);
 
-		a = Squares.fromSquareNo(lower);
-		b = Squares.fromSquareNo(upper);
+		a = Square.fromSquareNo(lower);
+		b = Square.fromSquareNo(upper);
 
 		var coordsDifference = {
 			x: b.coords.x - a.coords.x,
@@ -239,7 +239,7 @@ define(function(require) {
 			increment = difference / distanceInSquares;
 			
 			for(var squareNo = a.squareNo + increment; squareNo < b.squareNo; squareNo += increment) {
-				squares.push(Squares.fromSquareNo(squareNo));
+				squares.push(Square.fromSquareNo(squareNo));
 			}
 			
 			if(inclusive) {
