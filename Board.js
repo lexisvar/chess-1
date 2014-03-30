@@ -25,7 +25,7 @@ define(function(require) {
 	Board.prototype.setPiece = function(square, piece) {
 		this._board[square.squareNo] = piece;
 
-		if(piece.type === PieceType.king) {
+		if(piece !== null && piece.type === PieceType.king) {
 			this._kingPositions[piece.colour] = square;
 		}
 	}
