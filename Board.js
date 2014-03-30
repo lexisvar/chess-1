@@ -90,7 +90,7 @@ define(function(require) {
 			if(coords.isOnBoard) {
 				candidateSquare = Square.fromCoords(coords).adjusted[colour];
 
-				if(this._board.getPiece(candidateSquare) === piece) {
+				if(this._board[candidateSquare.squareNo] === piece) {
 					attackers.push(candidateSquare);
 				}
 			}
@@ -111,7 +111,7 @@ define(function(require) {
 				if(coords.isOnBoard) {
 					candidateSquare = Square.fromCoords(coords);
 
-					if(this._board.getPiece(candidateSquare) === piece && candidateSquare !== square) {
+					if(this._board[candidateSquare.squareNo] === piece && candidateSquare !== square) {
 						attackers.push(candidateSquare);
 					}
 				}
@@ -130,7 +130,7 @@ define(function(require) {
 		for(var i = 0; i < candidateSquares.length; i++) {
 			candidateSquare = candidateSquares[i];
 
-			if(this._board.getPiece(candidateSquare) === piece && !this._board.moveIsBlocked(square, candidateSquare)) {
+			if(this._board[candidateSquare.squareNo] === piece && !this.moveIsBlocked(square, candidateSquare)) {
 				attackers.push(candidateSquare);
 			}
 		}
@@ -254,7 +254,7 @@ define(function(require) {
 	Board.getReachableSquares = function(pieceType, from, colour) {
 		var squares = [];
 
-		switch(type) {
+		switch(pieceType) {
 			case PieceType.pawn: {
 				var fromRelative = from.adjusted[colour];
 
