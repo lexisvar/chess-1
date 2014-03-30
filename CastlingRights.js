@@ -58,7 +58,11 @@ define(function(require) {
 	}
 
 	CastlingRights.prototype.setFenString = function(fenString) {
-		this.reset();
+		Colour.forEach((function(colour) {
+			files.forEach((function(file) {
+				this.set(colour, file, false);
+			}).bind(this));
+		}).bind(this));
 
 		if(fenString !== Fen.NONE) {
 			var fenChar, fenCharLower, fenCharUpper;
