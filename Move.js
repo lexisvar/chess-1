@@ -7,6 +7,7 @@ define(function(require) {
 	var Fen = require("./Fen");
 	var Square = require("./Square");
 	var Board = require("./Board");
+	var Coords = require("./Coords");
 
 	function Move(positionBefore, from, to, promoteTo) {
 		this._positionBefore = positionBefore;
@@ -96,7 +97,7 @@ define(function(require) {
 		if(this._isRegularShape() && this._isUnobstructed) {
 			this._isValid = true;
 			this._positionAfter.setPiece(this._from, null);
-			this._positionAfter.setPiece(this._to, this._positionBefore.getSquare(this._from));
+			this._positionAfter.setPiece(this._to, this._positionBefore.getPiece(this._from));
 			this._label.piece = this._piece.type.sanString;
 			this._label.to = this._to.algebraic;
 
@@ -169,7 +170,7 @@ define(function(require) {
 						isDouble = true;
 					}
 
-					else if(Board.isPawnMove(this._from, this._to, this._colour)) {
+					else if(this._isPawnShape()) {
 						this._isValid = true;
 					}
 
@@ -198,7 +199,7 @@ define(function(require) {
 					}
 
 					else {
-						this._capturedPiece = this._positionBefore.getSquare(this._to);
+						this._capturedPiece = this._positionBefore.getPiece(this._to);
 					}
 				}
 
