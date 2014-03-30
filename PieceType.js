@@ -16,7 +16,7 @@ define(function(require) {
 		this.fenStrings = {};
 		this.fenStrings[Colour.white] = sanString.toUpperCase();
 		this.fenStrings[Colour.black] = sanString.toLowerCase();
-		this.isValidPromotion = (sanString !== "P" && sanString !== "K");
+		this.isValidPromotion = !!sanString.match(/[NBRQ]/);
 	}
 	
 	PieceType.prototype.toString = function() {
