@@ -106,16 +106,16 @@ define(function(require) {
 				this._position = move.getPositionAfter();
 	
 				if(move.isMate()) {
-					this._gameOver(Result.win(colour), Result.types.CHECKMATE);
+					this._gameOver(Result.win(colour, Result.types.CHECKMATE));
 				}
 	
 				else {
 					if(!this._position.playerCanMate(Colour.white) && !this._position.playerCanMate(Colour.black)) {
-						this._gameOver(Result.DRAW, Result.types.STALEMATE_INSUFFICIENT_MATERIAL);
+						this._gameOver(Result.draw(Result.types.INSUFFICIENT));
 					}
 	
 					if(this._position.countLegalMoves(colour.opposite) === 0) {
-						this._gameOver(Result.DRAW, Result.types.STALEMATE_NO_MOVES);
+						this._gameOver(Result.draw(Result.types.NO_MOVES));
 					}
 				}
 	
@@ -123,13 +123,13 @@ define(function(require) {
 				this._checkThreefold();
 				this._checkTime();
 			}
-	
+			
 			return move;
 		}
 	}
 	
 	Game.prototype.resign = function(colour) {
-		this._gameOver(Result.win(Colour.getOpposite(colour)), Result.types.RESIGNATION);
+		this._gameOver(Result.win(colour.opposite, Result.types.RESIGNATION));
 	}
 
 	Game.prototype.undoLastMove = function() {
@@ -177,19 +177,14 @@ define(function(require) {
 	Game.prototype._checkForTimeouts = function() {
 		Colour.forEach((function(colour) {
 			if(this._clocks[colour] <= 0) {
-				var result, resultType;
-				
 				if(this._position.playerCanMate(colour.opposite)) {
-					result = Result.win(colour.opposite);
-					resultType = Result.types.TIMEOUT;
+					this._gameOver(Result.win(colour.opposite, Result.types.TIMEOUT));
 				}
 				
 				else {
-					result = Result.DRAW;
-					resultType = Result.types.STALEMATE_INSUFFICIENT_MATERIAL;
+					this._gameOver(Result.draw(Result.types.INSUFFICIENT));
 				}
 				
-				this._gameOver(result, resultType);
 			}
 		}).bind(this));
 	}
