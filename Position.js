@@ -153,7 +153,7 @@ define(function(require) {
 		var reachableSquares;
 
 		if(piece !== null) {
-			reachableSquares = Board.getReachableSquares(piece, square);
+			reachableSquares = Board.getReachableSquares(piece.type, square, piece.colour);
 
 			for(var i = 0; i < reachableSquares.length; i++) {
 				if((new Move(this, square, reachableSquares[i])).isLegal()) {
@@ -161,7 +161,7 @@ define(function(require) {
 				}
 			}
 		}
-
+		
 		return legalMoves;
 	}
 	
