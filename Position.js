@@ -176,6 +176,10 @@ define(function(require) {
 	Position.prototype.moveIsBlocked = function(from, to) {
 		return this._board.moveIsBlocked(from, to);
 	}
+	
+	Position.prototype.playerIsInCheck = function(colour) {
+		return this._board.playerIsInCheck(colour);
+	}
 
 	return Position;
 });
