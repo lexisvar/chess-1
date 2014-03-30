@@ -109,7 +109,7 @@ define(function(require) {
 		var fen = new Fen();
 
 		fen.position = Fen.fenPositionFromBoardArray(this._board.getBoardArray());
-		fen.active = Colour.getFen(this._activeColour);
+		fen.active = this._activeColour.fenString;
 		fen.castlingRights = this._castlingRights.getFenString();
 
 		fen.epTarget = Fen.NONE;
