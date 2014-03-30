@@ -15,8 +15,8 @@ requirejs.config({
 	}
 });
 
-var tests = fs.readdirSync("./test").map(function(filename) {
-	return "./test/" + filename;
-});
+var testsDir = "./tests";
 
-requirejs(tests);
+requirejs(fs.readdirSync(testsDir).map(function(filename) {
+	return testsDir + "/" + filename;
+}));
