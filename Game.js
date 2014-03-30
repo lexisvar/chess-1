@@ -6,6 +6,7 @@ define(function(require) {
 	var Colour = require("./Colour");
 	var Move = require("./Move");
 	var Fen = require("./Fen");
+	var Result = require("./Result");
 
 	function Game(options) {
 		this._state = Game.states.IN_PROGRESS;
@@ -100,7 +101,6 @@ define(function(require) {
 		if(this._state === Game.states.IN_PROGRESS) {
 			var move = new Move(this._position, from, to, promoteTo);
 			var colour = move.getColour();
-			var oppColour = Colour.getOpposite(colour);
 	
 			if(move.isLegal()) {
 				this._position = move.getPositionAfter();
@@ -114,7 +114,7 @@ define(function(require) {
 						this._gameOver(Result.DRAW, Result.types.STALEMATE_INSUFFICIENT_MATERIAL);
 					}
 	
-					if(this._position.countLegalMoves(oppColour) === 0) {
+					if(this._position.countLegalMoves(colour.opposite) === 0) {
 						this._gameOver(Result.DRAW, Result.types.STALEMATE_NO_MOVES);
 					}
 				}
