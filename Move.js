@@ -162,7 +162,7 @@ define(function(require) {
 			}
 
 			if(isValidPromotion || !isPromotion) {
-				if(this._targetPiece.type === null) {
+				if(this._targetPiece === null) {
 					if(this._isDoublePawnShape()) {
 						this._isValid = true;
 						
