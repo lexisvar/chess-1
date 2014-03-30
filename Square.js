@@ -17,7 +17,7 @@ define(function(require) {
 	}
 	
 	var squares = [];
-	var squaresByAlgebraic = [];
+	var squaresByAlgebraic = {};
 	var squaresByCoords = [];
 	
 	var square, squareNo, algebraic;
@@ -27,8 +27,8 @@ define(function(require) {
 		
 		for(var y = 0; y < 8; y++) {
 			squareNo = y * 8 + x;
-			algebraicSquare = files.charAt(x) + ranks.charAt(y);
-			square = new Square(squareNo, x, y, algebraicSquare);
+			algebraic = files.charAt(x) + ranks.charAt(y);
+			square = new Square(squareNo, x, y, algebraic);
 			
 			squares[squareNo] = square;
 			squaresByCoords[x][y] = square;
