@@ -363,6 +363,10 @@ define(function(require) {
 	Move.prototype.isPromotion = function() {
 		return this._isPromotion;
 	}
+	
+	Move.prototype.getPromoteTo = function() {
+		return this._promoteTo;
+	}
 
 	Move.prototype.isLegal = function() {
 		return this._isLegal;
