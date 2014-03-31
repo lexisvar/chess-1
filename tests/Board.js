@@ -78,6 +78,30 @@ define(function(require, exports, module) {
 		
 		function() {
 			test.equal(Board.getEpPawn(d4, e3), e4);
+		},
+		
+		"getReachableSquares for a knight on e4 is [d2, d6, f2, f6, c5, c3, g5, g3]":
+		
+		function() {
+			var squares = Board.getReachableSquares(PieceType.knight, e4, Colour.white);
+			
+			test.deepEqual(squares, [d2, d6, f2, f6, c5, c3, g5, g3]);
+		},
+		
+		"getReachableSquares for a rook in the corner is correct":
+		
+		function() {
+			var squares = Board.getReachableSquares(PieceType.rook, a1, Colour.white);
+			
+			test.deepEqual(squares, [b1, a2, c1, a3, d1, a4, e1, a5, f1, a6, g1, a7, h1, a8]);
+		},
+		
+		"getReachableSquares for a rook in the middle is correct":
+		
+		function() {
+			var squares = Board.getReachableSquares(PieceType.rook, e4, Colour.white);
+			
+			test.deepEqual(squares, [a4, e1, b4, e2, c4, e3, d4, e5, f4, e6, g4, e7, h4, e8]);
 		}
 	};
 	
