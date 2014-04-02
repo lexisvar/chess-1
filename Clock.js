@@ -5,7 +5,7 @@ define(function(require) {
 	var MILLISECONDS_PER_SECOND = 1000;
 	
 	function Clock(options) {
-		this.TimeOut = new Event(this);
+		this.Timeout = new Event(this);
 		
 		this._options = {
 			startingColour: Colour.white,
@@ -120,7 +120,7 @@ define(function(require) {
 		var timeLeft = this.getTimeLeft();
 		
 		if(timeLeft <= 0) {
-			this.TimeOut.fire({
+			this.Timeout.fire({
 				colour: this._activeColour
 			});
 		}
