@@ -1,6 +1,6 @@
 define(function(require) {
 	var time = require("lib/time");
-	var Colour = require("../Colour");
+	var Colour = require("./Colour");
 	
 	var MILLISECONDS_PER_SECOND = 1000;
 	
