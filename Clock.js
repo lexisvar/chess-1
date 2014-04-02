@@ -123,6 +123,8 @@ define(function(require) {
 			this.Timeout.fire({
 				colour: this._activeColour
 			});
+			
+			this.stop();
 		}
 		
 		else {
