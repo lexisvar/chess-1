@@ -7,6 +7,7 @@ define(function(require) {
 	var Move = require("./Move");
 	var Fen = require("./Fen");
 	var Result = require("./Result");
+	var Clock = require("./Clock");
 
 	function Game(options) {
 		this._state = Game.states.IN_PROGRESS;
@@ -17,11 +18,11 @@ define(function(require) {
 		
 		this._options = {
 			startingFen: Fen.STARTING_FEN,
-			clockStartHalfmove: 1,
-			clockStartDelay: 0,
 			initialTime: 600,
-			timeIncrement: 0,
-			timingStyle: Game.timingStyles.SUDDEN_DEATH,
+			increment: 0,
+			incrementComesFirst: false,
+			cappedIncrement: false,
+			delay: 0,
 			isOvertime: false,
 			overtimeFullmove: 40,
 			overtimeBonus: 600,
@@ -39,26 +40,27 @@ define(function(require) {
 		this._startingPosition = new Position(this._options.startingFen);
 		this._history = [];
 		
-		this._checkTimeTimeout = null;
-		this._clocks = {};
-		this._clocks[Colour.white] = this._options.initialTime;
-		this._clocks[Colour.black] = this._options.initialTime;
+		this._clock = new Clock({
+			startingColour: this._position.getActiveColour(),
+			startingFullmove: this._position.getFullmove(),
+			initialTime: this._options.initialTime,
+			increment: this._options.increment,
+			incrementComesFirst: this._options.incrementComesFirst,
+			cappedIncrement: this._options.cappedIncrement,
+			delay: this._options.delay,
+			isOvertime: this._options.isOvertime,
+			overtimeFullmove: this._options.overtimeFullmove,
+			overtimeBonus: this._options.overtimeBonus
+		});
+		
+		this._clock.Timeout.addHandler(this, function(data) {
+			this._timeout(data.colour);
+		});
 	}
 	
 	Game.states = {
 		IN_PROGRESS: "In progress",
 		FINISHED: "Finished"
-	};
-	
-	Game.timingStyles = {
-		SUDDEN_DEATH: "Sudden death",
-		FISCHER: "Fischer",
-		FISCHER_AFTER: "Fischer After",
-		BRONSTEIN_DELAY: "Bronstein delay",
-		SIMPLE_DELAY: "Simple delay",
-		HOURGLASS: "Hourglass",
-		PER_MOVE: "Per move",
-		NONE: "None"
 	};
 	
 	Game.prototype.getState = function() {
@@ -121,7 +123,6 @@ define(function(require) {
 	
 				this._history.push(move);
 				this._checkThreefold();
-				this._checkTime();
 			}
 			
 			return move;
@@ -146,51 +147,24 @@ define(function(require) {
 		}
 		
 		this._checkThreefold();
-		this._checkTime();
+		
+		/*
+		FIXME clock needs an undo method to call here
+		*/
 	}
 	
 	Game.prototype._getLastMove = function() {
 		return this._history[this._history.length - 1] || null;
 	}
-
-	Game.prototype._checkTime = function() {
-		this._calculateTime();
-		this._checkForTimeouts();
-		
-		if(this._state !== Game.states.FINISHED) {
-			this._scheduleNextTimeCheck();
-		}
-	}
 	
-	Game.prototype._scheduleNextTimeCheck = function() {
-		var timeLeft = this._clocks[this._position.getActiveColour()];
-		
-		if(this._checkTimeTimeout !== null) {
-			clearTimeout(this._checkTimeTimeout);
+	Game.prototype._timeout = function(colour) {
+		if(this._position.playerCanMate(colour.opposite)) {
+			this._gameOver(Result.win(colour.opposite, Result.types.TIMEOUT));
 		}
 		
-		this._checkTimeTimeout = setTimeout((function() {
-			this._checkTime();
-		}).bind(this), timeLeft);
-	}
-	
-	Game.prototype._checkForTimeouts = function() {
-		Colour.forEach((function(colour) {
-			if(this._clocks[colour] <= 0) {
-				if(this._position.playerCanMate(colour.opposite)) {
-					this._gameOver(Result.win(colour.opposite, Result.types.TIMEOUT));
-				}
-				
-				else {
-					this._gameOver(Result.draw(Result.types.INSUFFICIENT));
-				}
-				
-			}
-		}).bind(this));
-	}
-
-	Game.prototype._calculateTime = function() {
-		//TODO
+		else {
+			this._gameOver(Result.draw(Result.types.INSUFFICIENT));
+		}
 	}
 
 	Game.prototype._checkThreefold = function() {
