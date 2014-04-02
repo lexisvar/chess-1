@@ -56,6 +56,8 @@ define(function(require) {
 		this._clock.Timeout.addHandler(this, function(data) {
 			this._timeout(data.colour);
 		});
+		
+		this._clock.start();
 	}
 	
 	Game.states = {
