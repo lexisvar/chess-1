@@ -73,6 +73,8 @@ define(function(require) {
 				this._fullmove++;
 			}
 			
+			this._timeLeft[this._activeColour] = timeLeft;
+			
 			this._startOrLastMoveTime = now;
 			this._activeColour = this._activeColour.opposite;
 			this._setTimeoutTimer();
