@@ -47,7 +47,6 @@ define(function(require) {
 			increment: this._options.increment,
 			incrementComesFirst: this._options.incrementComesFirst,
 			cappedIncrement: this._options.cappedIncrement,
-			delay: this._options.delay,
 			isOvertime: this._options.isOvertime,
 			overtimeFullmove: this._options.overtimeFullmove,
 			overtimeBonus: this._options.overtimeBonus
