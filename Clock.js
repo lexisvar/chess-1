@@ -4,7 +4,7 @@ define(function(require) {
 	var Event = require("lib/Event");
 	var TimePeriod = require("chess/TimePeriod");
 	
-	var MILLISECONDS_PER_SECOND = 1000;
+	var MILLISECONDS = 1000;
 	
 	function Clock(options) {
 		this.Timeout = new Event(this);
@@ -25,9 +25,9 @@ define(function(require) {
 			this._options[p] = options[p];
 		}
 		
-		this._initialTime = TimePeriod.parse(this._options.initialTime, "m") * MILLISECONDS_PER_SECOND;
-		this._increment = TimePeriod.parse(this._options.increment, "s") * MILLISECONDS_PER_SECOND;
-		this._overtimeBonus = TimePeriod.parse(this._options.overtimeBonus, "m") * MILLISECONDS_PER_SECOND;
+		this._initialTime = TimePeriod.parse(this._options.initialTime, "m") * MILLISECONDS;
+		this._increment = TimePeriod.parse(this._options.increment, "s") * MILLISECONDS;
+		this._overtimeBonus = TimePeriod.parse(this._options.overtimeBonus, "m") * MILLISECONDS;
 		
 		this._isRunning = false;
 		this._fullmove = this._options.startingFullmove;
@@ -137,10 +137,10 @@ define(function(require) {
 	}
 	
 	Clock.prototype._getShortDescription = function() {
-		var description = TimePeriod.encode(this._initialTime / MILLISECONDS_PER_SECOND, "m");
+		var description = TimePeriod.encode(this._initialTime / MILLISECONDS, "m");
 
 		if(this._increment > 0) {
-			description += "/" + TimePeriod.encode(this._increment / MILLISECONDS_PER_SECOND, "s");
+			description += "/" + TimePeriod.encode(this._increment / MILLISECONDS, "s");
 		}
 
 		return description;
