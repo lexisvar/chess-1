@@ -38,18 +38,18 @@ define(function() {
 			return timeInSeconds;
 		},
 
-		encode: function(time, defaultUnits) {
+		encode: function(timeInSeconds, defaultUnits) {
 			var remaining = time;
-			var divider, quantity;
+			var divisor, quantity;
 
 			return "ywdhms".split("").map(function(units) {
 				var string = "";
 				
-				divider = unitMultipliers[units];
+				divisor = unitMultipliers[units];
 
-				if(remaining >= divider) {
-					quantity = Math.floor(remaining / divider);
-					remaining = remaining % divider;
+				if(remaining >= divisor) {
+					quantity = Math.floor(remaining / divisor);
+					remaining = remaining % divisor;
 					string += quantity;
 					
 					if(units !== defaultUnits || remaining > 0) {
