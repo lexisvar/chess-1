@@ -37,8 +37,7 @@ define(function(require) {
 		this._timeLeft[Colour.white] = this._initialTime;
 		this._timeLeft[Colour.black] = this._initialTime;
 		
-		this._shortDescription = this._getShortDescription();
-		this._longDescription = this._getLongDescription();
+		this._description = this._getDescription();
 	}
 	
 	Clock.prototype.start = function() {
@@ -121,39 +120,22 @@ define(function(require) {
 		}
 	}
 	
-	Clock.prototype._getShortDescription = function() {
+	Clock.prototype.getDescription = function() {
+		return this._description;
+	}
+	
+	Clock.prototype._getDescription = function() {
 		var description = TimePeriod.encode(this._initialTime / MILLISECONDS, "m");
 
 		if(this._increment > 0) {
 			description += "/" + TimePeriod.encode(this._increment / MILLISECONDS, "s");
 		}
+		
+		if(this._options.isOvertime) {
+			description += TimePeriod.encode(this._overtimeBonus) + " @ move " + this._options.overtimeFullmove;
+		}
 
 		return description;
-	}
-	
-	Clock.prototype._getLongDescription = function() {
-		/*
-		TODO
-		*/
-		
-		/*
-		 function(timingStyle, initialTime, increment, isOvertime, overtimeIncrement, overtimeCutoff) {
-			var display = TimingStyle.noTimer.description;
-	
-			if(timingStyle !== TimingStyle.noTimer) {
-				display = this.encode(timingStyle, initialTime, increment);
-	
-				if(timingStyle !== TimingStyle.suddenDeath) {
-					display += " " + timingStyle.description;
-				}
-	
-				if(isOvertime) {
-					display += " + " + TimeParser.encode(overtimeIncrement, true) + " @ " + overtimeCutoff + " moves";
-				}
-			}
-	
-			return display;
-		*/
 	}
 	
 	return Clock;
