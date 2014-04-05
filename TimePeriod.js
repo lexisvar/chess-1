@@ -1,5 +1,7 @@
-define(function() {
+define(function(require) {
 	var Tokeniser = require("lib/Tokeniser");
+	
+	var MILLISECONDS_PER_SECOND = 1000;
 	
 	var unitMultipliers = {
 		"s": 1,
