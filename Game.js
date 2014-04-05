@@ -18,14 +18,14 @@ define(function(require) {
 		
 		this._options = {
 			startingFen: Fen.STARTING_FEN,
-			initialTime: 600,
-			increment: 0,
+			initialTime: "10m",
+			increment: "0",
 			incrementComesFirst: false,
 			cappedIncrement: false,
 			delay: 0,
 			isOvertime: false,
 			overtimeFullmove: 40,
-			overtimeBonus: 600,
+			overtimeBonus: "10m",
 			isRated: true
 		};
 		
