@@ -1,6 +1,8 @@
 define(function(require) {
 	var time = require("lib/time");
 	var Colour = require("./Colour");
+	var Event = require("lib/Event");
+	var TimePeriod = require("chess/TimePeriod");
 	
 	var MILLISECONDS_PER_SECOND = 1000;
 	
@@ -10,19 +12,22 @@ define(function(require) {
 		this._options = {
 			startingColour: Colour.white,
 			startingFullmove: 1,
-			initialTime: 600,
-			increment: 0,
+			initialTime: "10m",
+			increment: "0",
 			incrementComesFirst: false,
 			cappedIncrement: false,
-			delay: 0,
 			isOvertime: false,
 			overtimeFullmove: 40,
-			overtimeBonus: 600
+			overtimeBonus: "10m"
 		};
 		
 		for(var p in options) {
 			this._options[p] = options[p];
 		}
+		
+		this._initialTime = TimePeriod.parse(this._options.initialTime, "m") * MILLISECONDS_PER_SECOND;
+		this._increment = TimePeriod.parse(this._options.increment, "s") * MILLISECONDS_PER_SECOND;
+		this._overtimeBonus = TimePeriod.parse(this._options.overtimeBonus, "m") * MILLISECONDS_PER_SECOND;
 		
 		this._isRunning = false;
 		this._fullmove = this._options.startingFullmove;
@@ -30,11 +35,12 @@ define(function(require) {
 		this._startOrLastMoveTime = null;
 		this._activeColour = this._options.startingColour;
 		
-		var initialTime = this._options.initialTime * MILLISECONDS_PER_SECOND;
-		
 		this._timeLeft = {};
-		this._timeLeft[Colour.white] = initialTime;
-		this._timeLeft[Colour.black] = initialTime;
+		this._timeLeft[Colour.white] = this._initialTime;
+		this._timeLeft[Colour.black] = this._initialTime;
+		
+		this._shortDescription = this._getShortDescription();
+		this._longDescription = this._getLongDescription();
 	}
 	
 	Clock.prototype.start = function() {
@@ -61,25 +67,23 @@ define(function(require) {
 			var now = time();
 			var timeLeft = this._timeLeft[this._activeColour];
 			var thinkingTime = now - this._startOrLastMoveTime;
-			var timeUsed = Math.max(0, thinkingTime - this._options.delay * MILLISECONDS_PER_SECOND);
-			var increment = this._options.increment * MILLISECONDS_PER_SECOND;
 			
 			timeLeft -= timeUsed;
 			
 			if(this._options.incrementComesFirst) {
-				this._timeLeft[this._activeColour.opposite] += increment;
+				this._timeLeft[this._activeColour.opposite] += this._increment;
 			}
 			
 			else {
 				if(this._options.cappedIncrement) {
-					increment = Math.min(increment, timeUsed);
+					increment = Math.min(this._increment,  thinkingTime);
 				}
 				
-				timeLeft += increment;
+				timeLeft += this._increment;
 			}
 			
 			if(this._options.isOvertime && this._fullmove === this._options.overtimeFullmove) {
-				timeLeft += this._options.overtimeBonus * MILLISECONDS_PER_SECOND;
+				timeLeft += this._overtimeBonus;
 			}
 			
 			if(this._activeColour === Colour.black) {
@@ -132,31 +136,23 @@ define(function(require) {
 		}
 	}
 	
-	return Clock;
-});
+	Clock.prototype._getShortDescription = function() {
+		var description = TimePeriod.encode(this._initialTime / MILLISECONDS_PER_SECOND, "m");
 
-/*
-TODO merge this in (from ClockTimeDisplay):
-*/
+		if(this._increment > 0) {
+			description += "/" + TimePeriod.encode(this._increment / MILLISECONDS_PER_SECOND, "s");
+		}
 
-define(function(require) {
-	require("lib/Array.contains");
-	var TimeParser = require("./TimeParser");
-	var TimingStyle = require("./TimingStyle");
+		return description;
+	}
 	
-	return {
-		encode: function(timingStyle, initialTime, increment) {
-			var showDefaultUnits = !isIncrementStyle;
-			var str = TimeParser.encode(initialTime, showDefaultUnits, "m");
-	
-			if(timingStyle.isIncrementStyle) {
-				str += "/" + TimeParser.encode(increment, false, "s");
-			}
-	
-			return str;
-		},
-	
-		encodeFull: function(timingStyle, initialTime, increment, isOvertime, overtimeIncrement, overtimeCutoff) {
+	Clock.prototype._getLongDescription = function() {
+		/*
+		TODO
+		*/
+		
+		/*
+		 function(timingStyle, initialTime, increment, isOvertime, overtimeIncrement, overtimeCutoff) {
 			var display = TimingStyle.noTimer.description;
 	
 			if(timingStyle !== TimingStyle.noTimer) {
@@ -172,6 +168,8 @@ define(function(require) {
 			}
 	
 			return display;
-		}
-	};
+		*/
+	}
+	
+	return Clock;
 });
