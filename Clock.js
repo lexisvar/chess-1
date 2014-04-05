@@ -14,8 +14,6 @@ define(function(require) {
 			startingFullmove: 1,
 			initialTime: "10m",
 			increment: "0",
-			incrementComesFirst: false,
-			cappedIncrement: false,
 			isOvertime: false,
 			overtimeFullmove: 40,
 			overtimeBonus: "10m"
@@ -46,10 +44,6 @@ define(function(require) {
 	Clock.prototype.start = function() {
 		this._isRunning = true;
 		
-		if(this._options.incrementComesFirst) {
-			this._timeLeft[this._activeColour] += this._options.increment;
-		}
-		
 		this._startOrLastMoveTime = time();
 		this._setTimeoutTimer();
 	}
@@ -68,19 +62,8 @@ define(function(require) {
 			var timeLeft = this._timeLeft[this._activeColour];
 			var thinkingTime = now - this._startOrLastMoveTime;
 			
-			timeLeft -= timeUsed;
-			
-			if(this._options.incrementComesFirst) {
-				this._timeLeft[this._activeColour.opposite] += this._increment;
-			}
-			
-			else {
-				if(this._options.cappedIncrement) {
-					increment = Math.min(this._increment,  thinkingTime);
-				}
-				
-				timeLeft += this._increment;
-			}
+			timeLeft -= thinkingTime;
+			timeLeft += this._increment;
 			
 			if(this._options.isOvertime && this._fullmove === this._options.overtimeFullmove) {
 				timeLeft += this._overtimeBonus;
