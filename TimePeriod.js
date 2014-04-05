@@ -1,7 +1,7 @@
 define(function(require) {
 	var Tokeniser = require("lib/Tokeniser");
 	
-	var MILLISECONDS_PER_SECOND = 1000;
+	var MILLISECONDS = 1000;
 	
 	var unitMultipliers = {
 		"s": 1,
@@ -63,52 +63,39 @@ define(function(require) {
 			}).join("") || "0";
 		},
 		
-		getColonDisplay: function(time, displayTenths) {
-			var parts = [];
-			var time = Math.floor(time / MSEC_PER_SEC);
-			var tenths = Math.floor((time % MSEC_PER_SEC) / (MSEC_PER_SEC / 10));
-			var remaining = time;
+		getColonDisplay: function(timeInMilliseconds, displayTenths) {
+			var timeInSeconds = Math.floor(timeInMilliseconds / MILLISECONDS);
+			var tenths = Math.floor((timeInMilliseconds % MILLISECONDS) / (MILLISECONDS / 10));
+			var remaining = timeInSeconds;
 			var remainder;
 			var divisor;
-			var onFirstPart = true;
+			var minParts = 2;
+			var parts = [];
 			var haveNonZeroParts = false;
-			var display;
-			var partMultiples = [24, 60, 60, 1];
-			var n, str;
+			var quantity, quantityString;
 	
-			var minParts = 2;  // at least 0:12 if there are only 12 seconds left, but not 0:00:12
-			var minDigits = 2;
-	
-			for(var i = 0; i < partMultiples.length; i++) {
-				divisor = partMultiples[i];
-	
-				for(var j = i + 1; j < partMultiples.length; j++) {
-					divisor *= partMultiples[j];
-				}
-	
+			"dhms".split("").forEach(function(units, i, partMultipliers) {
+				divisor = unitMultipliers[units];
 				remainder = remaining % divisor;
-				n = (remaining - remainder) / divisor;
-				str = "" + n;
+				quantity = (remaining - remainder) / divisor;
+				quantityString = "" + quantity;
 	
-				if(!onFirstPart) {
-					while(str.length < minDigits) {
-						str = "0" + str;
+				if(quantity > 0 || haveNonZeroParts || i >= partMultipliers.length - minParts) {
+					if(parts.length > 0 && quantity < 10) {
+						quantityString = "0" + quantityString;
 					}
-				}
-	
-				if(n > 0 || haveNonZeroParts || i >= partMultiples.length - minParts) {
-					parts.push(str);
-					onFirstPart = false;
+					
+					parts.push(quantityString);
 				}
 	
 				remaining = remainder;
 	
-				if(n > 0) {
+				if(quantity > 0) {
 					haveNonZeroParts = true;
 				}
-			}
+			});
 	
-			display = parts.join(":");
+			var display = parts.join(":");
 	
 			if(displayTenths) {
 				display += "." + tenths;
