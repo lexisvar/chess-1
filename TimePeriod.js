@@ -41,7 +41,7 @@ define(function(require) {
 		},
 
 		encode: function(timeInSeconds, defaultUnits) {
-			var remaining = time;
+			var remaining = timeInSeconds;
 			var divisor, quantity;
 
 			return "ywdhms".split("").map(function(units) {
