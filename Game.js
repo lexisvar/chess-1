@@ -55,15 +55,6 @@ define(function(require) {
 		this._clock.start();
 	}
 	
-	Game.states = {
-		IN_PROGRESS: "In progress",
-		FINISHED: "Finished"
-	};
-	
-	Game.prototype.getState = function() {
-		return this._state;
-	}
-	
 	Game.prototype.getStartTime = function() {
 		return this._startTime;
 	}
