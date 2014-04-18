@@ -138,6 +138,10 @@ define(function(require) {
 		this._gameOver(Result.win(colour.opposite, Result.types.RESIGNATION));
 	}
 	
+	Game.prototype.drawByAgreement = function() {
+		this._gameOver(Result.draw(Result.types.DRAW_AGREED));
+	}
+	
 	Game.prototype._timeout = function(colour) {
 		if(this._position.playerCanMate(colour.opposite)) {
 			this._gameOver(Result.win(colour.opposite, Result.types.TIMEOUT));
