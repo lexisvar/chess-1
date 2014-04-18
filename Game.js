@@ -10,27 +10,25 @@ define(function(require) {
 	var Clock = require("./Clock");
 
 	function Game(options) {
-		this._state = Game.states.IN_PROGRESS;
 		this._startTime = time();
 		this._endTime = null;
 		this._result = null;
-		this._resultType = null;
+		
+		this.GameOver = new Event(this);
 		
 		this._options = {
 			startingFen: Fen.STARTING_FEN,
 			initialTime: "10m",
-			increment: "0",
-			incrementComesFirst: false,
-			cappedIncrement: false,
-			delay: 0,
+			timeIncrement: "0",
 			isOvertime: false,
 			overtimeFullmove: 40,
-			overtimeBonus: "10m",
-			isRated: true
+			overtimeBonus: "10m"
 		};
 		
-		for(var p in options) {
-			this._options[p] = options[p];
+		if(options) {
+			for(var p in options) {
+				this._options[p] = options[p];
+			}
 		}
 		
 		this._isThreefoldClaimable = false;
