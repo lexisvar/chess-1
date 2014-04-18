@@ -63,12 +63,12 @@ define(function(require) {
 		return this._endTime;
 	}
 	
-	Game.prototype.getResult = function() {
-		return this._result;
+	Game.prototype.isInProgress = function() {
+		return (this._endTime === null);
 	}
 	
-	Game.prototype.getResultType = function() {
-		return this._resultType;
+	Game.prototype.getResult = function() {
+		return this._result;
 	}
 
 	Game.prototype.isFiftymoveClaimable = function() {
