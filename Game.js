@@ -88,33 +88,31 @@ define(function(require) {
 	}
 
 	Game.prototype.move = function(from, to, promoteTo) {
-		if(this._state === Game.states.IN_PROGRESS) {
-			var move = new Move(this._position, from, to, promoteTo);
-			var colour = move.getColour();
-	
-			if(move.isLegal()) {
-				this._position = move.getPositionAfter();
-	
-				if(move.isMate()) {
-					this._gameOver(Result.win(colour, Result.types.CHECKMATE));
-				}
-	
-				else {
-					if(!this._position.playerCanMate(Colour.white) && !this._position.playerCanMate(Colour.black)) {
-						this._gameOver(Result.draw(Result.types.INSUFFICIENT));
-					}
-	
-					if(this._position.countLegalMoves(colour.opposite) === 0) {
-						this._gameOver(Result.draw(Result.types.NO_MOVES));
-					}
-				}
-	
-				this._history.push(move);
-				this._checkThreefold();
+		var move = new Move(this._position, from, to, promoteTo);
+		var colour = move.getColour();
+
+		if(move.isLegal()) {
+			this._position = move.getPositionAfter();
+
+			if(move.isMate()) {
+				this._gameOver(Result.win(colour, Result.types.CHECKMATE));
 			}
-			
-			return move;
+
+			else {
+				if(!this._position.playerCanMate(Colour.white) && !this._position.playerCanMate(Colour.black)) {
+					this._gameOver(Result.draw(Result.types.INSUFFICIENT));
+				}
+
+				if(this._position.countLegalMoves(colour.opposite) === 0) {
+					this._gameOver(Result.draw(Result.types.NO_MOVES));
+				}
+			}
+
+			this._history.push(move);
+			this._checkThreefold();
 		}
+		
+		return move;
 	}
 	
 	Game.prototype.resign = function(colour) {
