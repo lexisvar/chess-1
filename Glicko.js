@@ -2,7 +2,7 @@ define(function(require) {
 	return {
 		INITIAL_RATING: 1500,
 		
-		calculateNewRatings: function(oldRatings, result) {
+		getNewRatings: function(oldRatings, result) {
 			/*
 			Glicko
 			
