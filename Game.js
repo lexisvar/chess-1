@@ -10,10 +10,6 @@ define(function(require) {
 	var Clock = require("./Clock");
 
 	function Game(options) {
-		this._startTime = time();
-		this._endTime = null;
-		this._result = null;
-		
 		this.GameOver = new Event(this);
 		
 		this._options = {
@@ -30,10 +26,10 @@ define(function(require) {
 				this._options[p] = options[p];
 			}
 		}
-		
-		this._isThreefoldClaimable = false;
-		this._isFiftymoveClaimable = false;
 
+		this._startTime = time();
+		this._endTime = null;
+		this._result = null;
 		this._position = new Position(this._options.startingFen);
 		this._startingPosition = new Position(this._options.startingFen);
 		this._history = [];
@@ -76,7 +72,31 @@ define(function(require) {
 	}
 	
 	Game.prototype.isThreefoldClaimable = function() {
-		return this._isThreefoldClaimable;
+		var currentFenString = this._position.getFen();
+		var currentFen = new Fen(currentFenString);
+		var limit = 3;
+		var occurrences = 0;
+
+		if(currentFenString === this._startingPosition.getFen()) {
+			limit = 2;
+		}
+		
+		var fen;
+
+		this._history.forEach(function(move) {
+			fen = new Fen(move.getPositionAfter().getFen());
+			
+			if(
+				fen.position === currentFen.position
+				&& fen.active === currentFen.active
+				&& fen.castling === currentFen.castling
+				&& fen.epTarget === currentFen.epTarget
+			) {
+				occurrences++;
+			}
+		});
+
+		return (occurrences >= limit);
 	}
 	
 	Game.prototype.getPosition = function() {
@@ -109,7 +129,6 @@ define(function(require) {
 			}
 
 			this._history.push(move);
-			this._checkThreefold();
 		}
 		
 		return move;
@@ -117,30 +136,6 @@ define(function(require) {
 	
 	Game.prototype.resign = function(colour) {
 		this._gameOver(Result.win(colour.opposite, Result.types.RESIGNATION));
-	}
-
-	Game.prototype.undoLastMove = function() {
-		this._history.pop();
-		
-		var move = this._getLastMove();
-		
-		if(move !== null) {
-			this._position = move.getPositionAfter();
-		}
-		
-		else {
-			this._position = this._startingPosition.getCopy();
-		}
-		
-		this._checkThreefold();
-		
-		/*
-		FIXME clock needs an undo method to call here
-		*/
-	}
-	
-	Game.prototype._getLastMove = function() {
-		return this._history[this._history.length - 1] || null;
 	}
 	
 	Game.prototype._timeout = function(colour) {
@@ -151,34 +146,6 @@ define(function(require) {
 		else {
 			this._gameOver(Result.draw(Result.types.INSUFFICIENT));
 		}
-	}
-
-	Game.prototype._checkThreefold = function() {
-		var currentFenString = this._position.getFen();
-		var currentFen = new Fen(currentFenString);
-		var limit = 3;
-		var occurrences = 0;
-
-		if(currentFenString === this._startingPosition.getFen()) {
-			limit = 2;
-		}
-		
-		var fen;
-
-		this._history.forEach(function(move) {
-			fen = new Fen(move.getPositionAfter().getFen());
-			
-			if(
-				fen.position === currentFen.position
-				&& fen.active === currentFen.active
-				&& fen.castling === currentFen.castling
-				&& fen.epTarget === currentFen.epTarget
-			) {
-				occurrences++;
-			}
-		});
-
-		this._isThreefoldClaimable = (occurrences >= limit);
 	}
 
 	Game.prototype._gameOver = function(result) {
