@@ -42,9 +42,7 @@ define(function(require) {
 			startingColour: this._position.getActiveColour(),
 			startingFullmove: this._position.getFullmove(),
 			initialTime: this._options.initialTime,
-			increment: this._options.increment,
-			incrementComesFirst: this._options.incrementComesFirst,
-			cappedIncrement: this._options.cappedIncrement,
+			increment: this._options.timeIncrement,
 			isOvertime: this._options.isOvertime,
 			overtimeFullmove: this._options.overtimeFullmove,
 			overtimeBonus: this._options.overtimeBonus
