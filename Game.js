@@ -181,11 +181,13 @@ define(function(require) {
 		this._isThreefoldClaimable = (occurrences >= limit);
 	}
 
-	Game.prototype._gameOver = function(result, resultType) {
-		this._state = Game.states.FINISHED;
+	Game.prototype._gameOver = function(result) {
 		this._result = result;
-		this._resultType = resultType;
 		this._endTime = time();
+		
+		this.GameOver.fire({
+			result: result,
+		});
 	}
 
 	return Game;
