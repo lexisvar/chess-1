@@ -6,13 +6,18 @@ define(function(require) {
 			/*
 			Glicko
 			
-			...
+			FIXME
 			
 			return {
 				w: 1234,
 				b: 1634
 			};
 			*/
+			
+			return {
+				"w": 1500,
+				"b": 1500
+			};
 		}
 	};
 });
