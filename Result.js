@@ -15,15 +15,17 @@ define(function(require) {
 		}
 		
 		else {
-			this.winner = result;
+			var winner = result;
+			
+			this.winner = winner.fenString;
 			this.isDraw = false;
 			this.scores[this.winner] = 1;
 			this.scores[this.winner.opposite] = 0;
 			this.summary = this.scores[Colour.white] + "-" + this.scores[Colour.black];
 			
 			var replacements = {
-				"winner": this.winner.name,
-				"loser": this.winner.opposite.name
+				"winner": winner.name,
+				"loser": winner.opposite.name
 			};
 			
 			for(var placeholder in replacements) {
