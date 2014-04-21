@@ -28,9 +28,9 @@ define(function(require) {
 			return colours[fenString];
 		},
 		
-		forEach: function(callback) {
+		forEach: function(callback, bindTo) {
 			for(var fenString in colours) {
-				callback(colours[fenString]);
+				callback.bind(bindTo || this)(colours[fenString]);
 			}
 		}
 	};
