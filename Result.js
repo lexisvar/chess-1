@@ -19,8 +19,8 @@ define(function(require) {
 			
 			this.winner = winner.fenString;
 			this.isDraw = false;
-			this.scores[this.winner] = 1;
-			this.scores[this.winner.opposite] = 0;
+			this.scores[winner] = 1;
+			this.scores[winner.opposite] = 0;
 			this.summary = this.scores[Colour.white] + "-" + this.scores[Colour.black];
 			
 			var replacements = {
