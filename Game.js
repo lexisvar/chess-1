@@ -142,6 +142,24 @@ define(function(require) {
 		this._gameOver(Result.draw(Result.types.DRAW_AGREED));
 	}
 	
+	Game.prototype.claimDraw = function() {
+		var success = true;
+		
+		if(this.isFiftymoveClaimable()) {
+			this._gameOver(Result.draw(Result.types.FIFTYMOVE));
+		}
+		
+		else if(this.isThreefoldClaimable()) {
+			this._gameOver(Result.draw(Result.types.THREEFOLD));
+		}
+		
+		else {
+			success = false;
+		}
+		
+		return success;
+	}
+	
 	Game.prototype._timeout = function(colour) {
 		if(this._position.playerCanMate(colour.opposite)) {
 			this._gameOver(Result.win(colour.opposite, Result.types.TIMEOUT));
