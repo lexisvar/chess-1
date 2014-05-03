@@ -65,8 +65,8 @@ define(function(require) {
 	Result.descriptions[Result.types.DRAW_AGREED] = "Draw agreed";
 	
 	return {
-		win: function(colour, type, white, black) {
-			return new Result(colour, type, white, black);
+		win: function(colour, type) {
+			return new Result(colour, type);
 		},
 		
 		draw: function(type) {
