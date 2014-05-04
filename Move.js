@@ -44,6 +44,73 @@ define(function(require) {
 
 		this._check();
 	}
+	
+	Move.prototype.getPositionAfter = function() {
+		return this._positionAfter.getCopy();
+	}
+	
+	Move.prototype.getTime = function() {
+		return this._time;
+	}
+
+	Move.prototype.isCheck = function() {
+		this._checkForCheck();
+
+		return this._isCheck;
+	}
+
+	Move.prototype.isMate = function() {
+		this._checkForMate();
+
+		return this._isMate;
+	}
+
+	Move.prototype.isCastling = function() {
+		return this._isCastling;
+	}
+	
+	Move.prototype.isPromotion = function() {
+		return this._isPromotion;
+	}
+	
+	Move.prototype.getPromoteTo = function() {
+		return this._promoteTo;
+	}
+
+	Move.prototype.isLegal = function() {
+		return this._isLegal;
+	}
+
+	Move.prototype.getFullmove = function() {
+		return this._positionBefore.getFullmove();
+	}
+
+	Move.prototype.getColour = function() {
+		return this._colour;
+	}
+
+	Move.prototype.getLabel = function() {
+		this._checkForCheck();
+		this._checkForMate();
+
+		return this._label;
+	}
+
+	Move.prototype.getFullLabel = function() {
+		return this.getFullmove() + (this._colour === Colour.white ? "." : "...") + " " + this.getLabel();
+	}
+	
+	Move.prototype.getCapturedPiece = function() {
+		return this._capturedPiece;
+	}
+	
+	Move.prototype.getFrom = function() {
+		return this._from;
+	}
+	
+	Move.prototype.getTo = function() {
+		return this._to;
+	}
 
 	Move.prototype._check = function() {
 		if(this._piece !== null && this._piece.colour === this._colour) {
@@ -334,73 +401,6 @@ define(function(require) {
 		}
 
 		return disambiguationString;
-	}
-
-	Move.prototype.getPositionAfter = function() {
-		return this._positionAfter.getCopy();
-	}
-	
-	Move.prototype.getTime = function() {
-		return this._time;
-	}
-
-	Move.prototype.isCheck = function() {
-		this._checkForCheck();
-
-		return this._isCheck;
-	}
-
-	Move.prototype.isMate = function() {
-		this._checkForMate();
-
-		return this._isMate;
-	}
-
-	Move.prototype.isCastling = function() {
-		return this._isCastling;
-	}
-	
-	Move.prototype.isPromotion = function() {
-		return this._isPromotion;
-	}
-	
-	Move.prototype.getPromoteTo = function() {
-		return this._promoteTo;
-	}
-
-	Move.prototype.isLegal = function() {
-		return this._isLegal;
-	}
-
-	Move.prototype.getFullmove = function() {
-		return this._positionBefore.getFullmove();
-	}
-
-	Move.prototype.getColour = function() {
-		return this._colour;
-	}
-
-	Move.prototype.getLabel = function() {
-		this._checkForCheck();
-		this._checkForMate();
-
-		return this._label;
-	}
-
-	Move.prototype.getFullLabel = function() {
-		return this.getFullmove() + (this._colour === Colour.white ? "." : "...") + " " + this.getLabel();
-	}
-	
-	Move.prototype.getCapturedPiece = function() {
-		return this._capturedPiece;
-	}
-	
-	Move.prototype.getFrom = function() {
-		return this._from;
-	}
-	
-	Move.prototype.getTo = function() {
-		return this._to;
 	}
 
 	return Move;
