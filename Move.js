@@ -394,6 +394,14 @@ define(function(require) {
 	Move.prototype.getCapturedPiece = function() {
 		return this._capturedPiece;
 	}
+	
+	Move.prototype.getFrom = function() {
+		return this._from;
+	}
+	
+	Move.prototype.getTo = function() {
+		return this._to;
+	}
 
 	return Move;
 });
