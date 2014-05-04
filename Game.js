@@ -14,6 +14,7 @@ define(function(require) {
 		
 		this._options = {
 			startingFen: Fen.STARTING_FEN,
+			isTimed: true,
 			initialTime: "10m",
 			timeIncrement: "0",
 			isOvertime: false,
@@ -34,21 +35,23 @@ define(function(require) {
 		this._startingPosition = new Position(this._options.startingFen);
 		this._history = [];
 		
-		this._clock = new Clock({
-			startingColour: this._position.getActiveColour(),
-			startingFullmove: this._position.getFullmove(),
-			initialTime: this._options.initialTime,
-			increment: this._options.timeIncrement,
-			isOvertime: this._options.isOvertime,
-			overtimeFullmove: this._options.overtimeFullmove,
-			overtimeBonus: this._options.overtimeBonus
-		});
-		
-		this._clock.Timeout.addHandler(this, function(data) {
-			this._timeout(data.colour);
-		});
-		
-		this._clock.start();
+		if(this._options.isTimed) {
+			this._clock = new Clock({
+				startingColour: this._position.getActiveColour(),
+				startingFullmove: this._position.getFullmove(),
+				initialTime: this._options.initialTime,
+				increment: this._options.timeIncrement,
+				isOvertime: this._options.isOvertime,
+				overtimeFullmove: this._options.overtimeFullmove,
+				overtimeBonus: this._options.overtimeBonus
+			});
+			
+			this._clock.Timeout.addHandler(this, function(data) {
+				this._timeout(data.colour);
+			});
+			
+			this._clock.start();
+		}
 	}
 	
 	Game.prototype.getStartTime = function() {
