@@ -8,6 +8,8 @@ define(function(require) {
 	var Fen = require("./Fen");
 	var Result = require("./Result");
 	var Clock = require("./Clock");
+	var TimingStyle = require("./TimingStyle");
+	var Time = require("./Time");
 
 	function Game(options) {
 		this.GameOver = new Event(this);
@@ -42,7 +44,7 @@ define(function(require) {
 				isOvertime: this._options.isOvertime,
 				overtimeFullmove: this._options.overtimeFullmove,
 				overtimeBonus: Time.fromUnitString(this._options.overtimeBonus, Time.minutes)
-			}),this._position.getActiveColour(), this._position.getFullmove());
+			}), this._position.getFullmove(), this._position.getActiveColour());
 			
 			this._clock.Timeout.addHandler(this, function(data) {
 				this._timeout(data.colour);
