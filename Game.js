@@ -36,15 +36,13 @@ define(function(require) {
 		this._history = [];
 		
 		if(this._options.isTimed) {
-			this._clock = new Clock({
-				startingColour: this._position.getActiveColour(),
-				startingFullmove: this._position.getFullmove(),
-				initialTime: this._options.initialTime,
-				increment: this._options.timeIncrement,
+			this._clock = new Clock(new TimingStyle({
+				initialTime: Time.fromUnitString(this._options.initialTime, Time.minutes),
+				increment: Time.fromUnitString(this._options.timeIncrement, Time.seconds),
 				isOvertime: this._options.isOvertime,
 				overtimeFullmove: this._options.overtimeFullmove,
-				overtimeBonus: this._options.overtimeBonus
-			});
+				overtimeBonus: Time.fromUnitString(this._options.overtimeBonus, Time.minutes)
+			}),this._position.getActiveColour(), this._position.getFullmove());
 			
 			this._clock.Timeout.addHandler(this, function(data) {
 				this._timeout(data.colour);
@@ -111,27 +109,32 @@ define(function(require) {
 	}
 
 	Game.prototype.move = function(from, to, promoteTo) {
-		var move = new Move(this._position, from, to, promoteTo);
-		var colour = move.getColour();
+		var move = null;
 
-		if(move.isLegal()) {
-			this._position = move.getPositionAfter();
-
-			if(move.isMate()) {
-				this._gameOver(Result.win(colour, Result.types.CHECKMATE));
-			}
-
-			else {
-				if(!this._position.playerCanMate(Colour.white) && !this._position.playerCanMate(Colour.black)) {
-					this._gameOver(Result.draw(Result.types.INSUFFICIENT));
+		if(this.isInProgress()) {
+			move = new Move(this._position, from, to, promoteTo);
+			
+			var colour = move.getColour();
+			
+			if(move.isLegal()) {
+				this._position = move.getPositionAfter();
+	
+				if(move.isMate()) {
+					this._gameOver(Result.win(colour, Result.types.CHECKMATE));
 				}
-
-				if(this._position.countLegalMoves(colour.opposite) === 0) {
-					this._gameOver(Result.draw(Result.types.NO_MOVES));
+	
+				else {
+					if(!this._position.playerCanMate(Colour.white) && !this._position.playerCanMate(Colour.black)) {
+						this._gameOver(Result.draw(Result.types.INSUFFICIENT));
+					}
+	
+					if(this._position.countLegalMoves(colour.opposite) === 0) {
+						this._gameOver(Result.draw(Result.types.NO_MOVES));
+					}
 				}
+	
+				this._history.push(move);
 			}
-
-			this._history.push(move);
 		}
 		
 		return move;

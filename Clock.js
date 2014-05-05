@@ -2,42 +2,28 @@ define(function(require) {
 	var time = require("lib/time");
 	var Colour = require("./Colour");
 	var Event = require("lib/Event");
-	var TimePeriod = require("chess/TimePeriod");
+	var Time = require("chess/Time");
 	
 	var MILLISECONDS = 1000;
 	
-	function Clock(options) {
+	function Clock(timingStyle, startingFullmove, startingColour) {
+		startingFullmove = startingFullmove || 1;
+		startingColour = startingColour || Colour.white;
+		
 		this.Timeout = new Event(this);
 		
-		this._options = {
-			startingColour: Colour.white,
-			startingFullmove: 1,
-			initialTime: "10m",
-			increment: "0",
-			isOvertime: false,
-			overtimeFullmove: 40,
-			overtimeBonus: "10m"
-		};
-		
-		for(var p in options) {
-			this._options[p] = options[p];
-		}
-		
-		this._initialTime = TimePeriod.parse(this._options.initialTime, "m") * MILLISECONDS;
-		this._increment = TimePeriod.parse(this._options.increment, "s") * MILLISECONDS;
-		this._overtimeBonus = TimePeriod.parse(this._options.overtimeBonus, "m") * MILLISECONDS;
-		
+		this._timingStyle = timingStyle;
 		this._isRunning = false;
-		this._fullmove = this._options.startingFullmove;
+		this._fullmove = startingFullmove;
 		this._timeoutTimer = null;
 		this._startOrLastMoveTime = null;
-		this._activeColour = this._options.startingColour;
+		this._activeColour = startingColour;
 		
 		this._timeLeft = {};
-		this._timeLeft[Colour.white] = this._initialTime;
-		this._timeLeft[Colour.black] = this._initialTime;
+		this._timeLeft[Colour.white] = Time.fromMilliseconds(this._timingStyle.initialTime);
+		this._timeLeft[Colour.black] = Time.fromMilliseconds(this._timingStyle.initialTime);
 		
-		this._description = this._getDescription();
+		this._description = this._timingStyle.getDescription();
 	}
 	
 	Clock.prototype.start = function() {
@@ -61,18 +47,16 @@ define(function(require) {
 			var timeLeft = this._timeLeft[this._activeColour];
 			var thinkingTime = now - this._startOrLastMoveTime;
 			
-			timeLeft -= thinkingTime;
-			timeLeft += this._increment;
+			timeLeft.add(-thinkingTime);
+			timeLeft.add(this._timingStyle.increment);
 			
-			if(this._options.isOvertime && this._fullmove === this._options.overtimeFullmove) {
-				timeLeft += this._overtimeBonus;
+			if(this._timingStyle.isOvertime && this._fullmove === this._timingStyle.overtimeFullmove) {
+				timeLeft.add(this._timingStyle.overtimeBonus);
 			}
 			
 			if(this._activeColour === Colour.black) {
 				this._fullmove++;
 			}
-			
-			this._timeLeft[this._activeColour] = timeLeft;
 			
 			this._startOrLastMoveTime = now;
 			this._activeColour = this._activeColour.opposite;
@@ -86,7 +70,7 @@ define(function(require) {
 		var timeLeft = this._timeLeft[colour];
 		
 		if(colour === this._activeColour) {
-			timeLeft -= time() - this._startOrLastMoveTime;
+			timeLeft.add(-(time() - this._startOrLastMoveTime));
 		}
 		
 		return timeLeft;
@@ -122,20 +106,6 @@ define(function(require) {
 	
 	Clock.prototype.getDescription = function() {
 		return this._description;
-	}
-	
-	Clock.prototype._getDescription = function() {
-		var description = TimePeriod.encode(this._initialTime / MILLISECONDS, "m");
-
-		if(this._increment > 0) {
-			description += "/" + TimePeriod.encode(this._increment / MILLISECONDS, "s");
-		}
-		
-		if(this._options.isOvertime) {
-			description += TimePeriod.encode(this._overtimeBonus) + " @ move " + this._options.overtimeFullmove;
-		}
-
-		return description;
 	}
 	
 	return Clock;
