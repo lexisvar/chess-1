@@ -93,7 +93,7 @@ define(function(require) {
 		this._checkForCheck();
 		this._checkForMate();
 
-		return this._label;
+		return this._label.toString();
 	}
 
 	Move.prototype.getFullLabel = function() {
