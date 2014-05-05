@@ -111,7 +111,7 @@ define(function(require) {
 			var unitsRegex = /[smhdwy]/i;
 			var timeRegex = /\d/;
 			var unitValues = {};
-			var tokeniser = new Tokeniser(timeString);
+			var tokeniser = new Tokeniser(unitString);
 			var time, units;
 			
 			while(!tokeniser.isEof()) {
