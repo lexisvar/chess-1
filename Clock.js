@@ -73,7 +73,7 @@ define(function(require) {
 			timeLeft.add(-(time() - this._startOrLastMoveTime));
 		}
 		
-		return timeLeft;
+		return Time.fromMilliseconds(timeLeft);
 	}
 	
 	Clock.prototype._setTimeoutTimer = function() {
