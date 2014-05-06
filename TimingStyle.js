@@ -1,6 +1,5 @@
 define(function(require) {
 	var Time = require("./Time");
-	var Colour = require("./Colour");
 	
 	function TimingStyle(options) {
 		this.initialTime = Time.fromUnitString("10m");
@@ -8,6 +7,8 @@ define(function(require) {
 		this.isOvertime = false;
 		this.overtimeFullmove = 40;
 		this.overtimeBonus = Time.fromUnitString("10m");
+		this.firstTimedMoveIndex = 2;
+		this.initialDelay = 0;
 		
 		for(var p in options) {
 			this[p] = options[p];
