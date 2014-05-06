@@ -29,8 +29,9 @@ define(function(require) {
 	}
 	
 	Time.prototype.getColonDisplay = function(displayTenths) {
-		var timeInSeconds = Math.floor(this._milliseconds / MILLISECONDS);
-		var tenths = Math.floor((this._milliseconds % MILLISECONDS) / (MILLISECONDS / 10));
+		var absoluteMilliseconds = Math.abs(this._milliseconds);
+		var timeInSeconds = Math.floor(absoluteMilliseconds / MILLISECONDS);
+		var tenths = Math.floor((absoluteMilliseconds % MILLISECONDS) / (MILLISECONDS / 10));
 		var remaining = timeInSeconds;
 		var remainder;
 		var divisor;
@@ -66,14 +67,14 @@ define(function(require) {
 			display += "." + tenths;
 		}
 
-		return display;
+		return (this._milliseconds < 0 ? "-" : "") + display;
 	}
 	
 	Time.prototype.getUnitString = function(defaultUnits) {
-		var remaining = Math.floor(this._milliseconds / MILLISECONDS);
+		var remaining = Math.floor(Math.abs(this._milliseconds) / MILLISECONDS);
 		var divisor, quantity;
 
-		return "ywdhms".split("").map(function(units) {
+		return (this._milliseconds < 0 ? "-" : "") + "ywdhms".split("").map(function(units) {
 			var string = "";
 			
 			divisor = unitMultipliers[units];

@@ -135,6 +135,18 @@ define(function(require, exports, module) {
 		
 		function() {
 			same(Time.fromMilliseconds(172800999).getColonDisplay(true), "2:00:00:00.9");
+		},
+		
+		"getColonDisplay of negative 10 seconds is '-0:10'":
+		
+		function() {
+			same(Time.fromMilliseconds(-10000).getColonDisplay(), "-0:10");
+		},
+		
+		"getUnitString of negative 10 seconds is '-10s'":
+		
+		function() {
+			same(Time.fromMilliseconds(-10000).getUnitString(), "-10s");
 		}
 	};
 	
