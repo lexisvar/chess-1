@@ -13,7 +13,7 @@ define(function(require) {
 	};
 	
 	function Time(milliseconds) {
-		this._milliseconds = milliseconds;
+		this._milliseconds = milliseconds.valueOf();
 	}
 	
 	Time.prototype.add = function(milliseconds) {
