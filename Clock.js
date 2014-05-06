@@ -55,7 +55,7 @@ define(function(require) {
 		var timeLeft = this._timeLeft[move.getColour()];
 		var thinkingTime = moveTime - this._startOrLastMoveTime;
 		
-		if(this._lastMoveIndex >= this._timingStyle.firstTimedMoveIndex) {
+		if(this._lastMoveIndex >= this._timingStyle.firstTimedMoveIndex - 1) {
 			timeLeft.add(-thinkingTime);
 			timeLeft.add(this._timingStyle.increment);
 			
