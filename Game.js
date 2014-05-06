@@ -47,8 +47,8 @@ define(function(require) {
 				overtimeBonus: Time.fromUnitString(this._options.overtimeBonus, Time.minutes)
 			}));
 			
-			this._clock.Timeout.addHandler(this, function(data) {
-				this._timeout(data.colour);
+			this._clock.Timeout.addHandler(this, function() {
+				this._timeout();
 			});
 		}
 	}
@@ -171,9 +171,11 @@ define(function(require) {
 		return success;
 	}
 	
-	Game.prototype._timeout = function(colour) {
-		if(this._position.playerCanMate(colour.opposite)) {
-			this._gameOver(Result.win(colour.opposite, Result.types.TIMEOUT));
+	Game.prototype._timeout = function() {
+		var opponentColour = this._position.getActiveColour().opposite;
+		
+		if(this._position.playerCanMate(opponentColour)) {
+			this._gameOver(Result.win(opponentColour, Result.types.TIMEOUT));
 		}
 		
 		else {
