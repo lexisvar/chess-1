@@ -2,14 +2,12 @@ define(function(require) {
 	var time = require("lib/time");
 	var Colour = require("./Colour");
 	var Event = require("lib/Event");
-	var Time = require("chess/Time");
+	var Time = require("./Time");
+	var Position = require("./Position");
 	
 	var MILLISECONDS = 1000;
 	
-	function Clock(timingStyle, startingFullmove, startingColour) {
-		startingFullmove = startingFullmove || 1;
-		startingColour = startingColour || Colour.white;
-		
+	function Clock(timingStyle, startingPosition) {
 		this.Timeout = new Event(this);
 		
 		this._timingStyle = timingStyle;
@@ -17,7 +15,8 @@ define(function(require) {
 		this._fullmove = startingFullmove;
 		this._timeoutTimer = null;
 		this._startOrLastMoveTime = null;
-		this._activeColour = startingColour;
+		this._startingPosition = startingPosition || new Position();
+		this._activeColour = this._startingPosition.getActiveColour();
 		
 		this._timeLeft = {};
 		this._timeLeft[Colour.white] = Time.fromMilliseconds(this._timingStyle.initialTime);
@@ -28,7 +27,6 @@ define(function(require) {
 	
 	Clock.prototype.start = function() {
 		this._isRunning = true;
-		
 		this._startOrLastMoveTime = time();
 		this._setTimeoutTimer();
 	}
@@ -41,25 +39,22 @@ define(function(require) {
 		}
 	}
 	
-	Clock.prototype.playerMoved = function() {
+	Clock.prototype.playerMoved = function(move) {
 		if(this._isRunning) {
 			var now = time();
-			var timeLeft = this._timeLeft[this._activeColour];
+			var colour = move.getColour();
+			var timeLeft = this._timeLeft[colour];
 			var thinkingTime = now - this._startOrLastMoveTime;
 			
 			timeLeft.add(-thinkingTime);
 			timeLeft.add(this._timingStyle.increment);
 			
-			if(this._timingStyle.isOvertime && this._fullmove === this._timingStyle.overtimeFullmove) {
+			if(this._timingStyle.isOvertime && move.getFullmove() === this._timingStyle.overtimeFullmove) {
 				timeLeft.add(this._timingStyle.overtimeBonus);
 			}
 			
-			if(this._activeColour === Colour.black) {
-				this._fullmove++;
-			}
-			
 			this._startOrLastMoveTime = now;
-			this._activeColour = this._activeColour.opposite;
+			this._activeColour = colour.opposite;
 			this._setTimeoutTimer();
 		}
 	}

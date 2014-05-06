@@ -44,7 +44,7 @@ define(function(require) {
 				isOvertime: this._options.isOvertime,
 				overtimeFullmove: this._options.overtimeFullmove,
 				overtimeBonus: Time.fromUnitString(this._options.overtimeBonus, Time.minutes)
-			}), this._position.getFullmove(), this._position.getActiveColour());
+			}), this._startingPosition);
 			
 			this._clock.Timeout.addHandler(this, function(data) {
 				this._timeout(data.colour);
@@ -120,6 +120,10 @@ define(function(require) {
 			
 			if(move.isLegal()) {
 				this._position = move.getPositionAfter();
+				
+				if(this._options.isTimed) {
+					this._clock.playerMoved(move);
+				}
 	
 				if(move.isMate()) {
 					this._gameOver(Result.win(colour, Result.types.CHECKMATE));
