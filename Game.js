@@ -13,6 +13,7 @@ define(function(require) {
 
 	function Game(options) {
 		this.GameOver = new Event(this);
+		this.Move = new Event(this);
 		
 		this._options = {
 			startingFen: Fen.STARTING_FEN,
@@ -38,13 +39,13 @@ define(function(require) {
 		this._history = [];
 		
 		if(this._options.isTimed) {
-			this._clock = new Clock(new TimingStyle({
+			this._clock = new Clock(this, new TimingStyle({
 				initialTime: Time.fromUnitString(this._options.initialTime, Time.minutes),
 				increment: Time.fromUnitString(this._options.timeIncrement, Time.seconds),
 				isOvertime: this._options.isOvertime,
 				overtimeFullmove: this._options.overtimeFullmove,
 				overtimeBonus: Time.fromUnitString(this._options.overtimeBonus, Time.minutes)
-			}), this);
+			}));
 			
 			this._clock.Timeout.addHandler(this, function(data) {
 				this._timeout(data.colour);
@@ -118,10 +119,6 @@ define(function(require) {
 			
 			if(move.isLegal()) {
 				this._position = move.getPositionAfter();
-				
-				if(this._options.isTimed) {
-					this._clock.playerMoved(move);
-				}
 	
 				if(move.isMate()) {
 					this._gameOver(Result.win(colour, Result.types.CHECKMATE));
@@ -138,6 +135,10 @@ define(function(require) {
 				}
 	
 				this._history.push(move);
+				
+				this.Move.fire({
+					move: move
+				});
 			}
 		}
 		
