@@ -24,6 +24,6 @@ var testsDir = "./tests";
 requirejs([
 	"./tests/Board",
 	"./tests/CastlingRights",
-	"./tests/TimePeriod",
+	"./tests/Time",
 	"./tests/Game"
 ]);
