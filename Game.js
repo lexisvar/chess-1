@@ -44,13 +44,11 @@ define(function(require) {
 				isOvertime: this._options.isOvertime,
 				overtimeFullmove: this._options.overtimeFullmove,
 				overtimeBonus: Time.fromUnitString(this._options.overtimeBonus, Time.minutes)
-			}), this._startingPosition);
+			}), this);
 			
 			this._clock.Timeout.addHandler(this, function(data) {
 				this._timeout(data.colour);
 			});
-			
-			this._clock.start();
 		}
 	}
 	

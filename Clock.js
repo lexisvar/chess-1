@@ -7,68 +7,65 @@ define(function(require) {
 	
 	var MILLISECONDS = 1000;
 	
-	function Clock(timingStyle, startingPosition) {
+	function Clock(game, timingStyle) {
 		this.Timeout = new Event(this);
 		
+		this._game = game;
+		this._lastMoveIndex = -1;
 		this._timingStyle = timingStyle;
-		this._isRunning = false;
-		this._fullmove = startingFullmove;
 		this._timeoutTimer = null;
-		this._startOrLastMoveTime = null;
-		this._startingPosition = startingPosition || new Position();
-		this._activeColour = this._startingPosition.getActiveColour();
+		this._startOrLastMoveTime = this._game.getStartTime() + this._timingStyle.initialDelay;
 		
 		this._timeLeft = {};
 		this._timeLeft[Colour.white] = Time.fromMilliseconds(this._timingStyle.initialTime);
 		this._timeLeft[Colour.black] = Time.fromMilliseconds(this._timingStyle.initialTime);
 		
-		this._description = this._timingStyle.getDescription();
-	}
-	
-	Clock.prototype.start = function() {
-		this._isRunning = true;
-		this._startOrLastMoveTime = time();
+		this._game.getHistory().forEach((function(move) {
+			this._move(move);
+		}).bind(this));
+		
+		this._handleNewMoves();
 		this._setTimeoutTimer();
 	}
 	
-	Clock.prototype.stop = function() {
-		this._isRunning = false;
+	Clock.prototype.getTimeLeft = function(colour) {
+		var activeColour = this._getActiveColour();
+		var timeLeft = this._timeLeft[colour || activeColour];
 		
-		if(this._timeoutTimer !== null) {
-			clearTimeout(this._timeoutTimer);
+		if(colour === activeColour) {
+			timeLeft.add(-(time() - this._startOrLastMoveTime));
 		}
+		
+		return Time.fromMilliseconds(timeLeft);
 	}
 	
-	Clock.prototype.playerMoved = function(move) {
-		if(this._isRunning) {
-			var now = time();
-			var colour = move.getColour();
-			var timeLeft = this._timeLeft[colour];
-			var thinkingTime = now - this._startOrLastMoveTime;
-			
+	Clock.prototype.getDescription = function() {
+		return this._timingStyle.getDescription();
+	}
+	
+	Clock.prototype._handleNewMoves = function() {
+		this._game.Move.addHandler(this, function(data) {
+			this._move(data.move);
+			this._setTimeoutTimer();
+		});
+	}
+	
+	Clock.prototype._move = function(move) {
+		var moveTime = move.getTime();
+		var timeLeft = this._timeLeft[move.getColour()];
+		var thinkingTime = moveTime - this._startOrLastMoveTime;
+		
+		if(this._lastMoveIndex >= this._timingStyle.firstTimedMoveIndex) {
 			timeLeft.add(-thinkingTime);
 			timeLeft.add(this._timingStyle.increment);
 			
 			if(this._timingStyle.isOvertime && move.getFullmove() === this._timingStyle.overtimeFullmove) {
 				timeLeft.add(this._timingStyle.overtimeBonus);
 			}
-			
-			this._startOrLastMoveTime = now;
-			this._activeColour = colour.opposite;
-			this._setTimeoutTimer();
-		}
-	}
-	
-	Clock.prototype.getTimeLeft = function(colour) {
-		colour = colour || this._activeColour;
-		
-		var timeLeft = this._timeLeft[colour];
-		
-		if(colour === this._activeColour) {
-			timeLeft.add(-(time() - this._startOrLastMoveTime));
 		}
 		
-		return Time.fromMilliseconds(timeLeft);
+		this._lastMoveIndex++;
+		this._startOrLastMoveTime = moveTime;
 	}
 	
 	Clock.prototype._setTimeoutTimer = function() {
@@ -78,20 +75,12 @@ define(function(require) {
 		
 		this._timeoutTimer = setTimeout((function() {
 			this._timeout();
-		}).bind(this), this._timeLeft[this._activeColour]);
+		}).bind(this), this.getTimeLeft());
 	}
 	
 	Clock.prototype._timeout = function() {
-		clearTimeout(this._timeoutTimer);
-		
-		var timeLeft = this.getTimeLeft();
-		
-		if(timeLeft <= 0) {
-			this.Timeout.fire({
-				colour: this._activeColour
-			});
-			
-			this.stop();
+		if(this.getTimeLeft() <= 0) {
+			this.Timeout.fire();
 		}
 		
 		else {
@@ -99,8 +88,8 @@ define(function(require) {
 		}
 	}
 	
-	Clock.prototype.getDescription = function() {
-		return this._description;
+	Clock.prototype._getActiveColour = function() {
+		return this._game.getPosition().getActiveColour();
 	}
 	
 	return Clock;
