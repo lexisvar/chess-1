@@ -118,7 +118,7 @@ define(function(require) {
 				tokeniser.skipUntilMatches(timeRegex);
 				time = parseInt(tokeniser.readWhileMatches(timeRegex) || "0");
 				
-				if(time) {
+				if(time > 0) {
 					tokeniser.skipUntilMatches(unitsRegex);
 					units = tokeniser.readWhileMatches(unitsRegex).charAt(0).toLowerCase() || defaultUnits;
 					unitValues[units] = time;
