@@ -118,10 +118,11 @@ define(function(require) {
 				tokeniser.skipUntilMatches(timeRegex);
 				time = parseInt(tokeniser.readWhileMatches(timeRegex) || "0");
 				
-				tokeniser.skipUntilMatches(unitsRegex);
-				units = tokeniser.readWhileMatches(unitsRegex).charAt(0).toLowerCase() || defaultUnits;
-				
-				unitValues[units] = time;
+				if(time) {
+					tokeniser.skipUntilMatches(unitsRegex);
+					units = tokeniser.readWhileMatches(unitsRegex).charAt(0).toLowerCase() || defaultUnits;
+					unitValues[units] = time;
+				}
 			}
 			
 			for(var units in unitValues) {
