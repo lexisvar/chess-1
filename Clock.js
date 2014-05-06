@@ -32,7 +32,7 @@ define(function(require) {
 		var activeColour = this._getActiveColour();
 		var timeLeft = this._timeLeft[colour || activeColour];
 		
-		if(colour === activeColour) {
+		if(colour === activeColour && this._lastMoveIndex >= this._timingStyle.firstTimedMoveIndex - 1) {
 			timeLeft.add(-(time() - this._startOrLastMoveTime));
 		}
 		
