@@ -17,8 +17,8 @@ define(function(require) {
 		this._getCurrentTime = getCurrentTime || time;
 		
 		this._timeLeft = {};
-		this._timeLeft[Colour.white] = Time.fromMilliseconds(this._timingStyle.initialTime);
-		this._timeLeft[Colour.black] = Time.fromMilliseconds(this._timingStyle.initialTime);
+		this._timeLeft[Colour.white] = this._timingStyle.initialTime.getCopy();
+		this._timeLeft[Colour.black] = this._timingStyle.initialTime.getCopy();
 		
 		this._game.getHistory().forEach((function(move) {
 			this._move(move);
@@ -33,13 +33,15 @@ define(function(require) {
 		
 		colour = colour || activeColour;
 		
-		var timeLeft = this._timeLeft[colour];
+		var timeLeft = this._timeLeft[colour].getCopy();
 		
 		if(colour === activeColour && this._timingHasStarted()) {
-			timeLeft.add(-(this._getCurrentTime() - this._startOrLastMoveTime));
+			var thinkingTime = this._getCurrentTime() - this._startOrLastMoveTime;
+			
+			timeLeft.subtract(thinkingTime);
 		}
 		
-		return Time.fromMilliseconds(timeLeft);
+		return timeLeft;
 	}
 	
 	Clock.prototype.getDescription = function() {
@@ -59,7 +61,7 @@ define(function(require) {
 		var thinkingTime = moveTime - this._startOrLastMoveTime;
 		
 		if(this._timingHasStarted()) {
-			timeLeft.add(-thinkingTime);
+			timeLeft.subtract(thinkingTime);
 			timeLeft.add(this._timingStyle.increment);
 			
 			if(this._timingStyle.isOvertime && move.getFullmove() === this._timingStyle.overtimeFullmove) {
