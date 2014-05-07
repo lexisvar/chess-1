@@ -17,7 +17,7 @@ define(function(require) {
 	}
 	
 	Time.prototype.getCopy = function() {
-		return Time.fromMilliseconds(this._milliseconds);
+		return new Time(this._milliseconds);
 	}
 	
 	Time.prototype.add = function(milliseconds) {
