@@ -16,8 +16,12 @@ define(function(require) {
 		this._milliseconds = milliseconds.valueOf();
 	}
 	
-	Time.prototype.add = function(milliseconds) {
-		this._milliseconds += milliseconds;
+	Time.prototype.plus = function(milliseconds) {
+		return Time.fromMilliseconds(this._milliseconds - milliseconds);
+	}
+	
+	Time.prototype.minus = function(milliseconds) {
+		return Time.fromMilliseconds(this._milliseconds + milliseconds);
 	}
 	
 	Time.prototype.valueOf = function() {
