@@ -6,7 +6,7 @@ define(function(require) {
 	
 	var MILLISECONDS = 1000;
 	
-	function Clock(game, timingStyle) {
+	function Clock(game, timingStyle, getCurrentTime) {
 		this.Timeout = new Event(this);
 		
 		this._game = game;
@@ -14,6 +14,7 @@ define(function(require) {
 		this._timingStyle = timingStyle;
 		this._timeoutTimer = null;
 		this._startOrLastMoveTime = this._game.getStartTime() + this._timingStyle.initialDelay;
+		this._getCurrentTime = getCurrentTime || time;
 		
 		this._timeLeft = {};
 		this._timeLeft[Colour.white] = Time.fromMilliseconds(this._timingStyle.initialTime);
@@ -29,10 +30,13 @@ define(function(require) {
 	
 	Clock.prototype.getTimeLeft = function(colour) {
 		var activeColour = this._getActiveColour();
-		var timeLeft = this._timeLeft[colour || activeColour];
 		
-		if(colour === activeColour && this._lastMoveIndex >= this._timingStyle.firstTimedMoveIndex - 1) {
-			timeLeft.add(-(time() - this._startOrLastMoveTime));
+		colour = colour || activeColour;
+		
+		var timeLeft = this._timeLeft[colour];
+		
+		if(colour === activeColour && this._timingHasStarted()) {
+			timeLeft.add(-(this._getCurrentTime() - this._startOrLastMoveTime));
 		}
 		
 		return Time.fromMilliseconds(timeLeft);
@@ -54,7 +58,7 @@ define(function(require) {
 		var timeLeft = this._timeLeft[move.getColour()];
 		var thinkingTime = moveTime - this._startOrLastMoveTime;
 		
-		if(this._lastMoveIndex >= this._timingStyle.firstTimedMoveIndex - 1) {
+		if(this._timingHasStarted()) {
 			timeLeft.add(-thinkingTime);
 			timeLeft.add(this._timingStyle.increment);
 			
@@ -72,9 +76,11 @@ define(function(require) {
 			clearTimeout(this._timeoutTimer);
 		}
 		
-		this._timeoutTimer = setTimeout((function() {
-			this._timeout();
-		}).bind(this), this.getTimeLeft());
+		if(this._timingHasStarted()) {
+			this._timeoutTimer = setTimeout((function() {
+				this._timeout();
+			}).bind(this), this.getTimeLeft());
+		}
 	}
 	
 	Clock.prototype._timeout = function() {
@@ -85,6 +91,13 @@ define(function(require) {
 		else {
 			this._setTimeoutTimer();
 		}
+	}
+	
+	Clock.prototype._timingHasStarted = function() {
+		return (
+			this._lastMoveIndex >= this._timingStyle.firstTimedMoveIndex - 1
+			&& this._getCurrentTime() >= this._startOrLastMoveTime
+		);
 	}
 	
 	Clock.prototype._getActiveColour = function() {
