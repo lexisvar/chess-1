@@ -16,6 +16,18 @@ define(function(require) {
 		this._milliseconds = milliseconds.valueOf();
 	}
 	
+	Time.prototype.getCopy = function() {
+		return Time.fromMilliseconds(this._milliseconds);
+	}
+	
+	Time.prototype.add = function(milliseconds) {
+		this._milliseconds += milliseconds;
+	}
+	
+	Time.prototype.subtract = function(milliseconds) {
+		this._milliseconds -= milliseconds;
+	}
+	
 	Time.prototype.plus = function(milliseconds) {
 		return Time.fromMilliseconds(this._milliseconds - milliseconds);
 	}
