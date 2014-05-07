@@ -16,10 +16,14 @@ define(function(require) {
 	}
 	
 	TimingStyle.prototype.getDescription = function() {
-		var description = this.initialTime.getUnitString(Time.minutes);
+		var description;
 
 		if(this.increment > 0) {
-			description += "/" + this.increment.getUnitString(Time.seconds);
+			description = this.initialTime.getUnitString(Time.minutes) + "/" + this.increment.getUnitString(Time.seconds);
+		}
+		
+		else {
+			description = this.initialTime.getUnitString();
 		}
 		
 		if(this.isOvertime) {
