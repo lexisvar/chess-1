@@ -33,15 +33,15 @@ define(function(require) {
 		
 		colour = colour || activeColour;
 		
-		var timeLeft = this._timeLeft[colour].getCopy();
+		var timeLeft = this._timeLeft[colour].getMilliseconds();
 		
 		if(colour === activeColour && this._timingHasStarted()) {
 			var thinkingTime = this._getCurrentTime() - this._startOrLastMoveTime;
 			
-			timeLeft.subtract(thinkingTime);
+			timeLeft -= thinkingTime;
 		}
 		
-		return timeLeft;
+		return Time.fromMilliseconds(Math.max(0, timeLeft));
 	}
 	
 	Clock.prototype.getDescription = function() {
