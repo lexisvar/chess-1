@@ -173,7 +173,7 @@ define(function(require) {
 			}
 
 			if(this._targetPiece !== null && this._targetPiece.colour === this._colour.opposite) {
-				this._label.sign = MoveLabel.SIGN_CAPTURE;
+				this._label.sign = MoveLabel.signs.CAPTURE;
 				this._capturedPiece = this._targetPiece;
 			}
 		}
@@ -258,7 +258,7 @@ define(function(require) {
 				
 				if(isCapturing) {
 					this._label.disambiguation = this._from.file;
-					this._label.sign = MoveLabel.SIGN_CAPTURE;
+					this._label.sign = MoveLabel.signs.CAPTURE;
 
 					if(isEnPassant) {
 						this._positionAfter.setPiece(Board.getEpPawn(this._from, this._to), null);
@@ -279,7 +279,7 @@ define(function(require) {
 
 				if(isPromotion) {
 					this._positionAfter.setPiece(this._to, Piece.get(this._promoteTo, this._colour));
-					this._label.special = MoveLabel.SIGN_PROMOTE + this._promoteTo.sanString;
+					this._label.special = MoveLabel.signs.PROMOTION + this._promoteTo.sanString;
 				}
 
 				else {
@@ -337,7 +337,7 @@ define(function(require) {
 		) {
 			this._isValid = true;
 			this._isCastling = true;
-			this._label.special = (file === "a" ? MoveLabel.SIGN_CASTLE_QS : MoveLabel.SIGN_CASTLE_KS);
+			this._label.special = (file === "a" ? MoveLabel.signs.CASTLE_QUEENSIDE : MoveLabel.signs.CASTLE_KINGSIDE);
 			this._positionAfter.setPiece(this._from, null);
 			this._positionAfter.setPiece(this._to, Piece.get(PieceType.king, this._colour));
 			this._positionAfter.setPiece(rookOrigin, null);
@@ -350,7 +350,7 @@ define(function(require) {
 			this._isCheck = (this.isLegal() && this._positionAfter.playerIsInCheck(this._colour.opposite));
 
 			if(this._isCheck) {
-				this._label.check = MoveLabel.SIGN_CHECK;
+				this._label.check = MoveLabel.signs.CHECK;
 			}
 
 			this._hasCheckedForCheck = true;
@@ -362,7 +362,7 @@ define(function(require) {
 			this._isMate = (this.isLegal() && this.isCheck() && this._positionAfter.countLegalMoves(this._colour.opposite) === 0);
 
 			if(this._isMate) {
-				this._label.check = MoveLabel.SIGN_MATE;
+				this._label.check = MoveLabel.signs.MATE;
 			}
 
 			this._hasCheckedForMate = true;

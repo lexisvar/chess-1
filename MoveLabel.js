@@ -12,14 +12,16 @@ define(function(require) {
 	MoveLabel.prototype.toString = function() {
 		return this.piece + this.disambiguation + this.sign + this.to + this.special + this.check + this.notes;
 	}
-
-	MoveLabel.SIGN_CASTLE_KS = "O-O";
-	MoveLabel.SIGN_CASTLE_QS = "O-O-O";
-	MoveLabel.SIGN_CAPTURE = "x";
-	MoveLabel.SIGN_CHECK = "+";
-	MoveLabel.SIGN_MATE = "#";
-	MoveLabel.SIGN_PROMOTE = "=";
-	MoveLabel.SIGN_BUGHOUSE_DROP = "@";
+	
+	MoveLabel.signs = {
+		CASTLE_KINGSIDE: "O-O",
+		CASTLE_QUEENSIDE: "O-O-O",
+		CAPTURE: "x",
+		CHECK: "+",
+		MATE: "#",
+		PROMOTION: "=",
+		BUGHOUSE_DROP: "@"
+	};
 
 	return MoveLabel;
 });
