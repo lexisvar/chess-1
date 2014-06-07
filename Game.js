@@ -17,6 +17,7 @@ define(function(require) {
 		
 		this._options = {
 			startingFen: Fen.STARTING_FEN,
+			history: [],
 			isTimed: true,
 			initialTime: "10m",
 			timeIncrement: "0",
@@ -36,7 +37,7 @@ define(function(require) {
 		this._result = null;
 		this._position = new Position(this._options.startingFen);
 		this._startingPosition = new Position(this._options.startingFen);
-		this._history = [];
+		this._history = this._options.history.getShallowCopy();
 		
 		if(this._options.isTimed) {
 			this._clock = new Clock(this, new TimingStyle({
