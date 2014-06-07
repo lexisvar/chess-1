@@ -28,7 +28,7 @@ define(function(require, exports, module) {
 		
 		function(game) {
 			test.equal(game.getPosition().countLegalMoves(Colour.white), 20);
-			game.move(e2, e4).isMate();
+			game.move(e2, e4);
 			game.getPosition();
 			game.move(e7, e5);
 			game.move(f1, c4);
@@ -38,6 +38,21 @@ define(function(require, exports, module) {
 			var move = game.move(f3, f7);
 			
 			test.equal(move.isMate(), true);
+		},
+		
+		"threefold repetition after Nf3, Nc6, Ng1, Nb8, Nf3, Nc6, Ng1, Nb8":
+		
+		function(game) {
+			game.move(g1, f3);
+			game.move(b8, c6);
+			game.move(f3, g1);
+			game.move(c6, b8);
+			game.move(g1, f3);
+			game.move(b8, c6);
+			game.move(f3, g1);
+			game.move(c6, b8);
+			
+			test.equal(game.isThreefoldClaimable(), true);
 		}
 	};
 	

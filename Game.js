@@ -74,12 +74,17 @@ define(function(require) {
 	}
 	
 	Game.prototype.isThreefoldClaimable = function() {
-		var currentFenString = this._position.getFen();
-		var currentFen = new Fen(currentFenString);
+		var currentFen = new Fen(this._position.getFen());
+		var startingFen = new Fen(this._startingPosition.getFen());
 		var limit = 3;
 		var occurrences = 0;
 
-		if(currentFenString === this._startingPosition.getFen()) {
+		if(
+			currentFen.position === startingFen.position
+			&& currentFen.active === startingFen.active
+			&& currentFen.castling === startingFen.castling
+			&& currentFen.epTarget === startingFen.epTarget
+		) {
 			limit = 2;
 		}
 		
