@@ -35,9 +35,16 @@ define(function(require) {
 		this._startTime = time();
 		this._endTime = null;
 		this._result = null;
-		this._position = new Position(this._options.startingFen);
 		this._startingPosition = new Position(this._options.startingFen);
 		this._history = this._options.history.getShallowCopy();
+		
+		if(this._history.length > 0) {
+			this._position = this._history[this._history.length - 1].getPositionAfter();
+		}
+		
+		else {
+			this._position = new Position(this._options.startingFen);
+		}
 		
 		if(this._options.isTimed) {
 			this._clock = new Clock(this, new TimingStyle({
