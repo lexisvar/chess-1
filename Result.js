@@ -58,11 +58,11 @@ define(function(require) {
 	
 	Result.descriptions[Result.types.CHECKMATE] = "[winner] won by checkmate";
 	Result.descriptions[Result.types.RESIGNATION] = "[loser] resigned";
-	Result.descriptions[Result.types.FIFTYMOVE] = "Fifty move rule";
-	Result.descriptions[Result.types.THREEFOLD] = "Threefold repetition";
+	Result.descriptions[Result.types.FIFTYMOVE] = "draw by fifty move rule";
+	Result.descriptions[Result.types.THREEFOLD] = "draw by repetition";
 	Result.descriptions[Result.types.TIMEOUT] = "[loser] forfeit on time";
-	Result.descriptions[Result.types.INSUFFICIENT] = "Insufficient mating material";
-	Result.descriptions[Result.types.DRAW_AGREED] = "Draw agreed";
+	Result.descriptions[Result.types.INSUFFICIENT] = "insufficient mating material";
+	Result.descriptions[Result.types.DRAW_AGREED] = "draw agreed";
 	
 	return {
 		win: function(colour, type) {
