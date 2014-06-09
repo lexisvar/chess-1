@@ -40,7 +40,7 @@ define(function(require) {
 		square.adjusted[Colour.black] = squares[63 - square.squareNo];
 	});
 	
-	return {
+	var Square = {
 		fromSquareNo: function(squareNo) {
 			return squares[squareNo];
 		},
@@ -57,4 +57,10 @@ define(function(require) {
 			squares.forEach(callback);
 		}
 	};
+	
+	squares.forEach(function(square) {
+		Square[square.algebraic] = square;
+	});
+	
+	return Square;
 });
