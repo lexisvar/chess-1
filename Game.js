@@ -74,6 +74,10 @@ define(function(require) {
 		return this._isInProgress;
 	}
 	
+	Game.prototype.timingHasStarted = function() {
+		return (this._options.isTimed && this._clock.timingHasStarted());
+	}
+	
 	Game.prototype.getResult = function() {
 		return this._result;
 	}
