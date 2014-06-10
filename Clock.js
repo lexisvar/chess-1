@@ -14,6 +14,8 @@ define(function(require) {
 		this._timingStyle = timingStyle;
 		this._timeoutTimer = null;
 		this._startOrLastMoveTime = this._game.getStartTime() + this._timingStyle.initialDelay;
+		this._isRunning = true;
+		this._stopTime = null;
 		this._getCurrentTime = getCurrentTime || time;
 		
 		this._timeLeft = {};
@@ -36,12 +38,23 @@ define(function(require) {
 		var timeLeft = this._timeLeft[colour].getMilliseconds();
 		
 		if(colour === activeColour && this._timingHasStarted()) {
-			var thinkingTime = this._getCurrentTime() - this._startOrLastMoveTime;
+			var thinkingTime = (this._stopTime || this._getCurrentTime()) - this._startOrLastMoveTime;
 			
 			timeLeft -= thinkingTime;
 		}
 		
 		return Time.fromMilliseconds(Math.max(0, timeLeft));
+	}
+	
+	Clock.prototype.stop = function() {
+		if(this._isRunning) {
+			if(this._timeoutTimer !== null) {
+				clearTimeout(this._timeoutTimer);
+			}
+			
+			this._isRunning = false;
+			this._stopTime = this._getCurrentTime();
+		}
 	}
 	
 	Clock.prototype.getDescription = function() {
@@ -50,8 +63,10 @@ define(function(require) {
 	
 	Clock.prototype._handleNewMoves = function() {
 		this._game.Move.addHandler(this, function(data) {
-			this._move(data.move);
-			this._setTimeoutTimer();
+			if(this._isRunning) {
+				this._move(data.move);
+				this._setTimeoutTimer();
+			}
 		});
 	}
 	
@@ -87,6 +102,7 @@ define(function(require) {
 	
 	Clock.prototype._timeout = function() {
 		if(this.getTimeLeft() <= 0) {
+			this.stop();
 			this.Timeout.fire();
 		}
 		
