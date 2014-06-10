@@ -34,6 +34,7 @@ define(function(require) {
 
 		this._startTime = time();
 		this._endTime = null;
+		this._isInProgress = true;
 		this._result = null;
 		this._startingPosition = new Position(this._options.startingFen);
 		this._history = this._options.history.getShallowCopy();
@@ -70,7 +71,7 @@ define(function(require) {
 	}
 	
 	Game.prototype.isInProgress = function() {
-		return (this._endTime === null);
+		return this._isInProgress;
 	}
 	
 	Game.prototype.getResult = function() {
@@ -118,6 +119,10 @@ define(function(require) {
 		return this._position.getCopy();
 	}
 	
+	Game.prototype.getActiveColour = function() {
+		return this._position.getActiveColour();
+	}
+	
 	Game.prototype.getHistory = function() {
 		return this._history.getShallowCopy();
 	}
@@ -125,7 +130,7 @@ define(function(require) {
 	Game.prototype.move = function(from, to, promoteTo) {
 		var move = null;
 
-		if(this.isInProgress()) {
+		if(this._isInProgress) {
 			move = new Move(this._position, from, to, promoteTo);
 			
 			var colour = move.getColour();
@@ -159,29 +164,28 @@ define(function(require) {
 	}
 	
 	Game.prototype.resign = function(colour) {
-		this._gameOver(Result.win(colour.opposite, Result.types.RESIGNATION));
+		if(this._isInProgress) {
+			this._gameOver(Result.win(colour.opposite, Result.types.RESIGNATION));
+		}
+		
 	}
 	
 	Game.prototype.drawByAgreement = function() {
-		this._gameOver(Result.draw(Result.types.DRAW_AGREED));
+		if(this._isInProgress) {
+			this._gameOver(Result.draw(Result.types.DRAW_AGREED));
+		}
 	}
 	
 	Game.prototype.claimDraw = function() {
-		var success = true;
-		
-		if(this.isFiftymoveClaimable()) {
-			this._gameOver(Result.draw(Result.types.FIFTYMOVE));
+		if(this._isInProgress) {	
+			if(this.isFiftymoveClaimable()) {
+				this._gameOver(Result.draw(Result.types.FIFTYMOVE));
+			}
+			
+			else if(this.isThreefoldClaimable()) {
+				this._gameOver(Result.draw(Result.types.THREEFOLD));
+			}
 		}
-		
-		else if(this.isThreefoldClaimable()) {
-			this._gameOver(Result.draw(Result.types.THREEFOLD));
-		}
-		
-		else {
-			success = false;
-		}
-		
-		return success;
 	}
 	
 	Game.prototype._timeout = function() {
@@ -198,6 +202,7 @@ define(function(require) {
 
 	Game.prototype._gameOver = function(result) {
 		this._result = result;
+		this._isInProgress = false;
 		this._endTime = time();
 		
 		if(this._options.isTimed) {
