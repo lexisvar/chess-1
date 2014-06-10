@@ -37,7 +37,7 @@ define(function(require) {
 		
 		var timeLeft = this._timeLeft[colour].getMilliseconds();
 		
-		if(colour === activeColour && this._timingHasStarted()) {
+		if(colour === activeColour && this.timingHasStarted()) {
 			var thinkingTime = (this._stopTime || this._getCurrentTime()) - this._startOrLastMoveTime;
 			
 			timeLeft -= thinkingTime;
@@ -75,7 +75,7 @@ define(function(require) {
 		var timeLeft = this._timeLeft[move.getColour()];
 		var thinkingTime = moveTime - this._startOrLastMoveTime;
 		
-		if(this._timingHasStarted()) {
+		if(this.timingHasStarted()) {
 			timeLeft.subtract(thinkingTime);
 			timeLeft.add(this._timingStyle.increment);
 			
@@ -93,7 +93,7 @@ define(function(require) {
 			clearTimeout(this._timeoutTimer);
 		}
 		
-		if(this._timingHasStarted()) {
+		if(this.timingHasStarted()) {
 			this._timeoutTimer = setTimeout((function() {
 				this._timeout();
 			}).bind(this), this.getTimeLeft());
@@ -111,7 +111,7 @@ define(function(require) {
 		}
 	}
 	
-	Clock.prototype._timingHasStarted = function() {
+	Clock.prototype.timingHasStarted = function() {
 		return (
 			this._lastMoveIndex >= this._timingStyle.firstTimedMoveIndex - 1
 			&& this._getCurrentTime() >= this._startOrLastMoveTime
