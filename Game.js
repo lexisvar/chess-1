@@ -157,10 +157,7 @@ define(function(require) {
 				}
 	
 				this._history.push(move);
-				
-				this.Move.fire({
-					move: move
-				});
+				this.Move.fire(move);
 			}
 		}
 		
@@ -213,9 +210,7 @@ define(function(require) {
 			this._clock.stop();
 		}
 		
-		this.GameOver.fire({
-			result: result,
-		});
+		this.GameOver.fire(result);
 	}
 
 	return Game;
