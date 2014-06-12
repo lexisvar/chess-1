@@ -62,9 +62,9 @@ define(function(require) {
 	}
 	
 	Clock.prototype._handleNewMoves = function() {
-		this._game.Move.addHandler(this, function(data) {
+		this._game.Move.addHandler(this, function(move) {
 			if(this._isRunning) {
-				this._move(data.move);
+				this._move(move);
 				this._setTimeoutTimer();
 			}
 		});
