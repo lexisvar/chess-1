@@ -205,11 +205,6 @@ define(function(require) {
 		this._result = result;
 		this._isInProgress = false;
 		this._endTime = time();
-		
-		if(this._options.isTimed) {
-			this._clock.stop();
-		}
-		
 		this.GameOver.fire(result);
 	}
 

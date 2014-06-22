@@ -26,7 +26,7 @@ define(function(require) {
 			this._move(move);
 		}).bind(this));
 		
-		this._handleNewMoves();
+		this._handleGameEvents();
 		this._setTimeoutTimer();
 	}
 	
@@ -46,7 +46,7 @@ define(function(require) {
 		return Time.fromMilliseconds(Math.max(0, timeLeft));
 	}
 	
-	Clock.prototype.stop = function() {
+	Clock.prototype._stop = function() {
 		if(this._isRunning) {
 			if(this._timeoutTimer !== null) {
 				clearTimeout(this._timeoutTimer);
@@ -61,12 +61,16 @@ define(function(require) {
 		return this._timingStyle.getDescription();
 	}
 	
-	Clock.prototype._handleNewMoves = function() {
+	Clock.prototype._handleGameEvents = function() {
 		this._game.Move.addHandler(this, function(move) {
 			if(this._isRunning) {
 				this._move(move);
 				this._setTimeoutTimer();
 			}
+		});
+		
+		this._game.GameOver.addHandler(this, function() {
+			this._stop();
 		});
 	}
 	
