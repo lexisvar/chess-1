@@ -14,8 +14,8 @@ define(function(require) {
 		this._timingStyle = timingStyle;
 		this._timeoutTimer = null;
 		this._startOrLastMoveTime = this._game.getStartTime() + this._timingStyle.initialDelay;
-		this._stopTime = null;
 		this._isRunning = this._game.isInProgress();
+		this._stopTime = this._game.getEndTime();
 		this._getCurrentTime = getCurrentTime || time;
 		
 		this._timeLeft = {};
