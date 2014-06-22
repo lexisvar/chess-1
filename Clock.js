@@ -106,7 +106,6 @@ define(function(require) {
 	
 	Clock.prototype._timeout = function() {
 		if(this.getTimeLeft() <= 0) {
-			this.stop();
 			this.Timeout.fire();
 		}
 		
