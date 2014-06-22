@@ -97,7 +97,7 @@ define(function(require) {
 			clearTimeout(this._timeoutTimer);
 		}
 		
-		if(this.timingHasStarted()) {
+		if(this._isRunning && this.timingHasStarted()) {
 			this._timeoutTimer = setTimeout((function() {
 				this._timeout();
 			}).bind(this), this.getTimeLeft());
