@@ -124,6 +124,10 @@ define(function(require) {
 		return this._position.getCopy();
 	}
 	
+	Game.prototype.getLastMove = function() {
+		return this._history[this._history.length - 1] || null;
+	}
+	
 	Game.prototype.getActiveColour = function() {
 		return this._position.getActiveColour();
 	}
