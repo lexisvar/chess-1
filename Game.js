@@ -19,6 +19,7 @@ define(function(require) {
 			startingFen: Fen.STARTING_FEN,
 			history: [],
 			isTimed: true,
+			startTime: time(),
 			initialTime: "10m",
 			timeIncrement: "0",
 			isOvertime: false,
@@ -32,7 +33,7 @@ define(function(require) {
 			}
 		}
 
-		this._startTime = time();
+		this._startTime = this._options.startTime;
 		this._endTime = null;
 		this._isInProgress = true;
 		this._result = null;
