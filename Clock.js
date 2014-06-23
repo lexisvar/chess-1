@@ -46,6 +46,10 @@ define(function(require) {
 		return Time.fromMilliseconds(Math.max(0, timeLeft));
 	}
 	
+	Clock.prototype.addTime = function(time) {
+		this._timeLeft[this._getActiveColour()].add(time);
+	}
+	
 	Clock.prototype._stop = function() {
 		if(this._isRunning) {
 			if(this._timeoutTimer !== null) {
