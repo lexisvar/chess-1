@@ -17,15 +17,9 @@ define(function(require) {
 		this._isRunning = this._game.isInProgress();
 		this._stopTime = this._game.getEndTime();
 		this._getCurrentTime = getCurrentTime || time;
-		
 		this._timeLeft = {};
-		this._timeLeft[Colour.white] = this._timingStyle.initialTime.getCopy();
-		this._timeLeft[Colour.black] = this._timingStyle.initialTime.getCopy();
 		
-		this._game.getHistory().forEach((function(move) {
-			this._move(move);
-		}).bind(this));
-		
+		this.calculateTimes();
 		this._handleGameEvents();
 		this._setTimeoutTimer();
 	}
@@ -48,6 +42,15 @@ define(function(require) {
 	
 	Clock.prototype.addTime = function(time) {
 		this._timeLeft[this._getActiveColour()].add(time);
+	}
+	
+	Clock.prototype.calculateTimes = function() {
+		this._timeLeft[Colour.white] = this._timingStyle.initialTime.getCopy();
+		this._timeLeft[Colour.black] = this._timingStyle.initialTime.getCopy();
+		
+		this._game.getHistory().forEach((function(move) {
+			this._move(move);
+		}).bind(this));
 	}
 	
 	Clock.prototype._stop = function() {
