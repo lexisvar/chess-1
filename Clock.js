@@ -45,6 +45,8 @@ define(function(require) {
 	}
 	
 	Clock.prototype.calculateTimes = function() {
+		this._lastMoveIndex = -1;
+		this._startOrLastMoveTime = this._game.getStartTime() + this._timingStyle.initialDelay;
 		this._timeLeft[Colour.white] = this._timingStyle.initialTime.getCopy();
 		this._timeLeft[Colour.black] = this._timingStyle.initialTime.getCopy();
 		
