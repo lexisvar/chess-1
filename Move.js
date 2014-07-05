@@ -190,10 +190,6 @@ define(function(require) {
 		}
 
 		switch(this._piece.type) {
-			case PieceType.pawn: {
-				return false;
-			}
-
 			case PieceType.knight: {
 				return ((diff.x === 2 && diff.y === 1) || (diff.x === 1 && diff.y === 2));
 			}
