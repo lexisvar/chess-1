@@ -113,7 +113,7 @@ define(function(require) {
 	}
 
 	Move.prototype._check = function() {
-		if(this._piece !== null && this._piece.colour === this._colour) {
+		if(this._piece !== null && this._piece.colour === this._colour && this._isUnobstructed) {
 			if(this._piece.type === PieceType.pawn) {
 				this._checkPawnMove();
 			}
@@ -161,7 +161,7 @@ define(function(require) {
 	}
 
 	Move.prototype._checkRegularMove = function() {
-		if(this._isRegularShape() && this._isUnobstructed) {
+		if(this._isRegularShape()) {
 			this._isValid = true;
 			this._positionAfter.setPiece(this._from, null);
 			this._positionAfter.setPiece(this._to, this._positionBefore.getPiece(this._from));
@@ -217,74 +217,72 @@ define(function(require) {
 	}
 
 	Move.prototype._checkPawnMove = function() {
-		if(this._piece.type === PieceType.pawn && this._isUnobstructed) {
-			var isCapturing = this._isPawnCaptureShape();
-			var isEnPassant = false;
-			var isDouble = false;
-			var isPromotion = false;
-			var isValidPromotion = false;
+		var isCapturing = this._isPawnCaptureShape();
+		var isEnPassant = false;
+		var isDouble = false;
+		var isPromotion = false;
+		var isValidPromotion = false;
 
-			if(this._to.isPromotionRank) {
-				isPromotion = true;
-				isValidPromotion = this._promoteTo.isValidPromotion;
-			}
+		if(this._to.isPromotionRank) {
+			isPromotion = true;
+			isValidPromotion = this._promoteTo.isValidPromotion;
+		}
 
-			if(isValidPromotion || !isPromotion) {
-				if(this._targetPiece === null) {
-					if(this._isDoublePawnShape()) {
-						this._isValid = true;
-						
-						isDouble = true;
-					}
-
-					else if(this._isPawnShape()) {
-						this._isValid = true;
-					}
-
-					else if(isCapturing && this._to === this._positionBefore.getEpTarget()) {
-						this._isValid = true;
-						
-						isEnPassant = true;
-					}
+		if(isValidPromotion || !isPromotion) {
+			if(this._targetPiece === null) {
+				if(this._isDoublePawnShape()) {
+					this._isValid = true;
+					
+					isDouble = true;
 				}
 
-				else if(isCapturing) {
+				else if(this._isPawnShape()) {
 					this._isValid = true;
 				}
+
+				else if(isCapturing && this._to === this._positionBefore.getEpTarget()) {
+					this._isValid = true;
+					
+					isEnPassant = true;
+				}
 			}
 
-			if(this._isValid) {
-				this._isPromotion = isPromotion;
-				
-				if(isCapturing) {
-					this._label.disambiguation = this._from.file;
-					this._label.sign = MoveLabel.signs.CAPTURE;
+			else if(isCapturing) {
+				this._isValid = true;
+			}
+		}
 
-					if(isEnPassant) {
-						this._positionAfter.setPiece(Board.getEpPawn(this._from, this._to), null);
-						this._capturedPiece = Piece.get(PieceType.pawn, this._colour.opposite);
-					}
+		if(this._isValid) {
+			this._isPromotion = isPromotion;
+			
+			if(isCapturing) {
+				this._label.disambiguation = this._from.file;
+				this._label.sign = MoveLabel.signs.CAPTURE;
 
-					else {
-						this._capturedPiece = this._positionBefore.getPiece(this._to);
-					}
-				}
-
-				if(isDouble) {
-					this._positionAfter.setEpTarget(Board.getEpTarget(this._from, this._to));
-				}
-
-				this._label.to = this._to.algebraic;
-				this._positionAfter.setPiece(this._from, null);
-
-				if(isPromotion) {
-					this._positionAfter.setPiece(this._to, Piece.get(this._promoteTo, this._colour));
-					this._label.special = MoveLabel.signs.PROMOTION + this._promoteTo.sanString;
+				if(isEnPassant) {
+					this._positionAfter.setPiece(Board.getEpPawn(this._from, this._to), null);
+					this._capturedPiece = Piece.get(PieceType.pawn, this._colour.opposite);
 				}
 
 				else {
-					this._positionAfter.setPiece(this._to, this._positionBefore.getPiece(this._from));
+					this._capturedPiece = this._positionBefore.getPiece(this._to);
 				}
+			}
+
+			if(isDouble) {
+				this._positionAfter.setEpTarget(Board.getEpTarget(this._from, this._to));
+			}
+
+			this._label.to = this._to.algebraic;
+			this._positionAfter.setPiece(this._from, null);
+
+			if(isPromotion) {
+				this._positionAfter.setPiece(this._to, Piece.get(this._promoteTo, this._colour));
+				this._label.special = MoveLabel.signs.PROMOTION + this._promoteTo.sanString;
+			}
+
+			else {
+				this._positionAfter.setPiece(this._to, this._positionBefore.getPiece(this._from));
 			}
 		}
 	}
