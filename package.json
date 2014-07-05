@@ -1,0 +1,12 @@
+{
+	"name": "chess",
+	"description": "Chess library",
+	"author": "Gus Hogg-Blake <gus@hogg-blake.co.uk>",
+	"devDependencies": {
+		"chai": "*"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/lighsquaredev/chess.git"
+	}
+}
