@@ -325,8 +325,7 @@ define(function(require) {
 		var rookDestination = Square.fromCoords(new Coords(rookDestinationX, this._from.coords.y));
 		
 		if(
-			this._piece.type === PieceType.king
-			&& Math.abs(this._to.coords.x - this._from.coords.x) === 2
+			Math.abs(this._to.coords.x - this._from.coords.x) === 2
 			&& !this._positionBefore.moveIsBlocked(this._from, rookOrigin)
 			&& this._positionBefore.getCastlingRights(this._colour, file)
 			&& this._positionBefore.getPiece(rookOrigin) === Piece.get(PieceType.rook, this._colour)
