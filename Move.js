@@ -378,11 +378,11 @@ define(function(require) {
 
 			if(square !== this._from) {
 				if(square.file === this._from.file) {
-					disambiguation.file = this._from.file;
+					disambiguation.rank = this._from.rank;
 				}
 
 				if(square.rank === this._from.rank) {
-					disambiguation.rank = this._from.rank;
+					disambiguation.file = this._from.file;
 				}
 			}
 		}
