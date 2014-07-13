@@ -25,5 +25,6 @@ requirejs([
 	"./tests/Board",
 	"./tests/CastlingRights",
 	"./tests/Time",
-	"./tests/Game"
+	"./tests/Game",
+	"./tests/Move"
 ]);
