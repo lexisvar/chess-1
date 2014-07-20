@@ -19,6 +19,10 @@ define(function(require) {
 		this._getCurrentTime = getCurrentTime || time;
 		this._timeLeft = {};
 		
+		this._addedTime = {};
+		this._addedTime[Colour.white] = 0;
+		this._addedTime[Colour.black] = 0;
+		
 		this.calculateTimes();
 		this._handleGameEvents();
 		this._setTimeoutTimer();
@@ -37,13 +41,11 @@ define(function(require) {
 			timeLeft -= thinkingTime;
 		}
 		
-		return Time.fromMilliseconds(Math.max(0, timeLeft));
+		return Time.fromMilliseconds(Math.max(0, timeLeft + this._addedTime[colour]));
 	}
 	
 	Clock.prototype.addTime = function(time, colour) {
-		colour = colour || this._getActiveColour();
-		
-		this._timeLeft[colour].add(time);
+		this._addedTime[colour || this._getActiveColour()] += time;
 	}
 	
 	Clock.prototype.calculateTimes = function() {
