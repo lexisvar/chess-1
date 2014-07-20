@@ -40,6 +40,10 @@ define(function(require) {
 		this._startingPosition = new Position(this._options.startingFen);
 		this._history = this._options.history.getShallowCopy();
 		
+		this._addedTime = {};
+		this._addedTime[Colour.white] = 0;
+		this._addedTime[Colour.black] = 0;
+		
 		if(this._history.length > 0) {
 			this._position = this._history[this._history.length - 1].getPositionAfter();
 		}
@@ -69,6 +73,14 @@ define(function(require) {
 	
 	Game.prototype.getEndTime = function() {
 		return this._endTime;
+	}
+	
+	Game.prototype.addTime = function(colour, time) {
+		this._addedTime[colour] += time;
+	}
+	
+	Game.prototype.getAddedTime = function(colour) {
+		return this._addedTime[colour];
 	}
 	
 	Game.prototype.isInProgress = function() {
@@ -192,10 +204,6 @@ define(function(require) {
 				this._gameOver(Result.draw(Result.types.THREEFOLD));
 			}
 		}
-	}
-	
-	Game.prototype.addTimeToClock = function(time) {
-		this._clock.addTime(time);
 	}
 	
 	Game.prototype._timeout = function() {
