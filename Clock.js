@@ -37,7 +37,7 @@ define(function(require) {
 			timeLeft -= thinkingTime;
 		}
 		
-		return Time.fromMilliseconds(Math.max(0, timeLeft) + this._game.getAddedTime(colour));
+		return Time.fromMilliseconds(Math.max(0, timeLeft + this._game.getAddedTime(colour)));
 	}
 	
 	Clock.prototype.calculateTimes = function() {
