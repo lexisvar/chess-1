@@ -80,7 +80,13 @@ define(function(require) {
 	}
 	
 	Game.prototype.getAddedTime = function(colour) {
-		return this._addedTime[colour];
+		if(colour) {
+			return this._addedTime[colour];
+		}
+		
+		else {
+			return this._addedTime;
+		}
 	}
 	
 	Game.prototype.isInProgress = function() {
