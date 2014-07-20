@@ -40,8 +40,10 @@ define(function(require) {
 		return Time.fromMilliseconds(Math.max(0, timeLeft));
 	}
 	
-	Clock.prototype.addTime = function(time) {
-		this._timeLeft[this._getActiveColour()].add(time);
+	Clock.prototype.addTime = function(time, colour) {
+		colour = colour || this._getActiveColour();
+		
+		this._timeLeft[colour].add(time);
 	}
 	
 	Clock.prototype.calculateTimes = function() {

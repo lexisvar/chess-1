@@ -194,8 +194,8 @@ define(function(require) {
 		}
 	}
 	
-	Game.prototype.addTimeToClock = function(time) {
-		this._clock.addTime(time);
+	Game.prototype.addTimeToClock = function(time, colour) {
+		this._clock.addTime(time, colour);
 	}
 	
 	Game.prototype._timeout = function() {
