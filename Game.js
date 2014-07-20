@@ -194,6 +194,10 @@ define(function(require) {
 		}
 	}
 	
+	Game.prototype.addTimeToClock = function(time) {
+		this._clock.addTime(time);
+	}
+	
 	Game.prototype._timeout = function() {
 		var opponentColour = this._position.getActiveColour().opposite;
 		

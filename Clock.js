@@ -37,7 +37,11 @@ define(function(require) {
 			timeLeft -= thinkingTime;
 		}
 		
-		return Time.fromMilliseconds(Math.max(0, timeLeft + this._game.getAddedTime(colour)));
+		return Time.fromMilliseconds(Math.max(0, timeLeft));
+	}
+	
+	Clock.prototype.addTime = function(time) {
+		this._timeLeft[this._getActiveColour()].add(time);
 	}
 	
 	Clock.prototype.calculateTimes = function() {
