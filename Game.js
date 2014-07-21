@@ -57,9 +57,9 @@ define(function(require) {
 				overtimeBonus: Time.fromUnitString(this._options.overtimeBonus, Time.minutes)
 			}));
 			
-			this._clock.Timeout.addHandler(this, function() {
+			this._clock.Timeout.addHandler(function() {
 				this._timeout();
-			});
+			}, this);
 		}
 	}
 	

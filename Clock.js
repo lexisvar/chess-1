@@ -75,16 +75,16 @@ define(function(require) {
 	}
 	
 	Clock.prototype._handleGameEvents = function() {
-		this._game.Move.addHandler(this, function(move) {
+		this._game.Move.addHandler(function(move) {
 			if(this._isRunning) {
 				this._move(move);
 				this._setTimeoutTimer();
 			}
-		});
+		}, this);
 		
-		this._game.GameOver.addHandler(this, function() {
+		this._game.GameOver.addHandler(function() {
 			this._stop();
-		});
+		}, this);
 	}
 	
 	Clock.prototype._move = function(move) {
