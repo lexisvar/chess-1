@@ -79,14 +79,20 @@ define(function(require) {
 	}
 	
 	Time.prototype.getUnitString = function(defaultUnits, separator) {
+		if(separator === undefined) {
+			separator = " ";
+		}
+		
 		var remaining = Math.floor(Math.abs(this._milliseconds) / MILLISECONDS);
 		var divisor, quantity;
 		
 		var notEmpty = function(string) {
 			return (string !== "");
 		};
+		
+		var sign = (this._milliseconds < 0 ? "-" : "");
 
-		return (this._milliseconds < 0 ? "-" : "") + "ywdhms".split("").map(function(units) {
+		return sign + "ywdhms".split("").map(function(units) {
 			var string = "";
 			
 			divisor = unitMultipliers[units];
@@ -102,7 +108,7 @@ define(function(require) {
 			}
 			
 			return string;
-		}).filter(notEmpty).join(separator || "") || "0";
+		}).filter(notEmpty).join(separator) || "0";
 	}
 
 	return {
