@@ -78,9 +78,13 @@ define(function(require) {
 		return (this._milliseconds < 0 ? "-" : "") + display;
 	}
 	
-	Time.prototype.getUnitString = function(defaultUnits) {
+	Time.prototype.getUnitString = function(defaultUnits, separator) {
 		var remaining = Math.floor(Math.abs(this._milliseconds) / MILLISECONDS);
 		var divisor, quantity;
+		
+		var notEmpty = function(string) {
+			return (string !== "");
+		};
 
 		return (this._milliseconds < 0 ? "-" : "") + "ywdhms".split("").map(function(units) {
 			var string = "";
@@ -98,7 +102,7 @@ define(function(require) {
 			}
 			
 			return string;
-		}).join("") || "0";
+		}).filter(notEmpty).join(separator || "") || "0";
 	}
 
 	return {
