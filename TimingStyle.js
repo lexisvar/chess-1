@@ -19,7 +19,9 @@ define(function(require) {
 		var description;
 
 		if(this.increment > 0) {
-			description = this.initialTime.getUnitString(Time.minutes) + "/" + this.increment.getUnitString(Time.seconds);
+			description = this.initialTime.getUnitString(Time.minutes)
+				+ " / "
+				+ this.increment.getUnitString(Time.seconds);
 		}
 		
 		else {
