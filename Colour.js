@@ -12,26 +12,31 @@ define(function(require) {
 		return this.fenString;
 	}
 	
-	var colours = {
-		"w": new Colour("w"),
-		"b": new Colour("b")
-	};
+	var white = new Colour("w");
+	var black = new Colour("b");
 	
-	colours["w"].opposite = colours["b"];
-	colours["b"].opposite = colours["w"];
+	white.opposite = black;
+	black.opposite = white;
+	
+	var colours = [white, black];
+	
+	colours["w"] = white;
+	colours["b"] = black;
 
 	return {
-		white: colours["w"],
-		black: colours["b"],
+		white: white,
+		black: black,
 		
 		fromFenString: function(fenString) {
 			return colours[fenString];
 		},
 		
-		forEach: function(callback, bindTo) {
-			for(var fenString in colours) {
-				callback.bind(bindTo || this)(colours[fenString]);
-			}
+		forEach: function() {
+			colours.forEach.apply(colours, arguments);
+		},
+		
+		map: function() {
+			return colours.map.apply(colours, arguments);
 		}
 	};
 });
