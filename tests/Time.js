@@ -65,10 +65,10 @@ define(function(require, exports, module) {
 			same(Time.fromUnitString("10", Time.seconds).getUnitString(Time.minutes), "10s");
 		},
 		
-		"getUnitString() with 100 and default units of minutes is '1m40s'":
+		"getUnitString() with 100 and default units of minutes is '1m 40s'":
 		
 		function() {
-			same(Time.fromMilliseconds(100000).getUnitString(Time.minutes), "1m40s");
+			same(Time.fromMilliseconds(100000).getUnitString(Time.minutes), "1m 40s");
 		},
 		
 		"getUnitString() with 600 and default units of minutes is '10'":
@@ -95,10 +95,10 @@ define(function(require, exports, module) {
 			same(Time.fromMilliseconds(86400000).getUnitString(Time.days), "1");
 		},
 		
-		"getUnitString() with 86401 and default units 's' is '1d1'":
+		"getUnitString() with 86401 and default units 's' is '1d 1'":
 		
 		function() {
-			same(Time.fromMilliseconds(86401000).getUnitString(Time.seconds), "1d1");
+			same(Time.fromMilliseconds(86401000).getUnitString(Time.seconds), "1d 1");
 		},
 		
 		"getColonDisplay with 1000 is 0:01":
