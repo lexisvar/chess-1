@@ -75,6 +75,10 @@ define(function(require) {
 		return (this._options.isTimed ? this._clock.getTimeLeft(colour) : Infinity);
 	}
 	
+	Game.prototype.getTimingStyle = function() {
+		return (this._options.isTimed ? this._clock.getTimingStyle() : null);
+	}
+	
 	Game.prototype.isInProgress = function() {
 		return this._isInProgress;
 	}

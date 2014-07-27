@@ -134,6 +134,10 @@ define(function(require) {
 		);
 	}
 	
+	Clock.prototype.getTimingStyle = function() {
+		return this._timingStyle;
+	}
+	
 	Clock.prototype._getActiveColour = function() {
 		return this._game.getPosition().getActiveColour();
 	}
