@@ -12,6 +12,10 @@ define(function(require) {
 		return this.fenString;
 	}
 	
+	Colour.prototype.toJSON = function() {
+		return this.fenString;
+	}
+	
 	var white = new Colour("w");
 	var black = new Colour("b");
 	
