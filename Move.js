@@ -76,6 +76,10 @@ define(function(require) {
 	Move.prototype.getPromoteTo = function() {
 		return this._promoteTo;
 	}
+	
+	Move.prototype.getUciLabel = function() {
+		return this._from.algebraic + this._to.algebraic + (this._isPromotion ? this._promoteTo.sanString.toLowerCase() : "");
+	}
 
 	Move.prototype.isLegal = function() {
 		return this._isLegal;
