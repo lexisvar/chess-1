@@ -139,7 +139,7 @@ define(function(require) {
 	}
 	
 	Clock.prototype._getActiveColour = function() {
-		return this._game.getPosition().getActiveColour();
+		return this._game.getActiveColour();
 	}
 	
 	return Clock;
