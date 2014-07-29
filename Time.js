@@ -2,6 +2,7 @@ define(function(require) {
 	var Tokeniser = require("lib/Tokeniser");
 	
 	var MILLISECONDS = 1000;
+	var units = "ywdhms".split("");
 	
 	var unitMultipliers = {
 		"s": 1,
@@ -78,7 +79,7 @@ define(function(require) {
 		return (this._milliseconds < 0 ? "-" : "") + display;
 	}
 	
-	Time.prototype.getUnitString = function(defaultUnits, separator) {
+	Time.prototype.getUnitString = function(defaultUnit, separator) {
 		if(separator === undefined) {
 			separator = " ";
 		}
@@ -92,18 +93,18 @@ define(function(require) {
 		
 		var sign = (this._milliseconds < 0 ? "-" : "");
 
-		return sign + "ywdhms".split("").map(function(units) {
+		return sign + units.map(function(unit) {
 			var string = "";
 			
-			divisor = unitMultipliers[units];
+			divisor = unitMultipliers[unit];
 
 			if(remaining >= divisor) {
 				quantity = Math.floor(remaining / divisor);
 				remaining = remaining % divisor;
 				string += quantity;
 				
-				if(units !== defaultUnits || remaining > 0) {
-					string += units;
+				if(unit !== defaultUnit || remaining > 0) {
+					string += unit;
 				}
 			}
 			
@@ -123,15 +124,16 @@ define(function(require) {
 			return new Time(milliseconds);
 		},
 		
-		fromUnitString: function(unitString, defaultUnits) {
-			defaultUnits = defaultUnits || "m";
+		fromUnitString: function(unitString, defaultUnit) {
+			defaultUnit = defaultUnit || "m";
 			
 			var timeInSeconds = 0;
 			var unitsRegex = /[smhdwy]/i;
 			var timeRegex = /\d/;
 			var unitValues = {};
 			var tokeniser = new Tokeniser(unitString);
-			var time, units;
+			var time, unit;
+			var lastUnit = null;
 			
 			while(!tokeniser.isEof()) {
 				tokeniser.skipUntilMatches(timeRegex);
@@ -139,14 +141,16 @@ define(function(require) {
 				
 				if(time > 0) {
 					tokeniser.skipUntilMatches(unitsRegex);
-					units = tokeniser.readWhileMatches(unitsRegex).charAt(0).toLowerCase() || defaultUnits;
-					unitValues[units] = time;
+					unit = tokeniser.readWhileMatches(unitsRegex).charAt(0).toLowerCase();
+					unit = unit || (lastUnit ? units[units.indexOf(lastUnit) + 1] || defaultUnit : defaultUnit);
+					unitValues[unit] = time;
+					lastUnit = unit;
 				}
 			}
 			
-			for(var units in unitValues) {
-				if(units in unitMultipliers) {
-					timeInSeconds += unitValues[units] * unitMultipliers[units];
+			for(var unit in unitValues) {
+				if(unit in unitMultipliers) {
+					timeInSeconds += unitValues[unit] * unitMultipliers[unit];
 				}
 			}
 			
