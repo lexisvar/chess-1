@@ -131,6 +131,25 @@ define(function(require) {
 	Position.prototype.playerIsMated = function(colour) {
 		return (this.playerIsInCheck(colour) && this.countLegalMoves(colour) === 0);
 	}
+	
+	Position.prototype.getLegalMoves = function() {
+		var legalMoves = [];
+
+		Square.forEach((function(from) {
+			var piece = this._board.getPiece(from);
+
+			if(piece !== null && piece.colour === this._activeColour) {
+				legalMoves = legalMoves.concat(this.getLegalMovesFromSquare(from).map(function(to) {
+					return {
+						from: from,
+						to: to
+					};
+				}));
+			}
+		}).bind(this));
+
+		return legalMoves;
+	}
 
 	Position.prototype.countLegalMoves = function() {
 		var legalMoves = 0;
