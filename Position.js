@@ -132,14 +132,14 @@ define(function(require) {
 		return (this.playerIsInCheck(colour) && this.countLegalMoves(colour) === 0);
 	}
 
-	Position.prototype.countLegalMoves = function(colour) {
+	Position.prototype.countLegalMoves = function() {
 		var legalMoves = 0;
 		var piece;
 
 		Square.forEach((function(square) {
 			piece = this._board.getPiece(square);
 
-			if(piece !== null && piece.colour === colour) {
+			if(piece !== null && piece.colour === this._activeColour) {
 				legalMoves += this.getLegalMovesFromSquare(square).length;
 			}
 		}).bind(this));
