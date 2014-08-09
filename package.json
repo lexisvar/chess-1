@@ -2,11 +2,9 @@
 	"name": "chess",
 	"description": "Chess library",
 	"author": "Gus Hogg-Blake <gus@hogg-blake.co.uk>",
-	"dependencies": {
-		"requirejs": "*"
-	},
 	"devDependencies": {
-		"chai": "*"
+		"chai": "*",
+		"requirejs": "*"
 	},
 	"repository": {
 		"type": "git",
