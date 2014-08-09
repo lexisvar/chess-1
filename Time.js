@@ -1,5 +1,5 @@
 define(function(require) {
-	var Tokeniser = require("lib/Tokeniser");
+	var Tokeniser = require("tokeniser/Tokeniser");
 	
 	var MILLISECONDS = 1000;
 	var units = "ywdhms".split("");

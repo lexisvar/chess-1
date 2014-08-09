@@ -1,7 +1,7 @@
 define(function(require) {
 	var time = require("lib/time");
-	var Colour = require("./Colour");
 	var Event = require("lib/Event");
+	var Colour = require("./Colour");
 	var Time = require("./Time");
 	
 	var MILLISECONDS = 1000;
