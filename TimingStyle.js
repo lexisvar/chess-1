@@ -20,7 +20,7 @@ define(function(require) {
 
 		if(this.increment > 0) {
 			description = this.initialTime.getUnitString(Time.minutes)
-				+ " / "
+				+ " | "
 				+ this.increment.getUnitString(Time.seconds);
 		}
 		
