@@ -111,6 +111,10 @@ define(function(require) {
 			return string;
 		}).filter(notEmpty).join(separator) || "0";
 	}
+	
+	Time.prototype.toJSON = function() {
+		return this.getMilliseconds();
+	}
 
 	return {
 		seconds: "s",
