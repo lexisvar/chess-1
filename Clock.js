@@ -2,7 +2,6 @@ define(function(require) {
 	var time = require("lib/time");
 	var Event = require("lib/Event");
 	var Colour = require("./Colour");
-	var Time = require("./Time");
 	
 	var MILLISECONDS = 1000;
 	
@@ -33,7 +32,7 @@ define(function(require) {
 		
 		colour = colour || activeColour;
 		
-		var timeLeft = this._timeLeft[colour].getMilliseconds();
+		var timeLeft = this._timeLeft[colour];
 		
 		if(colour === activeColour && this.timingHasStarted()) {
 			var thinkingTime = (this._stopTime || this._getCurrentTime()) - this._startOrLastMoveTime;
@@ -41,7 +40,7 @@ define(function(require) {
 			timeLeft -= thinkingTime;
 		}
 		
-		return Time.fromMilliseconds(Math.max(0, timeLeft + this._addedTime[colour]));
+		return Math.max(0, timeLeft + this._addedTime[colour]);
 	}
 	
 	Clock.prototype.addTime = function(time, colour) {
@@ -51,8 +50,8 @@ define(function(require) {
 	Clock.prototype.calculateTimes = function() {
 		this._lastMoveIndex = -1;
 		this._startOrLastMoveTime = this._game.getStartTime() + this._timingStyle.initialDelay;
-		this._timeLeft[Colour.white] = this._timingStyle.initialTime.getCopy();
-		this._timeLeft[Colour.black] = this._timingStyle.initialTime.getCopy();
+		this._timeLeft[Colour.white] = this._timingStyle.initialTime;
+		this._timeLeft[Colour.black] = this._timingStyle.initialTime;
 		
 		this._game.getHistory().forEach((function(move) {
 			this._move(move);
@@ -93,11 +92,11 @@ define(function(require) {
 		var thinkingTime = moveTime - this._startOrLastMoveTime;
 		
 		if(this.timingHasStarted()) {
-			timeLeft.subtract(thinkingTime);
-			timeLeft.add(this._timingStyle.increment);
+			timeLeft -= thinkingTime;
+			timeLeft += this._timingStyle.increment;
 			
 			if(this._timingStyle.isOvertime && move.getFullmove() === this._timingStyle.overtimeFullmove) {
-				timeLeft.add(this._timingStyle.overtimeBonus);
+				timeLeft += this._timingStyle.overtimeBonus;
 			}
 		}
 		

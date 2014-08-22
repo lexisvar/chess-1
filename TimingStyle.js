@@ -3,7 +3,7 @@ define(function(require) {
 	
 	function TimingStyle(options) {
 		this.initialTime = Time.fromUnitString("10m");
-		this.increment = Time.fromMilliseconds(0);
+		this.increment = 0;
 		this.isOvertime = false;
 		this.overtimeFullmove = 40;
 		this.overtimeBonus = Time.fromUnitString("10m");
@@ -17,19 +17,21 @@ define(function(require) {
 	
 	TimingStyle.prototype.getDescription = function() {
 		var description;
+		var initialTime = Time.fromMilliseconds(this.initialTime);
+		var increment = Time.fromMilliseconds(this.increment);
 
 		if(this.increment > 0) {
-			description = this.initialTime.getUnitString(Time.minutes)
+			description = initialTime.getUnitString(Time.minutes)
 				+ " | "
-				+ this.increment.getUnitString(Time.seconds);
+				+ increment.getUnitString(Time.seconds);
 		}
 		
 		else {
-			description = this.initialTime.getUnitString();
+			description = initialTime.getUnitString();
 		}
 		
 		if(this.isOvertime) {
-			description += this.overtimeBonus.getUnitString(Time.minutes) + " @ move " + this.overtimeFullmove;
+			description += Time.fromMilliseconds(this.overtimeBonus).getUnitString(Time.minutes) + " @ move " + this.overtimeFullmove;
 		}
 
 		return description;

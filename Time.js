@@ -33,6 +33,10 @@ define(function(require) {
 		return this._milliseconds;
 	}
 	
+	Time.prototype.toJSON = function() {
+		return this._milliseconds;
+	}
+	
 	Time.prototype.getMilliseconds = function() {
 		return this._milliseconds;
 	}
@@ -110,10 +114,6 @@ define(function(require) {
 			
 			return string;
 		}).filter(notEmpty).join(separator) || "0";
-	}
-	
-	Time.prototype.toJSON = function() {
-		return this.getMilliseconds();
 	}
 
 	return {
