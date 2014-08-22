@@ -88,7 +88,8 @@ define(function(require) {
 	
 	Clock.prototype._move = function(move) {
 		var moveTime = move.getTime();
-		var timeLeft = this._timeLeft[move.getColour()];
+		var colour = move.getColour();
+		var timeLeft = this._timeLeft[colour];
 		var thinkingTime = moveTime - this._startOrLastMoveTime;
 		
 		if(this.timingHasStarted()) {
@@ -100,6 +101,7 @@ define(function(require) {
 			}
 		}
 		
+		this._timeLeft[colour] = timeLeft;
 		this._lastMoveIndex++;
 		this._startOrLastMoveTime = moveTime;
 	}
