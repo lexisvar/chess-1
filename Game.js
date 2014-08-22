@@ -20,11 +20,11 @@ define(function(require) {
 			history: [],
 			isTimed: true,
 			startTime: time(),
-			initialTime: "10m",
-			timeIncrement: "0",
+			initialTime: Time.fromUnitString("10m"),
+			timeIncrement: 0,
 			isOvertime: false,
 			overtimeFullmove: 40,
-			overtimeBonus: "10m"
+			overtimeBonus: Time.fromUnitString("10m")
 		};
 		
 		if(options) {
@@ -50,11 +50,11 @@ define(function(require) {
 		
 		if(this._options.isTimed) {
 			this._clock = new Clock(this, new TimingStyle({
-				initialTime: Time.fromUnitString(this._options.initialTime, Time.minutes),
-				increment: Time.fromUnitString(this._options.timeIncrement, Time.seconds),
+				initialTime: this._options.initialTime,
+				increment: this._options.timeIncrement,
 				isOvertime: this._options.isOvertime,
 				overtimeFullmove: this._options.overtimeFullmove,
-				overtimeBonus: Time.fromUnitString(this._options.overtimeBonus, Time.minutes)
+				overtimeBonus: this._options.overtimeBonus
 			}));
 			
 			this._clock.Timeout.addHandler(function() {
