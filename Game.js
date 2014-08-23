@@ -20,11 +20,11 @@ define(function(require) {
 			history: [],
 			isTimed: true,
 			startTime: time(),
-			initialTime: Time.fromUnitString("10m"),
+			initialTime: 1000 * 60 * 10,
 			timeIncrement: 0,
 			isOvertime: false,
 			overtimeFullmove: 40,
-			overtimeBonus: Time.fromUnitString("10m")
+			overtimeBonus: 1000 * 60 * 10
 		};
 		
 		if(options) {

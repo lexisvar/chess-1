@@ -2,11 +2,11 @@ define(function(require) {
 	var Time = require("./Time");
 	
 	function TimingStyle(options) {
-		this.initialTime = Time.fromUnitString("10m");
+		this.initialTime = 1000 * 60 * 10;
 		this.increment = 0;
 		this.isOvertime = false;
 		this.overtimeFullmove = 40;
-		this.overtimeBonus = Time.fromUnitString("10m");
+		this.overtimeBonus = 1000 * 60 * 10;
 		this.firstTimedMoveIndex = 2;
 		this.initialDelay = 0;
 		
