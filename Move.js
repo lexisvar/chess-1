@@ -319,6 +319,7 @@ define(function(require) {
 
 	Move.prototype._checkCastlingMove = function() {
 		var file = (this._to.squareNo < this._from.squareNo ? "a" : "h");
+		var homeRankY = (this._colour === Colour.white ? 0 : 7);
 		var rookOriginX = (file === "a" ? 0 : 7);
 		var rookDestinationX = (file === "a" ? 3 : 5);
 		var rookOrigin = Square.fromCoords(new Coords(rookOriginX, this._from.coords.y));
@@ -326,6 +327,8 @@ define(function(require) {
 		
 		if(
 			Math.abs(this._to.coords.x - this._from.coords.x) === 2
+			&& this._from.coords.y === homeRankY
+			&& this._to.coords.y === homeRankY
 			&& !this._positionBefore.moveIsBlocked(this._from, rookOrigin)
 			&& this._positionBefore.getCastlingRights(this._colour, file)
 			&& this._positionBefore.getPiece(rookOrigin) === Piece.get(PieceType.rook, this._colour)
