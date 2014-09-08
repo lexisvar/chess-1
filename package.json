@@ -1,5 +1,6 @@
 {
 	"name": "chess",
+	"version": "0.1",
 	"description": "Chess library",
 	"author": "Gus Hogg-Blake <gus@hogg-blake.co.uk>",
 	"devDependencies": {
