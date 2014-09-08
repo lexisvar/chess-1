@@ -1,6 +1,6 @@
 define(function(require) {
-	var Event = require("lib/Event");
-	var time = require("lib/time");
+	var Event = require("js/Event");
+	var time = require("js/time");
 	require("Array.prototype/getShallowCopy");
 	var Position = require("./Position");
 	var Colour = require("./Colour");

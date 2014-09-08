@@ -3,6 +3,11 @@
 	"version": "1.0.0",
 	"description": "Chess library",
 	"author": "Gus Hogg-Blake <gus@hogg-blake.co.uk>",
+	"dependencies": {
+		"tokeniser": "git://github.com/gushogg-blake/tokeniser.git",
+		"Array.prototype": "git://github.com/gushogg-blake/Array.prototype.git",
+		"js": "git://github.com/gushogg-blake/js.git"
+	},
 	"devDependencies": {
 		"chai": "*",
 		"requirejs": "*"

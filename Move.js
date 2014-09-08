@@ -1,5 +1,5 @@
 define(function(require) {
-	var time = require("lib/time");
+	var time = require("js/time");
 	var Colour = require("./Colour");
 	var PieceType = require("./PieceType");
 	var Piece = require("./Piece");
