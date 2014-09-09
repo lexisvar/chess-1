@@ -35,6 +35,14 @@ supplying the callback is if you have a function that returns an estimate of the
 current time on a server, and you want a chess-playing client to reflect the server's
 time situation as accurately as possible.
 
+####Colour
+
+All code that deals with colours deals with instances of this class, which is closed
+behind the module interface.  To get a Colour, use `Colour.fromFenString` passing
+`"w"` or `"b"`, or `Colour.white` or `Colour.black`.  There are exactly two instances of
+the Colour class at any one time, so you can be sure that `colourA === colourB` if they
+are the same colour.
+
 ###Module format
 
 This library can be used on the browser and in node, but the modules are only
