@@ -78,7 +78,7 @@ application developer.
 
 ####Move
 
-Represents a move.  The Game history is an array of Moves.  A Move takes a Position, from Square, to Square
+Represents a move.  The Game history is an array of Moves.  A Move takes a starting Position, from Square, to Square,
 and optional promotion PieceType.  It has methods for
 checking whether it is legal, whether it's a capture move, a castling move, a promotion
 move etc, and for getting the Position that results from making the move.  For illegal moves,
