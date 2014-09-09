@@ -50,7 +50,7 @@ property, which is either `"w"` or `"b"`.
 
 An object with `x`, `y` and `isOnBoard`.  This is used for calculations which are easier
 to do with numeric coordinate pairs than other square representations (algebraic etc).  The
-x/y properties refer to the rank and file of a square -- x goes from 0-7 ("a" - "h") and y goes
+x/y properties refer to the file and rank of a square -- x goes from 0-7 ("a" - "h") and y goes
 from 0-7 ("1" - "8").  `isOnBoard` indicates whether the coordinate pair is within the bounds
 of a normal chessboard.
 
