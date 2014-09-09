@@ -112,6 +112,14 @@ Note - from now on I'll refer to the attributes above (exact amount at any time,
 object identity guarantee, and no direct access to the constructor outside the module) under
 the term "value objects".
 
+####PieceType
+
+Value object representing the different types of piece (Pawn, Knight, Bishop, Rook,
+Queen, King).  The `type` property on Pieces refers to an instance of PieceType.
+
+PieceType has properties for getting the value (1 for pawns up to 9 for queens and
+Infinity for kings), the FEN representations for each colour and the SAN string.
+
 ###Module format
 
 This library can be used on the browser and in node, but the modules are only
