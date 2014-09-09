@@ -120,6 +120,20 @@ Queen, King).  The `type` property on Pieces refers to an instance of PieceType.
 PieceType has properties for getting the value (1 for pawns up to 9 for queens and
 `Infinity` for kings), the FEN representations for each colour and the SAN string.
 
+####Position
+
+Represents a position, with all the same information as a FEN or X-FEN string.
+
+Position has methods for getting a list of all the possible moves in that position,
+and checking whether a player is in check/checkmate.
+
+There are public methods for setting things like the current en-passant square
+and the active colour, so any classes that deal with Positions should be careful
+not to pass out references to Positions which shouldn't be modified by other code.
+For example, `Game.getPosition` returns a copy to ensure that the Game's internal position stays
+consistent no matter what the calling code does with its position.  Position provides
+`getCopy()` for this purpose.
+
 ###Module format
 
 This library can be used on the browser and in node, but the modules are only
