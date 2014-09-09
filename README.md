@@ -54,6 +54,16 @@ x/y properties refer to the file and rank of a square -- x goes from 0-7 ("a" - 
 from 0-7 ("1" - "8").  `isOnBoard` indicates whether the coordinate pair is within the bounds
 of a normal chessboard.
 
+####Fen
+
+Represents a FEN string.  This module basically takes a FEN string and splits it on
+the space character, and exposes each field as a property.  It also has static methods
+for converting between FEN positions and arrays of Pieces, and holds some FEN-related constants.
+
+Not all code that deals with FEN strings uses the Fen module -- Colour deals with the FEN
+representations of colours, for example, but just hard-codes `"w"` and `"b"`.  This seems
+acceptable given the stability, wide acceptance and obvious meaning of the strings.
+
 ###Module format
 
 This library can be used on the browser and in node, but the modules are only
