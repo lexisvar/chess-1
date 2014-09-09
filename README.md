@@ -43,6 +43,9 @@ behind the module interface.  To get a Colour, use `Colour.fromFenString` passin
 the Colour class at any one time, so you can be sure that `colourA === colourB` if they
 are the same colour.
 
+Colours have a `name` property, which is either `"white"` or `"black"`, and a `fenString`
+property, which is either `"w"` or `"b"`.
+
 ###Module format
 
 This library can be used on the browser and in node, but the modules are only
