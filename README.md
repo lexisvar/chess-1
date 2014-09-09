@@ -16,7 +16,7 @@ anything else about the position.  Used in the Position class, which holds all
 the same information as a FEN string.
 
 This class also has methods for detecting certain things about a position which
-can be known only from looking at the board, for example, whether a move from one square
+can be known just from looking at the board, for example, whether a move from one square
 to another is blocked, or what squares a pawn could theoretically move to from
 a given square.
 
