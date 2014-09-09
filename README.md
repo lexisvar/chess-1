@@ -90,6 +90,25 @@ code responsible for implementing the rules pertaining to individual moves (lega
 effects on the position), whereas Game handles rules regarding the aggregate of moves
 and the overall game (repetition rules, stalemate, etc).
 
+####MoveLabel
+
+A utility class for building up the label of a move, e.g. "e8=Q#".  Move uses it
+to build the move labels by setting its properties (`piece` is the "N" in "Nb3";
+`disambiguation` is the "8" in "R8d7", etc), and its toString just concatenates
+all the properties in the right order.
+
+####Piece
+
+Represents a piece (as a certain type and colour as opposed to a specific piece
+in a specific position).  There are exactly twelve Piece instances at any one time,
+and the class is closed behind the module interface -- use `get(PieceType, Colour)`
+or `fromFenString` to obtain Pieces.  `pieceA === pieceB` if they're the same type
+and colour.
+
+Note - from now on I'll refer to the attributes above (exact amount at any time,
+object identity guarantee, and no direct access to the constructor outside the module) under
+the term "value objects".
+
 ###Module format
 
 This library can be used on the browser and in node, but the modules are only
