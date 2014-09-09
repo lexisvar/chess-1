@@ -134,6 +134,29 @@ For example, `Game.getPosition` returns a copy to ensure that the Game's interna
 consistent no matter what the calling code does with its position.  Position provides
 `getCopy()` for this purpose.
 
+####Result
+
+Represents a result, holding all the information about the result of a Game
+which has reached a win/loss/draw, as opposed to being in-progress or aborted.
+
+Result is closed behind the module interface, which exposes the methods
+`win` (get a winning result given a winning colour and a type), `draw` (get
+a draw result given a type), and the result type constants under `types`.
+
+The `type` property is set to one of the `Result.types` constants.
+The other properties contain useful details about the result, such as
+the scores (0, 0.5 or 1) indexed by colour and the score summary string
+("1-0" etc).
+
+Example:
+
+```
+var result = Result.win(Colour.white, Result.types.CHECKMATE);
+
+result.scores[Colour.white]; //1
+result.description; //"white won by checkmate"
+```
+
 ###Module format
 
 This library can be used on the browser and in node, but the modules are only
