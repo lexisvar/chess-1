@@ -118,7 +118,7 @@ Value object representing the different types of piece (Pawn, Knight, Bishop, Ro
 Queen, King).  The `type` property on Pieces refers to an instance of PieceType.
 
 PieceType has properties for getting the value (1 for pawns up to 9 for queens and
-Infinity for kings), the FEN representations for each colour and the SAN string.
+`Infinity` for kings), the FEN representations for each colour and the SAN string.
 
 ###Module format
 
