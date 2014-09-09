@@ -46,6 +46,14 @@ are the same colour.
 Colours have a `name` property, which is either `"white"` or `"black"`, and a `fenString`
 property, which is either `"w"` or `"b"`.
 
+####Coords
+
+An object with `x`, `y` and `isOnBoard`.  This is used for calculations which are easier
+to do with numeric coordinate pairs than other square representations (algebraic etc).  The
+x/y properties refer to the rank and file of a square -- x goes from 0-7 ("a" - "h") and y goes
+from 0-7 ("1" - "8").  `isOnBoard` indicates whether the coordinate pair is within the bounds
+of a normal chessboard.
+
 ###Module format
 
 This library can be used on the browser and in node, but the modules are only
