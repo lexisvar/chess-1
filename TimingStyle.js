@@ -31,7 +31,7 @@ define(function(require) {
 		}
 		
 		if(this.isOvertime) {
-			description += Time.fromMilliseconds(this.overtimeBonus).getUnitString(Time.minutes) + " @ move " + this.overtimeFullmove;
+			description += " + " + Time.fromMilliseconds(this.overtimeBonus).getUnitString(Time.minutes) + " @ move " + this.overtimeFullmove;
 		}
 
 		return description;
