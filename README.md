@@ -76,6 +76,20 @@ etc, are application-specific and likely to vary widely with the different
 uses of the library, so their implementation is left entirely up to the
 application developer.
 
+####Move
+
+Represents a move.  The Game history is an array of Moves.  A Move takes a Position, from Square, to Square
+and optional promotion PieceType.  It has methods for
+checking whether it is legal, whether it's a capture move, a castling move, a promotion
+move etc, and for getting the Position that results from making the move.  For illegal moves,
+the resulting Position is the same as the original position.
+
+Most of the logic for checking legality and calculating the effect of a move on the
+position is in private methods on the Move class -- Move can be considered the top-level
+code responsible for implementing the rules pertaining to individual moves (legality and
+effects on the position), whereas Game handles rules regarding the aggregate of moves
+and the overall game (repetition rules, stalemate, etc).
+
 ###Module format
 
 This library can be used on the browser and in node, but the modules are only
