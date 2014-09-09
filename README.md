@@ -191,6 +191,15 @@ manipulating the underlying time value.
 `valueOf` returns the milliseconds, so an instance of the Time class can be
 used in some calculations that expect a quantity of time in milliseconds.
 
+####TimingStyle
+
+TimingStyles describe the time controls of a game in detail, including:
+
+- how much time each player starts with
+- how much time is added after each move
+- when timing starts
+- overtime (an extra period of time added after a certain move)
+
 ###Module format
 
 This library can be used on the browser and in node, but the modules are only
