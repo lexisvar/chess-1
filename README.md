@@ -64,6 +64,18 @@ Not all code that deals with FEN strings uses the Fen module -- Colour deals wit
 representations of colours, for example, but just hard-codes `"w"` and `"b"`.  This seems
 acceptable given the stability, wide acceptance and obvious meaning of the strings.
 
+####Game
+
+Represents a chess game.  Has methods to make moves, get the current Position, etc.
+Game fires an event when a move is made and when the game ends.
+
+All the details and functionality related to a game of chess is here,
+except for information about the players and ratings, which aren't dealt
+with at all in this library.  The concepts of players, ratings, tournaments,
+etc, are application-specific and likely to vary widely with the different
+uses of the library, so their implementation is left entirely up to the
+application developer.
+
 ###Module format
 
 This library can be used on the browser and in node, but the modules are only
