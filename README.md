@@ -178,6 +178,19 @@ a1.adjusted[Colour.black].algebraic; //"h8"
 This is useful for calculations that depend on directionality based on colour, e.g.
 checking that a pawn is moving "forwards".
 
+####Time
+
+Represents an amount of time, as opposed to a point in time.  This module has
+functionality for reading a human-readable description of a time control, e.g.
+`"10m 5s"`, and converting it to milliseconds (605000 in this case).
+
+Instances of the Time class have methods for converting back to various
+human-readable representations, e.g. "10m" or "10:00", as well as methods for
+manipulating the underlying time value.
+
+`valueOf` returns the milliseconds, so an instance of the Time class can be
+used in some calculations that expect a quantity of time in milliseconds.
+
 ###Module format
 
 This library can be used on the browser and in node, but the modules are only
