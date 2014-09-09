@@ -200,6 +200,13 @@ TimingStyles describe the time controls of a game in detail, including:
 - when timing starts
 - overtime (an extra period of time added after a certain move)
 
+Clock accepts a TimingStyle.  Wrapping up the various options into an object
+like this reduces the number of parameters the Clock constructor would need to
+take, or the different setters it would need.
+
+TimingStyle also has a method for getting a human-readable description of the
+time control, e.g. `"1h30 | 30 + 30m @ 40 moves"`.
+
 ###Module format
 
 This library can be used on the browser and in node, but the modules are only
