@@ -157,6 +157,27 @@ result.scores[Colour.white]; //1
 result.description; //"white won by checkmate"
 ```
 
+####Square
+
+Value object representing the squares on the board.  As with Colours and Pieces,
+they are closed behind methods for retrieving them based on common representations
+(`fromAlgebraic` etc) and have properties containing other representations and
+useful information about them.
+
+Square objects also have an `adjusted` property which contains Squares indexed
+by colour.  Under "w" is a reference to the Square itself, and under "b" is a
+reference to the square's opposite.  For example:
+
+```
+var a1 = Square.fromAlgebraic("a1");
+
+a1.adjusted[Colour.white].algebraic; //"a1"
+a1.adjusted[Colour.black].algebraic; //"h8"
+```
+
+This is useful for calculations that depend on directionality based on colour, e.g.
+checking that a pawn is moving "forwards".
+
 ###Module format
 
 This library can be used on the browser and in node, but the modules are only
