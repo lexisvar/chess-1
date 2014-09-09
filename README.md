@@ -105,6 +105,9 @@ and the class is closed behind the module interface -- use `get(PieceType, Colou
 or `fromFenString` to obtain Pieces.  `pieceA === pieceB` if they're the same type
 and colour.
 
+All pieces in the library are represented by instances of this class.  It has
+properties for getting the FEN representation, type and colour etc.
+
 Note - from now on I'll refer to the attributes above (exact amount at any time,
 object identity guarantee, and no direct access to the constructor outside the module) under
 the term "value objects".
