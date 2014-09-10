@@ -4,12 +4,7 @@ var requirejs = require("requirejs");
 var fs = require("fs");
 
 requirejs.config({
-	nodeRequire: require,
-	paths: {
-		"lib": "/home/gus/projects/js",
-		"Array.prototype": "/home/gus/projects/Array.prototype",
-		"tokeniser": "/home/gus/projects/tokeniser"
-	}
+	nodeRequire: require
 });
 
 var testsDir = "./tests";
