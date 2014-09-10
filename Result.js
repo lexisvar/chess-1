@@ -3,11 +3,12 @@ define(function(require) {
 	
 	function Result(result, type) {
 		this.winner = null;
-		this.isDraw = true;
+		this.isDraw = (result === Result.DRAW);
 		this.scores = {};
 		this.type = type;
+		this.description = Result.descriptions[this.type][this.isDraw ? "draw" : "win"];
 		
-		if(result === Result.DRAW) {
+		if(this.isDraw) {
 			this.summary = "\u00bd-\u00bd";
 			this.scores[Colour.white] = 0.5;
 			this.scores[Colour.black] = 0.5;
@@ -34,8 +35,6 @@ define(function(require) {
 				);
 			}
 		}
-		
-		this.description = Result.descriptions[this.type][this.isDraw ? "draw" : "win"];
 	}
 	
 	Result.prototype.toString = function() {
