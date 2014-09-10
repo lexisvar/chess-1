@@ -10,7 +10,8 @@
 	},
 	"devDependencies": {
 		"chai": "*",
-		"requirejs": "*"
+		"requirejs": "*",
+		"amdefine": "*"
 	},
 	"repository": {
 		"type": "git",
