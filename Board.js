@@ -154,67 +154,45 @@ define(function(require) {
 	
 	Board.prototype.playerCanMate = function(colour) {
 		var pieces = {};
-		var knights = {};
 		var bishops = {};
+		var knights = {};
 
-		pieces[Colour.white] = 0;
-		pieces[Colour.black] = 0;
-		knights[Colour.white] = 0;
-		knights[Colour.black] = 0;
-		bishops[Square.colours.DARK] = 0;
-		bishops[Square.colours.LIGHT] = 0;
+		pieces[PieceType.knight] = 0;
+		pieces[PieceType.bishop] = 0;
 		bishops[Colour.white] = 0;
 		bishops[Colour.black] = 0;
-		
-		var pieces = {};
-		
-		PieceType.forEach(function(type) {
-			Colour.forEach(function(colour) {
-				pieces[Piece.get(type, colour)] = 0;
-			});
-		});
+		knights[Colour.white] = 0;
+		knights[Colour.black] = 0;
 
-		Square.forEach((function(square) {
-			var piece = this._board[square];
+		var piece;
+
+		for(var square = 0; square < 64; square++) {
+			piece = this._board[square];
 
 			if(piece !== null && piece.type !== PieceType.king) {
 				if(
 					piece.colour === colour
-					&& [
-						PieceType.pawn,
-						PieceType.rook,
-						PieceType.queen
-					].indexOf(piece.type) !== -1
+					&& ([PieceType.pawn, PieceType.rook, PieceType.queen].indexOf(piece.type) !== -1)
 				) {
 					return true;
 				}
-				
-				pieces[piece.colour]++;
 
 				if(piece.type === PieceType.bishop) {
-					bishops[square.colour]++;
 					bishops[piece.colour]++;
+					pieces[PieceType.bishop]++;
 				}
 
 				if(piece.type === PieceType.knight) {
 					knights[piece.colour]++;
+					pieces[PieceType.knight]++;
 				}
 			}
-		}).bind(this));
+		}
 
 		return (
-			(
-				bishops[colour] > 0
-				&& (
-					bishops[Square.colours.LIGHT] > 0
-					&& bishops[Square.colours.DARK] > 0
-				) || (
-					pieces[colour.opposite] > bishops[colour.opposite]
-				)
-			) || (
-				knights[colour] > 0
-				&& pieces[colour.opposite] > 0
-			)
+			(bishops[Colour.white] > 0 && bishops[Colour.black] > 0)
+			|| (pieces[PieceType.bishop] > 0 && pieces[PieceType.knight] > 0)
+			|| (pieces[PieceType.knight] > 2 && knights[colour] > 0)
 		);
 	}
 	
