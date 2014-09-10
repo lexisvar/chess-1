@@ -14,7 +14,13 @@ define(function(require) {
 		this.isPromotionRank = (this.rank === "1" || this.rank === "8");
 		this.adjusted = {};
 		this.adjusted[Colour.white] = this;
+		this.colour = (this.coords.x % 2 === this.coords.y % 2 ? Square.colours.DARK : Square.colours.LIGHT);
 	}
+	
+	Square.colours = {
+		DARK: "dark",
+		LIGHT: "light"
+	};
 	
 	var squares = [];
 	var squaresByAlgebraic = {};
@@ -55,7 +61,9 @@ define(function(require) {
 		
 		forEach: function(callback) {
 			squares.forEach(callback);
-		}
+		},
+		
+		colours: Square.colours
 	};
 	
 	squares.forEach(function(square) {
