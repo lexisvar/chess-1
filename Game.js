@@ -214,7 +214,7 @@ define(function(require) {
 		}
 		
 		else {
-			this._gameOver(Result.draw(Result.types.INSUFFICIENT));
+			this._gameOver(Result.draw(Result.types.TIMEOUT));
 		}
 	}
 
