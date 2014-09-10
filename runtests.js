@@ -7,6 +7,8 @@ requirejs.config({
 	nodeRequire: require
 });
 
+require("amdefine/intercept");
+
 var testsDir = "./tests";
 
 //requirejs(fs.readdirSync(testsDir).map(function(filename) {
@@ -18,5 +20,6 @@ requirejs([
 	"./tests/CastlingRights",
 	"./tests/Time",
 	"./tests/Game",
-	"./tests/Move"
+	"./tests/Move",
+	"./tests/Square"
 ]);
