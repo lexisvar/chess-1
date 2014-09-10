@@ -6,7 +6,6 @@ define(function(require) {
 		this.isDraw = true;
 		this.scores = {};
 		this.type = type;
-		this.description = Result.descriptions[this.type];
 		
 		if(result === Result.DRAW) {
 			this.summary = "\u00bd-\u00bd";
@@ -35,6 +34,8 @@ define(function(require) {
 				);
 			}
 		}
+		
+		this.description = Result.descriptions[this.type][this.isDraw ? "draw" : "win"];
 	}
 	
 	Result.prototype.toString = function() {
@@ -60,9 +61,20 @@ define(function(require) {
 	Result.descriptions[Result.types.RESIGNATION] = "[loser] resigned";
 	Result.descriptions[Result.types.FIFTYMOVE] = "draw by fifty move rule";
 	Result.descriptions[Result.types.THREEFOLD] = "draw by repetition";
-	Result.descriptions[Result.types.TIMEOUT] = "[loser] forfeit on time";
 	Result.descriptions[Result.types.INSUFFICIENT] = "insufficient mating material";
 	Result.descriptions[Result.types.DRAW_AGREED] = "draw agreed";
+	
+	for(var type in Result.descriptions) {
+		Result.descriptions[type] = {
+			win: Result.descriptions[type],
+			draw: Result.descriptions[type]
+		};
+	}
+	
+	Result.descriptions[Result.types.TIMEOUT] = {
+		win: "[loser] forfeit on time",
+		draw: "insufficient mating material"
+	};
 	
 	return {
 		win: function(colour, type) {
