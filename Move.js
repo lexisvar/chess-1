@@ -26,7 +26,10 @@ define(function(require) {
 
 		this._label = new MoveLabel();
 		this._isCastling = false;
+		this._castlingRookOrigin = null;
+		this._castlingRookDestination = null;
 		this._isPromotion = false;
+		this._isEnPassant = false;
 
 		this._isUnobstructed = (
 			!this._positionBefore.moveIsBlocked(this._from, this._to)
@@ -68,12 +71,24 @@ define(function(require) {
 		return this._isCastling;
 	}
 	
+	Move.prototype.getCastlingRookOrigin = function() {
+		return this._castlingRookOrigin;
+	}
+	
+	Move.prototype.getCastlingRookDestination = function() {
+		return this._castlingRookDestination;
+	}
+	
 	Move.prototype.isPromotion = function() {
 		return this._isPromotion;
 	}
 	
 	Move.prototype.getPromoteTo = function() {
 		return this._promoteTo;
+	}
+	
+	Move.prototype.isEnPassant = function() {
+		return this._isEnPassant;
 	}
 	
 	Move.prototype.getUciLabel = function() {
@@ -253,6 +268,7 @@ define(function(require) {
 
 		if(this._isValid) {
 			this._isPromotion = isPromotion;
+			this._isEnPassant = isEnPassant;
 			
 			if(isCapturing) {
 				this._label.disambiguation = this._from.file;
@@ -336,6 +352,8 @@ define(function(require) {
 		) {
 			this._isValid = true;
 			this._isCastling = true;
+			this._castlingRookOrigin = rookOrigin,
+			this._castlingRookDestination = rookDestination;
 			this._label.special = (file === "a" ? MoveLabel.signs.CASTLE_QUEENSIDE : MoveLabel.signs.CASTLE_KINGSIDE);
 			this._positionAfter.setPiece(this._from, null);
 			this._positionAfter.setPiece(this._to, Piece.get(PieceType.king, this._colour));
