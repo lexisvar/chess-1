@@ -91,6 +91,10 @@ define(function(require) {
 		return this._isEnPassant;
 	}
 	
+	Move.prototype.getEpTarget = function() {
+		return this._positionBefore.getEpTarget();
+	}
+	
 	Move.prototype.getUciLabel = function() {
 		return this._from.algebraic + this._to.algebraic + (this._isPromotion ? this._promoteTo.sanString.toLowerCase() : "");
 	}
