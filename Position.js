@@ -16,13 +16,7 @@ define(function(require) {
 		this._fiftymoveClock = 0;
 		this._fullmove = 1;
 
-		if(fen) {
-			this.setFen(fen);
-		}
-
-		else {
-			this.setFen(Fen.STARTING_FEN);
-		}
+		this.setFen(fen || Fen.STARTING_FEN);
 	}
 	
 	Position.prototype.getBoardArray = function() {
