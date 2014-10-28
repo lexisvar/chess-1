@@ -28,9 +28,7 @@ define(function(require) {
 	});
 
 	return {
-		get: function(type, colour) {
-			return pieces[type][colour];
-		},
+		pieces: pieces,
 		
 		fromFenString: function(fenString) {
 			return piecesByFenString[fenString];

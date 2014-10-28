@@ -42,33 +42,16 @@ define(function(require) {
 		}
 	}
 	
-	squares.forEach(function(square) {
-		square.adjusted[Colour.black] = squares[63 - square.squareNo];
-	});
+	for(var i = 0; i < 64; i++) {
+		squares[i].adjusted[Colour.black] = squares[63 - i];
+	}
 	
 	var Square = {
-		fromSquareNo: function(squareNo) {
-			return squares[squareNo];
-		},
-		
-		fromAlgebraic: function(algebraic) {
-			return squaresByAlgebraic[algebraic];
-		},
-		
-		fromCoords: function(coords) {
-			return squaresByCoords[coords.x][coords.y];
-		},
-		
-		forEach: function(callback) {
-			squares.forEach(callback);
-		},
-		
-		colours: Square.colours
+		colours: Square.colours,
+		bySquareNo: squares,
+		byAlgebraic: squaresByAlgebraic,
+		byCoords: squaresByCoords
 	};
-	
-	squares.forEach(function(square) {
-		Square[square.algebraic] = square;
-	});
 	
 	return Square;
 });
