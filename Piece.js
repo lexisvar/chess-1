@@ -29,9 +29,6 @@ define(function(require) {
 
 	return {
 		pieces: pieces,
-		
-		fromFenString: function(fenString) {
-			return piecesByFenString[fenString];
-		}
+		byFenString: piecesByFenString
 	};
 });
