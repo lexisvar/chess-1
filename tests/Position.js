@@ -53,25 +53,25 @@ define(function(require, exports, module) {
 		"rook moves jumping over pawns in start position are blocked":
 		
 		function(position) {
-			test.equal(board.moveIsBlocked(a1, a3), true);
-			test.equal(board.moveIsBlocked(h1, h3), true);
-			test.equal(board.moveIsBlocked(a8, a6), true);
-			test.equal(board.moveIsBlocked(h8, h6), true);
+			test.equal(position.moveIsBlocked(a1, a3), true);
+			test.equal(position.moveIsBlocked(h1, h3), true);
+			test.equal(position.moveIsBlocked(a8, a6), true);
+			test.equal(position.moveIsBlocked(h8, h6), true);
 		},
 		
 		"e2e4 is not blocked":
 		
 		function(position) {
-			test.equal(board.moveIsBlocked(e2, e4), false);
+			test.equal(position.moveIsBlocked(e2, e4), false);
 		},
 		
 		"knight moves are not blocked":
 		
 		function(position) {
-			test.equal(board.moveIsBlocked(b1, c3), false);
-			test.equal(board.moveIsBlocked(b1, a3), false);
-			test.equal(board.moveIsBlocked(g1, f3), false);
-			test.equal(board.moveIsBlocked(g1, h3), false);
+			test.equal(position.moveIsBlocked(b1, c3), false);
+			test.equal(position.moveIsBlocked(b1, a3), false);
+			test.equal(position.moveIsBlocked(g1, f3), false);
+			test.equal(position.moveIsBlocked(g1, h3), false);
 		},
 		
 		"en passant pawn is e4 for ep capture from d4 to e3":
