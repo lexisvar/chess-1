@@ -11,7 +11,7 @@ define(function(require) {
 		this.board = getInitialBoard();
 		this.castlingRights = {K: true, Q: true, k: true, q: true};
 		this.activeColour = Colour.white;
-		this.epTarget = epTarget || null;
+		this.epTarget = null;
 		this.fiftymoveClock = 0;
 		this.fullmove = 1;
 		this.kingPositions = {w: Square.byAlgebraic.e1, b: Square.byAlgebraic.e8};
@@ -255,8 +255,8 @@ define(function(require) {
 		var lower = Math.min(a.squareNo, b.squareNo);
 		var upper = Math.max(a.squareNo, b.squareNo);
 
-		a = Square.fromSquareNo(lower);
-		b = Square.fromSquareNo(upper);
+		a = Square.bySquareNo[lower];
+		b = Square.bySquareNo[upper];
 
 		var coordsDifference = {
 			x: Math.abs(b.coords.x - a.coords.x),
@@ -279,7 +279,7 @@ define(function(require) {
 			increment = difference / distanceInSquares;
 			
 			for(var squareNo = a.squareNo + increment; squareNo < b.squareNo; squareNo += increment) {
-				squares.push(Square.fromSquareNo(squareNo));
+				squares.push(Square.bySquareNo[squareNo]);
 			}
 			
 			if(inclusive) {
