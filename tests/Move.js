@@ -6,9 +6,9 @@ define(function(require, exports, module) {
 	
 	console.log("\033[1m" + module.id + "\033[0m");
 	
-	Square.forEach(function(square) {
-		global[square.algebraic] = square;
-	});
+	for(var i = 0; i < 64; i++) {
+		global[Square.bySquareNo[i].algebraic] = Square.bySquareNo[i];
+	}
 	
 	var tests = {
 		"disambiguation: rook on a1, rook on a3, a1-a2 label is R1a2":
