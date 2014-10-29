@@ -17,6 +17,7 @@ var testsDir = "./tests";
 
 requirejs([
 	"./tests/CastlingRights",
+	"./tests/Position",
 	"./tests/Time",
 	"./tests/Game",
 	"./tests/Move",
