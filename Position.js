@@ -263,7 +263,7 @@ define(function(require) {
 			y: Math.abs(b.coords.y - a.coords.y)
 		};
 		
-		var difference = b.squareNo - a.squareNo;
+		var difference = upper - lower;
 		var distanceInSquares = 0;
 		var increment;
 		
