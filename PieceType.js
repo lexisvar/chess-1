@@ -40,9 +40,7 @@ define(function(require) {
 		queen: types["Q"],
 		king: types["K"],
 		
-		fromSanString: function(sanString) {
-			return types[sanString];
-		},
+		bySanString: types,
 		
 		forEach: function(callback) {
 			for(var sanString in types) {
