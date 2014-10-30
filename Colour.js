@@ -31,9 +31,7 @@ define(function(require) {
 		white: white,
 		black: black,
 		
-		fromFenString: function(fenString) {
-			return colours[fenString];
-		},
+		byFenString: colours,
 		
 		forEach: function() {
 			colours.forEach.apply(colours, arguments);

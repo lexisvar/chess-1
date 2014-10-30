@@ -121,7 +121,7 @@ define(function(require) {
 
 	Position.prototype.getPawnAttackers = function(square, colour) {
 		var attackers = [];
-		var piece = Piece.get(PieceType.pawn, colour);
+		var piece = Piece.pieces[PieceType.pawn][colour];
 		var candidateSquare;
 		var coords;
 
@@ -142,7 +142,7 @@ define(function(require) {
 
 	Position.prototype.getKingAttackers = function(square, colour) {
 		var attackers = [];
-		var piece = Piece.get(PieceType.king, colour);
+		var piece = Piece.pieces[PieceType.king][colour];
 		var coords, candidateSquare;
 
 		for(var x = -1; x <= 1; x++) {

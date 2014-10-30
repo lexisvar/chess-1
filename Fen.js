@@ -52,7 +52,7 @@ define(function(require) {
 				fenChar = ranks[i].charAt(j);
 
 				if(fenChar.match(/[pnbrqk]/i)) {
-					board.push(Piece.fromFenString(fenChar));
+					board.push(Piece.byFenString[fenChar]);
 				}
 
 				else if(fenChar.match(/\d/)) {
