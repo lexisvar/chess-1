@@ -17,6 +17,10 @@ define(function(require) {
 		this.colour = (this.coords.x % 2 === this.coords.y % 2 ? Square.colours.DARK : Square.colours.LIGHT);
 	}
 	
+	Square.prototype.tosSring = function() {
+		return this.algebraic;
+	}
+	
 	Square.colours = {
 		DARK: "dark",
 		LIGHT: "light"
