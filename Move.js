@@ -58,29 +58,16 @@ define(function(require) {
 		this._isValid = false;
 		this.isLegal = false;
 
-		this._isCheck = false;
-		this._isMate = false;
+		this.isCheck = null;
+		this.isMate = null;
 		this._hasCheckedForCheck = false;
 		this._hasCheckedForMate = false;
 
 		this._check();
 	}
 
-	Move.prototype.isCheck = function() {
-		this._checkForCheck();
-
-		return this._isCheck;
-	}
-
-	Move.prototype.isMate = function() {
-		this._checkForMate();
-
-		return this._isMate;
-	}
-
 	Move.prototype.getLabel = function() {
-		this._checkForCheck();
-		this._checkForMate();
+		this.checkCheckAndMate();
 
 		return ""
 			+ this._label.piece
@@ -90,6 +77,11 @@ define(function(require) {
 			+ this._label.special
 			+ this._label.check
 			+ this._label.notes;
+	}
+	
+	Move.prototype.checkCheckAndMate = function() {
+		this._checkCheck();
+		this._checkMate();
 	}
 
 	Move.prototype.getFullLabel = function() {
@@ -336,11 +328,11 @@ define(function(require) {
 		}
 	}
 
-	Move.prototype._checkForCheck = function() {
+	Move.prototype._checkCheck = function() {
 		if(!this._hasCheckedForCheck) {
-			this._isCheck = (this.isLegal && this.positionAfter.playerIsInCheck(this.colour.opposite));
+			this.isCheck = (this.isLegal && this.positionAfter.playerIsInCheck(this.colour.opposite));
 
-			if(this._isCheck) {
+			if(this.isCheck) {
 				this._label.check = signs.CHECK;
 			}
 
@@ -348,11 +340,13 @@ define(function(require) {
 		}
 	}
 
-	Move.prototype._checkForMate = function() {
+	Move.prototype._checkMate = function() {
+		this._checkCheck();
+		
 		if(!this._hasCheckedForMate) {
-			this._isMate = (this.isLegal && this.isCheck() && this.positionAfter.countLegalMoves() === 0);
+			this.isMate = (this.isLegal && this.isCheck && this.positionAfter.countLegalMoves() === 0);
 
-			if(this._isMate) {
+			if(this.isMate) {
 				this._label.check = signs.MATE;
 			}
 
