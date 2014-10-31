@@ -3,8 +3,17 @@ define(function(require) {
 	var Colour = require("./Colour");
 	var PieceType = require("./PieceType");
 	var Piece = require("./Piece");
-	var MoveLabel = require("./MoveLabel");
 	var Square = require("./Square");
+	
+	var signs = {
+		CASTLE_KINGSIDE: "O-O",
+		CASTLE_QUEENSIDE: "O-O-O",
+		CAPTURE: "x",
+		CHECK: "+",
+		MATE: "#",
+		PROMOTION: "=",
+		BUGHOUSE_DROP: "@"
+	};
 
 	function Move(position, from, to, promoteTo) {
 		this.positionBefore = position.getCopy();
@@ -23,7 +32,16 @@ define(function(require) {
 		this._fromRelative = this.from.adjusted[this.colour];
 		this._toRelative = this.to.adjusted[this.colour];
 
-		this._label = new MoveLabel();
+		this._label = {
+			piece: "",
+			disambiguation: "",
+			sign: "",
+			to: "",
+			special: "",
+			check: "",
+			notes: ""
+		};
+		
 		this.uciLabel = "";
 		
 		this.isCastling = false;
@@ -64,7 +82,14 @@ define(function(require) {
 		this._checkForCheck();
 		this._checkForMate();
 
-		return this._label.toString();
+		return ""
+			+ this._label.piece
+			+ this._label.disambiguation
+			+ this._label.sign
+			+ this._label.to
+			+ this._label.special
+			+ this._label.check
+			+ this._label.notes;
 	}
 
 	Move.prototype.getFullLabel = function() {
@@ -107,13 +132,19 @@ define(function(require) {
 				}
 
 				if(this.piece.type === PieceType.king || this.isCastling) {
-					"abcdefgh".split("").forEach((function(file) {
-						this.positionAfter.setCastlingRights(this.colour, file, false);
-					}).bind(this));
+					this.positionAfter.setCastlingRights(this.colour, PieceType.king, false);
+					this.positionAfter.setCastlingRights(this.colour, PieceType.queen, false);
 				}
 
 				else if(this.piece.type === PieceType.rook) {
-					this.positionAfter.setCastlingRights(this.colour, this.from.file, false);
+					if(
+						(this.from.file === "a" || this.from.file === "h")
+						&& this.from.adjusted[this.colour].x === 0
+					) {
+						var side = (this.from.file === "a" ? PieceType.queen : PieceType.king);
+						
+						this.positionAfter.setCastlingRights(this.colour, side, false);
+					}
 				}
 				
 				this.uciLabel = this.from.algebraic + this.to.algebraic + (this.isPromotion ? this.promoteTo.sanString.toLowerCase() : "");
@@ -134,7 +165,7 @@ define(function(require) {
 			}
 
 			if(this._targetPiece !== null && this._targetPiece.colour === this.colour.opposite) {
-				this._label.sign = MoveLabel.signs.CAPTURE;
+				this._label.sign = signs.CAPTURE;
 				this.capturedPiece = this._targetPiece;
 			}
 		}
@@ -215,7 +246,7 @@ define(function(require) {
 			
 			if(isCapturing) {
 				this._label.disambiguation = this.from.file;
-				this._label.sign = MoveLabel.signs.CAPTURE;
+				this._label.sign = signs.CAPTURE;
 
 				if(isEnPassant) {
 					this.positionAfter.setPiece(Position.getEpPawn(this.from, this.to), null);
@@ -236,7 +267,7 @@ define(function(require) {
 
 			if(isPromotion) {
 				this.position.setPiece(this.to, Piece.pieces[this.promoteTo][this.colour]);
-				this._label.special = MoveLabel.signs.PROMOTION + this.promoteTo.sanString;
+				this._label.special = signs.PROMOTION + this.promoteTo.sanString;
 			}
 
 			else {
@@ -297,7 +328,7 @@ define(function(require) {
 			this.isCastling = true;
 			this.castlingRookOrigin = rookOrigin,
 			this.castlingRookDestination = rookDestination;
-			this._label.special = (file === "a" ? MoveLabel.signs.CASTLE_QUEENSIDE : MoveLabel.signs.CASTLE_KINGSIDE);
+			this._label.special = (file === "a" ? signs.CASTLE_QUEENSIDE : signs.CASTLE_KINGSIDE);
 			this.positionAfter.setPiece(this.from, null);
 			this.positionAfter.setPiece(this.to, Piece.pieces[PieceType.king][this.colour]);
 			this.positionAfter.setPiece(rookOrigin, null);
@@ -310,7 +341,7 @@ define(function(require) {
 			this._isCheck = (this.isLegal && this.positionAfter.playerIsInCheck(this.colour.opposite));
 
 			if(this._isCheck) {
-				this._label.check = MoveLabel.signs.CHECK;
+				this._label.check = signs.CHECK;
 			}
 
 			this._hasCheckedForCheck = true;
@@ -322,7 +353,7 @@ define(function(require) {
 			this._isMate = (this.isLegal && this.isCheck() && this.positionAfter.countLegalMoves() === 0);
 
 			if(this._isMate) {
-				this._label.check = MoveLabel.signs.MATE;
+				this._label.check = signs.MATE;
 			}
 
 			this._hasCheckedForMate = true;
