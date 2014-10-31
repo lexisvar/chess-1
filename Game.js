@@ -15,7 +15,6 @@ define(function(require) {
 		this.Move = new Event(this);
 		
 		this._options = {
-			startingFen: Fen.STARTING_FEN,
 			history: [],
 			isTimed: true,
 			startTime: time(),
@@ -36,7 +35,7 @@ define(function(require) {
 		this.endTime = null;
 		this.isInProgress = true;
 		this.result = null;
-		this.startingPosition = new Position(this._options.startingFen); //FIXME not starting fen.  probs just remove the startingFen option.
+		this.startingPosition = new Position();
 		this.history = this._options.history.slice();
 		
 		if(this.history.length > 0) {
@@ -46,8 +45,6 @@ define(function(require) {
 		else {
 			this.position = new Position(this._options.startingFen);
 		}
-		
-		//FIXME fix code to use game.position.activeColour instead of game.activeColour
 		
 		if(this._options.isTimed) {
 			this._clock = new Clock(this, new TimingStyle({
@@ -81,37 +78,15 @@ define(function(require) {
 	}
 	
 	Game.prototype.isThreefoldClaimable = function() {
-		//FIXME do this without using FENs
-		var currentFen = new Fen(this.position.getFen());
-		var startingFen = new Fen(this.startingPosition.getFen());
-		var limit = 3;
 		var occurrences = 0;
-
-		if(
-			currentFen.position === startingFen.position
-			&& currentFen.active === startingFen.active
-			&& currentFen.castling === startingFen.castling
-			&& currentFen.epTarget === startingFen.epTarget
-		) {
-			limit = 2;
-		}
 		
-		var fen;
-
-		this.history.forEach(function(move) {
-			fen = new Fen(move.positionAfter.getFen());
-			
-			if(
-				fen.position === currentFen.position
-				&& fen.active === currentFen.active
-				&& fen.castling === currentFen.castling
-				&& fen.epTarget === currentFen.epTarget
-			) {
+		for(var i = 0; i < this.history.length; i++) {
+			if(this.position.isThreefoldRepeatOf(this.history[i].positionAfter)) {
 				occurrences++;
 			}
-		});
+		}
 
-		return (occurrences >= limit);
+		return (occurrences >= 3);
 	}
 	
 	Game.prototype.getLastMove = function() {
@@ -124,10 +99,10 @@ define(function(require) {
 		if(this.isInProgress) {
 			move = new Move(this.position, from, to, promoteTo);
 			
-			var colour = move.getColour();
+			var colour = move.colour;
 			
-			if(move.isLegal()) {
-				this.position = move.positionAfter;
+			if(move.isLegal) {
+				this.position = move.positionAfter.getCopy();
 	
 				if(move.isMate()) {
 					this._gameOver(Result.win(colour, Result.types.CHECKMATE));
