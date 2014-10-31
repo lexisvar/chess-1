@@ -17,12 +17,30 @@ define(function(require) {
 		this.kingPositions = {w: Square.byAlgebraic.e1, b: Square.byAlgebraic.e8};
 	}
 	
-	Position.prototype.setCastlingRights = function(colour, file, allow) {
-		//TODO
+	Position.prototype.isThreefoldRepeatOf = function(position) {
+		if(
+			position.epTarget !== this.epTarget
+			|| position.activeColour !== this.activeColour
+			|| JSON.stringify(position.castlingRights) !== JSON.stringify(this.castlingRights)
+		) {
+			return false;
+		}
+		
+		for(var i = 0; i < 64; i++) {
+			if(position.board[i] !== this.board[i]) {
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	Position.prototype.setCastlingRights = function(colour, side, allow) {
+		this.castlingRights[Piece.pieces[side][colour].fenString] = allow;
 	}
 	
 	Position.prototype.getCastlingRights = function(colour, file) {
-		//TODO
+		return this.castlingRights[Piece.pieces[side][colour].fenString];
 	}
 	
 	Position.prototype.setPiece = function(square, piece) {
