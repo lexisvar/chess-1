@@ -152,7 +152,7 @@ define(function(require) {
 				else if(this.piece.type === PieceType.rook) {
 					if(
 						(this.from.file === "a" || this.from.file === "h")
-						&& this.from.adjusted[this.colour].x === 0
+						&& this.from.adjusted[this.colour].coords.x === 0
 					) {
 						var side = (this.from.file === "a" ? PieceType.queen : PieceType.king);
 						
