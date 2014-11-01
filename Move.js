@@ -29,6 +29,8 @@ define(function(require) {
 
 		this.colour = this.position.activeColour;
 		this.fullmove = position.fullmove;
+		this.index = (this.fullmove - 1) * 2 + (this.colour === Colour.black ? 1 : 0);
+		
 		this._fromRelative = this.from.adjusted[this.colour];
 		this._toRelative = this.to.adjusted[this.colour];
 
@@ -42,11 +44,15 @@ define(function(require) {
 			notes: ""
 		};
 		
+		this.label = "";
+		this.fullLabel = "";
 		this.uciLabel = "";
+		this._hasLabels = false;
 		
 		this.isCastling = false;
-		this.castlingRookOrigin = null;
-		this.castlingRookDestination = null;
+		this.castlingRookFrom = null;
+		this.castlingRookTo = null;
+		this.castlingRightsLost = [];
 		this.isPromotion = false;
 		this.isEnPassant = false;
 
@@ -65,27 +71,38 @@ define(function(require) {
 
 		this._check();
 	}
-
-	Move.prototype.getLabel = function() {
-		this.checkCheckAndMate();
-
-		return ""
-			+ this._label.piece
-			+ this._label.disambiguation
-			+ this._label.sign
-			+ this._label.to
-			+ this._label.special
-			+ this._label.check
-			+ this._label.notes;
-	}
 	
 	Move.prototype.checkCheckAndMate = function() {
 		this._checkCheck();
 		this._checkMate();
 	}
-
-	Move.prototype.getFullLabel = function() {
-		return this.fullmove + (this.colour === Colour.white ? "." : "...") + " " + this.getLabel();
+	
+	Move.prototype.generateLabels = function() {
+		if(!this._hasLabels) {
+			this._checkCheckAndMate();
+			
+			if(this.isMate) {
+				this._label.check = signs.MATE;
+			}
+			
+			else if(this.isCheck) {
+				this._label.check = signs.CHECK;
+			}
+			
+			this.label = ""
+				+ this._label.piece
+				+ this._label.disambiguation
+				+ this._label.sign
+				+ this._label.to
+				+ this._label.special
+				+ this._label.check
+				+ this._label.notes;
+			
+			this.fullLabel = ""
+				+ this.fullmove
+				+ (this.colour === Colour.white ? "." : "...") + " " 
+				+ this.label;
+		}
 	}
 
 	Move.prototype._check = function() {
@@ -123,9 +140,10 @@ define(function(require) {
 					this.positionAfter.epTarget = null;
 				}
 
-				if(this.piece.type === PieceType.king || this.isCastling) {
+				if(this.piece.type === PieceType.king) {
 					this.positionAfter.setCastlingRights(this.colour, PieceType.king, false);
 					this.positionAfter.setCastlingRights(this.colour, PieceType.queen, false);
+					this.castlingRightsLost = [PieceType.king, PieceType.queen];
 				}
 
 				else if(this.piece.type === PieceType.rook) {
@@ -136,10 +154,14 @@ define(function(require) {
 						var side = (this.from.file === "a" ? PieceType.queen : PieceType.king);
 						
 						this.positionAfter.setCastlingRights(this.colour, side, false);
+						this.castlingRightsLost = [side];
 					}
 				}
 				
-				this.uciLabel = this.from.algebraic + this.to.algebraic + (this.isPromotion ? this.promoteTo.sanString.toLowerCase() : "");
+				this.uciLabel = ""
+					+ this.from.algebraic
+					+ this.to.algebraic
+					+ (this.isPromotion ? this.promoteTo.sanString.toLowerCase() : "");
 			}
 		}
 	}
@@ -318,8 +340,8 @@ define(function(require) {
 		) {
 			this._isValid = true;
 			this.isCastling = true;
-			this.castlingRookOrigin = rookOrigin,
-			this.castlingRookDestination = rookDestination;
+			this.castlingRookFrom = rookOrigin,
+			this.castlingRookTo = rookDestination;
 			this._label.special = (file === "a" ? signs.CASTLE_QUEENSIDE : signs.CASTLE_KINGSIDE);
 			this.positionAfter.setPiece(this.from, null);
 			this.positionAfter.setPiece(this.to, Piece.pieces[PieceType.king][this.colour]);
@@ -331,11 +353,6 @@ define(function(require) {
 	Move.prototype._checkCheck = function() {
 		if(!this._hasCheckedForCheck) {
 			this.isCheck = (this.isLegal && this.positionAfter.playerIsInCheck(this.colour.opposite));
-
-			if(this.isCheck) {
-				this._label.check = signs.CHECK;
-			}
-
 			this._hasCheckedForCheck = true;
 		}
 	}
@@ -345,11 +362,6 @@ define(function(require) {
 		
 		if(!this._hasCheckedForMate) {
 			this.isMate = (this.isLegal && this.isCheck && this.positionAfter.countLegalMoves() === 0);
-
-			if(this.isMate) {
-				this._label.check = signs.MATE;
-			}
-
 			this._hasCheckedForMate = true;
 		}
 	}
