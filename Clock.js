@@ -10,7 +10,7 @@ define(function(require) {
 		
 		this._game = game;
 		this._lastMoveIndex = -1;
-		this._timingStyle = timingStyle;
+		this.timingStyle = timingStyle;
 		this._timeoutTimer = null;
 		this._startOrLastMoveTime = this._game.startTime + this._timingStyle.initialDelay;
 		this._isRunning = this._game.isInProgress;
@@ -28,7 +28,7 @@ define(function(require) {
 	}
 	
 	Clock.prototype.getTimeLeft = function(colour) {
-		var activeColour = this._activeColour;
+		var activeColour = this._game.position.activeColour;
 		
 		colour = colour || activeColour;
 		
@@ -44,7 +44,7 @@ define(function(require) {
 	}
 	
 	Clock.prototype.addTime = function(time, colour) {
-		this._addedTime[colour || this._activeColour] += time;
+		this._addedTime[colour || this._game.position.activeColour] += time;
 	}
 	
 	Clock.prototype.calculateTimes = function() {
@@ -96,7 +96,7 @@ define(function(require) {
 			timeLeft -= thinkingTime;
 			timeLeft += this._timingStyle.increment;
 			
-			if(this._timingStyle.isOvertime && move.getFullmove() === this._timingStyle.overtimeFullmove) {
+			if(this._timingStyle.isOvertime && move.fullmove === this._timingStyle.overtimeFullmove) {
 				timeLeft += this._timingStyle.overtimeBonus;
 			}
 		}
@@ -133,14 +133,6 @@ define(function(require) {
 			this._lastMoveIndex >= this._timingStyle.firstTimedMoveIndex - 1
 			&& this._getCurrentTime() >= this._startOrLastMoveTime
 		);
-	}
-	
-	Clock.prototype.getTimingStyle = function() {
-		return this._timingStyle;
-	}
-	
-	Clock.prototype._getActiveColour = function() {
-		return this._game.activeColour;
 	}
 	
 	return Clock;
