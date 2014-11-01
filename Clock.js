@@ -12,7 +12,7 @@ define(function(require) {
 		this._lastMoveIndex = -1;
 		this.timingStyle = timingStyle;
 		this._timeoutTimer = null;
-		this._startOrLastMoveTime = this._game.startTime + this._timingStyle.initialDelay;
+		this._startOrLastMoveTime = this._game.startTime + this.timingStyle.initialDelay;
 		this._isRunning = this._game.isInProgress;
 		this._stopTime = this._game.endTime;
 		this._getCurrentTime = getCurrentTime || time;
@@ -49,9 +49,9 @@ define(function(require) {
 	
 	Clock.prototype.calculateTimes = function() {
 		this._lastMoveIndex = -1;
-		this._startOrLastMoveTime = this._game.startTime + this._timingStyle.initialDelay;
-		this._timeLeft[Colour.white] = this._timingStyle.initialTime;
-		this._timeLeft[Colour.black] = this._timingStyle.initialTime;
+		this._startOrLastMoveTime = this._game.startTime + this.timingStyle.initialDelay;
+		this._timeLeft[Colour.white] = this.timingStyle.initialTime;
+		this._timeLeft[Colour.black] = this.timingStyle.initialTime;
 		
 		this._game.history.forEach((function(move) {
 			this._move(move);
@@ -70,7 +70,7 @@ define(function(require) {
 	}
 	
 	Clock.prototype.getDescription = function() {
-		return this._timingStyle.getDescription();
+		return this.timingStyle.getDescription();
 	}
 	
 	Clock.prototype._handleGameEvents = function() {
@@ -94,10 +94,10 @@ define(function(require) {
 		
 		if(this.timingHasStarted()) {
 			timeLeft -= thinkingTime;
-			timeLeft += this._timingStyle.increment;
+			timeLeft += this.timingStyle.increment;
 			
-			if(this._timingStyle.isOvertime && move.fullmove === this._timingStyle.overtimeFullmove) {
-				timeLeft += this._timingStyle.overtimeBonus;
+			if(this.timingStyle.isOvertime && move.fullmove === this.timingStyle.overtimeFullmove) {
+				timeLeft += this.timingStyle.overtimeBonus;
 			}
 		}
 		
@@ -130,7 +130,7 @@ define(function(require) {
 	
 	Clock.prototype.timingHasStarted = function() {
 		return (
-			this._lastMoveIndex >= this._timingStyle.firstTimedMoveIndex - 1
+			this._lastMoveIndex >= this.timingStyle.firstTimedMoveIndex - 1
 			&& this._getCurrentTime() >= this._startOrLastMoveTime
 		);
 	}
