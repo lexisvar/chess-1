@@ -10,11 +10,11 @@ define(function(require) {
 		
 		this._game = game;
 		this._lastMoveIndex = -1;
-		this._timingStyle = timingStyle;
+		this.timingStyle = timingStyle;
 		this._timeoutTimer = null;
-		this._startOrLastMoveTime = this._game.getStartTime() + this._timingStyle.initialDelay;
-		this._isRunning = this._game.isInProgress();
-		this._stopTime = this._game.getEndTime();
+		this._startOrLastMoveTime = this._game.startTime + this.timingStyle.initialDelay;
+		this._isRunning = this._game.isInProgress;
+		this._stopTime = this._game.endTime;
 		this._getCurrentTime = getCurrentTime || time;
 		this._timeLeft = {};
 		
@@ -28,7 +28,7 @@ define(function(require) {
 	}
 	
 	Clock.prototype.getTimeLeft = function(colour) {
-		var activeColour = this._getActiveColour();
+		var activeColour = this._game.position.activeColour;
 		
 		colour = colour || activeColour;
 		
@@ -44,16 +44,16 @@ define(function(require) {
 	}
 	
 	Clock.prototype.addTime = function(time, colour) {
-		this._addedTime[colour || this._getActiveColour()] += time;
+		this._addedTime[colour || this._game.position.activeColour] += time;
 	}
 	
 	Clock.prototype.calculateTimes = function() {
 		this._lastMoveIndex = -1;
-		this._startOrLastMoveTime = this._game.getStartTime() + this._timingStyle.initialDelay;
-		this._timeLeft[Colour.white] = this._timingStyle.initialTime;
-		this._timeLeft[Colour.black] = this._timingStyle.initialTime;
+		this._startOrLastMoveTime = this._game.startTime + this.timingStyle.initialDelay;
+		this._timeLeft[Colour.white] = this.timingStyle.initialTime;
+		this._timeLeft[Colour.black] = this.timingStyle.initialTime;
 		
-		this._game.getHistory().forEach((function(move) {
+		this._game.history.forEach((function(move) {
 			this._move(move);
 		}).bind(this));
 	}
@@ -70,7 +70,7 @@ define(function(require) {
 	}
 	
 	Clock.prototype.getDescription = function() {
-		return this._timingStyle.getDescription();
+		return this.timingStyle.getDescription();
 	}
 	
 	Clock.prototype._handleGameEvents = function() {
@@ -87,17 +87,17 @@ define(function(require) {
 	}
 	
 	Clock.prototype._move = function(move) {
-		var moveTime = move.getTime();
-		var colour = move.getColour();
+		var moveTime = move.time;
+		var colour = move.colour;
 		var timeLeft = this._timeLeft[colour];
 		var thinkingTime = moveTime - this._startOrLastMoveTime;
 		
 		if(this.timingHasStarted()) {
 			timeLeft -= thinkingTime;
-			timeLeft += this._timingStyle.increment;
+			timeLeft += this.timingStyle.increment;
 			
-			if(this._timingStyle.isOvertime && move.getFullmove() === this._timingStyle.overtimeFullmove) {
-				timeLeft += this._timingStyle.overtimeBonus;
+			if(this.timingStyle.isOvertime && move.fullmove === this.timingStyle.overtimeFullmove) {
+				timeLeft += this.timingStyle.overtimeBonus;
 			}
 		}
 		
@@ -130,17 +130,9 @@ define(function(require) {
 	
 	Clock.prototype.timingHasStarted = function() {
 		return (
-			this._lastMoveIndex >= this._timingStyle.firstTimedMoveIndex - 1
+			this._lastMoveIndex >= this.timingStyle.firstTimedMoveIndex - 1
 			&& this._getCurrentTime() >= this._startOrLastMoveTime
 		);
-	}
-	
-	Clock.prototype.getTimingStyle = function() {
-		return this._timingStyle;
-	}
-	
-	Clock.prototype._getActiveColour = function() {
-		return this._game.getActiveColour();
 	}
 	
 	return Clock;

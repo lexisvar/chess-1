@@ -1,11 +1,9 @@
 define(function(require) {
 	var Event = require("js/Event");
 	var time = require("js/time");
-	require("Array.prototype/getShallowCopy");
 	var Position = require("./Position");
 	var Colour = require("./Colour");
 	var Move = require("./Move");
-	var Fen = require("./Fen");
 	var Result = require("./Result");
 	var Clock = require("./Clock");
 	var TimingStyle = require("./TimingStyle");
@@ -16,7 +14,6 @@ define(function(require) {
 		this.Move = new Event(this);
 		
 		this._options = {
-			startingFen: Fen.STARTING_FEN,
 			history: [],
 			isTimed: true,
 			startTime: time(),
@@ -33,19 +30,18 @@ define(function(require) {
 			}
 		}
 
-		this._startTime = this._options.startTime;
-		this._endTime = null;
-		this._isInProgress = true;
-		this._result = null;
-		this._startingPosition = new Position(this._options.startingFen);
-		this._history = this._options.history.getShallowCopy();
+		this.startTime = this._options.startTime;
+		this.endTime = null;
+		this.isInProgress = true;
+		this.result = null;
+		this.history = this._options.history.slice();
 		
-		if(this._history.length > 0) {
-			this._position = this._history[this._history.length - 1].getPositionAfter();
+		if(this.history.length > 0) {
+			this.position = this.history[this.history.length - 1].positionAfter.getCopy();
 		}
 		
 		else {
-			this._position = new Position(this._options.startingFen);
+			this.position = new Position();
 		}
 		
 		if(this._options.isTimed) {
@@ -63,135 +59,96 @@ define(function(require) {
 		}
 	}
 	
-	Game.prototype.getStartTime = function() {
-		return this._startTime;
-	}
-	
-	Game.prototype.getEndTime = function() {
-		return this._endTime;
-	}
-	
 	Game.prototype.getTimeLeft = function(colour) {
 		return (this._options.isTimed ? this._clock.getTimeLeft(colour) : Infinity);
 	}
 	
 	Game.prototype.getTimingStyle = function() {
-		return (this._options.isTimed ? this._clock.getTimingStyle() : null);
-	}
-	
-	Game.prototype.isInProgress = function() {
-		return this._isInProgress;
+		return (this._options.isTimed ? this._clock.timingStyle : null);
 	}
 	
 	Game.prototype.timingHasStarted = function() {
 		return (this._options.isTimed && this._clock.timingHasStarted());
 	}
-	
-	Game.prototype.getResult = function() {
-		return this._result;
-	}
 
 	Game.prototype.isFiftymoveClaimable = function() {
-		return (this._position.getFiftymoveClock() > 49);
+		return (this.position.fiftymoveClock > 49);
 	}
 	
 	Game.prototype.isThreefoldClaimable = function() {
-		var currentFen = new Fen(this._position.getFen());
-		var startingFen = new Fen(this._startingPosition.getFen());
-		var limit = 3;
 		var occurrences = 0;
-
-		if(
-			currentFen.position === startingFen.position
-			&& currentFen.active === startingFen.active
-			&& currentFen.castling === startingFen.castling
-			&& currentFen.epTarget === startingFen.epTarget
-		) {
-			limit = 2;
-		}
 		
-		var fen;
-
-		this._history.forEach(function(move) {
-			fen = new Fen(move.getPositionAfter().getFen());
-			
-			if(
-				fen.position === currentFen.position
-				&& fen.active === currentFen.active
-				&& fen.castling === currentFen.castling
-				&& fen.epTarget === currentFen.epTarget
-			) {
+		for(var i = 0; i < this.history.length - 1; i++) {
+			if(this.position.isThreefoldRepeatOf(this.history[i].positionAfter)) {
 				occurrences++;
 			}
-		});
+		}
 
-		return (occurrences >= limit);
-	}
-	
-	Game.prototype.getPosition = function() {
-		return this._position.getCopy();
+		return (occurrences >= 2);
 	}
 	
 	Game.prototype.getLastMove = function() {
-		return this._history[this._history.length - 1] || null;
-	}
-	
-	Game.prototype.getActiveColour = function() {
-		return this._position.getActiveColour();
-	}
-	
-	Game.prototype.getHistory = function() {
-		return this._history.getShallowCopy();
+		return this.history[this.history.length - 1] || null;
 	}
 
 	Game.prototype.move = function(from, to, promoteTo) {
 		var move = null;
 
-		if(this._isInProgress) {
-			move = new Move(this._position, from, to, promoteTo);
+		if(this.isInProgress) {
+			move = new Move(this.position, from, to, promoteTo);
 			
-			var colour = move.getColour();
-			
-			if(move.isLegal()) {
-				this._position = move.getPositionAfter();
-	
-				if(move.isMate()) {
-					this._gameOver(Result.win(colour, Result.types.CHECKMATE));
-				}
-	
-				else {
-					if(!this._position.playerCanMate(Colour.white) && !this._position.playerCanMate(Colour.black)) {
-						this._gameOver(Result.draw(Result.types.INSUFFICIENT));
-					}
-	
-					if(this._position.countLegalMoves(colour.opposite) === 0) {
-						this._gameOver(Result.draw(Result.types.NO_MOVES));
-					}
-				}
-	
-				this._history.push(move);
-				this.Move.fire(move);
+			if(move.isLegal) {
+				move.checkCheckAndMate();
+				
+				this._addMove(move);
 			}
 		}
 		
 		return move;
 	}
 	
+	Game.prototype.addMove = function(move) {
+		if(this.isInProgress) {
+			this._addMove(move);
+		}
+	}
+	
+	Game.prototype._addMove = function(move) {
+		this.position = move.positionAfter.getCopy();
+		
+		if(move.isMate) {
+			this._gameOver(Result.win(colour, Result.types.CHECKMATE));
+		}
+
+		else {
+			if(!this.position.playerCanMate(Colour.white) && !this.position.playerCanMate(Colour.black)) {
+				this._gameOver(Result.draw(Result.types.INSUFFICIENT));
+			}
+
+			if(this.position.countLegalMoves() === 0) {
+				this._gameOver(Result.draw(Result.types.NO_MOVES));
+			}
+		}
+
+		this.history.push(move);
+		this.Move.fire(move);
+	}
+	
 	Game.prototype.resign = function(colour) {
-		if(this._isInProgress) {
+		if(this.isInProgress) {
 			this._gameOver(Result.win(colour.opposite, Result.types.RESIGNATION));
 		}
 		
 	}
 	
 	Game.prototype.drawByAgreement = function() {
-		if(this._isInProgress) {
+		if(this.isInProgress) {
 			this._gameOver(Result.draw(Result.types.DRAW_AGREED));
 		}
 	}
 	
 	Game.prototype.claimDraw = function() {
-		if(this._isInProgress) {	
+		if(this.isInProgress) {	
 			if(this.isFiftymoveClaimable()) {
 				this._gameOver(Result.draw(Result.types.FIFTYMOVE));
 			}
@@ -207,9 +164,9 @@ define(function(require) {
 	}
 	
 	Game.prototype._timeout = function() {
-		var opponentColour = this._position.getActiveColour().opposite;
+		var opponentColour = this.position.activeColour.opposite;
 		
-		if(this._position.playerCanMate(opponentColour)) {
+		if(this.position.playerCanMate(opponentColour)) {
 			this._gameOver(Result.win(opponentColour, Result.types.TIMEOUT));
 		}
 		
@@ -219,9 +176,9 @@ define(function(require) {
 	}
 
 	Game.prototype._gameOver = function(result) {
-		this._result = result;
-		this._isInProgress = false;
-		this._endTime = time();
+		this.result = result;
+		this.isInProgress = false;
+		this.endTime = time();
 		this.GameOver.fire(result);
 	}
 

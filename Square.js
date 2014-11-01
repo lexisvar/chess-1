@@ -17,6 +17,10 @@ define(function(require) {
 		this.colour = (this.coords.x % 2 === this.coords.y % 2 ? Square.colours.DARK : Square.colours.LIGHT);
 	}
 	
+	Square.prototype.tosSring = function() {
+		return this.algebraic;
+	}
+	
 	Square.colours = {
 		DARK: "dark",
 		LIGHT: "light"
@@ -42,33 +46,20 @@ define(function(require) {
 		}
 	}
 	
-	squares.forEach(function(square) {
-		square.adjusted[Colour.black] = squares[63 - square.squareNo];
-	});
+	for(var i = 0; i < 64; i++) {
+		squares[i].adjusted[Colour.black] = squares[63 - i];
+	}
 	
 	var Square = {
-		fromSquareNo: function(squareNo) {
-			return squares[squareNo];
-		},
+		colours: Square.colours,
+		bySquareNo: squares,
+		byAlgebraic: squaresByAlgebraic,
+		byCoords: squaresByCoords,
 		
-		fromAlgebraic: function(algebraic) {
-			return squaresByAlgebraic[algebraic];
-		},
-		
-		fromCoords: function(coords) {
-			return squaresByCoords[coords.x][coords.y];
-		},
-		
-		forEach: function(callback) {
-			squares.forEach(callback);
-		},
-		
-		colours: Square.colours
+		forEach: function() {
+			Array.prototype.forEach.apply(squares, arguments);
+		}
 	};
-	
-	squares.forEach(function(square) {
-		Square[square.algebraic] = square;
-	});
 	
 	return Square;
 });

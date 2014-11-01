@@ -28,12 +28,7 @@ define(function(require) {
 	});
 
 	return {
-		get: function(type, colour) {
-			return pieces[type][colour];
-		},
-		
-		fromFenString: function(fenString) {
-			return piecesByFenString[fenString];
-		}
+		pieces: pieces,
+		byFenString: piecesByFenString
 	};
 });

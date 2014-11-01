@@ -8,9 +8,9 @@ define(function(require, exports, module) {
 	
 	console.log("\033[1m" + module.id + "\033[0m");
 	
-	Square.forEach(function(square) {
-		global[square.algebraic] = square;
-	});
+	for(var i = 0; i < 64; i++) {
+		global[Square.bySquareNo[i].algebraic] = Square.bySquareNo[i];
+	}
 	
 	var tests = {
 		"white can move from d2 to d4 at the beginning of a standard game":

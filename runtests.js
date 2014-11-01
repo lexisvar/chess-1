@@ -16,8 +16,8 @@ var testsDir = "./tests";
 //}));
 
 requirejs([
-	"./tests/Board",
 	"./tests/CastlingRights",
+	"./tests/Position",
 	"./tests/Time",
 	"./tests/Game",
 	"./tests/Move",
