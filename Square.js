@@ -54,7 +54,11 @@ define(function(require) {
 		colours: Square.colours,
 		bySquareNo: squares,
 		byAlgebraic: squaresByAlgebraic,
-		byCoords: squaresByCoords
+		byCoords: squaresByCoords,
+		
+		forEach: function() {
+			Array.prototype.forEach.apply(squares, arguments);
+		}
 	};
 	
 	return Square;
