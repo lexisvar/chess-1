@@ -267,14 +267,6 @@ define(function(require) {
 		return false;
 	}
 	
-	Position.getEpTarget = function(from, to) {
-		return Square.bySquareNo[to.squareNo - ((to.squareNo - from.squareNo) / 2)];
-	}
-	
-	Position.getEpPawn = function(from, to) {
-		return Square.byCoords[to.coords.x][from.coords.y];
-	}
-	
 	Position.getSquaresBetween = function(a, b, inclusive) {
 		var squares = [];
 
