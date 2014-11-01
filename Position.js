@@ -98,7 +98,7 @@ define(function(require) {
 			piece = this.board[i];
 
 			if(piece !== null && piece.colour === this.activeColour) {
-				legalMoves += this.getLegalMovesFromSquare(i).length;
+				legalMoves += this.getLegalMovesFromSquare(square).length;
 			}
 		}
 
