@@ -4,6 +4,7 @@ define(function(require) {
 	var PieceType = require("./PieceType");
 	var Piece = require("./Piece");
 	var Square = require("./Square");
+	var Position = require("./Position");
 	
 	var signs = {
 		CASTLE_KINGSIDE: "O-O",
