@@ -23,9 +23,8 @@ define(function(require) {
 		this.promoteTo = promoteTo || PieceType.queen;
 		this.time = time();
 
-		this._targetPiece = this.position.board[this.to.squareNo];
+		this.capturedPiece = this.position.board[this.to.squareNo];
 		this.piece = this.position.board[this.from.squareNo];
-		this.capturedPiece = null;
 
 		this.colour = this.position.activeColour;
 		this.fullmove = position.fullmove;
@@ -58,7 +57,7 @@ define(function(require) {
 
 		this._isUnobstructed = (
 			!this.position.moveIsBlocked(this.from, this.to)
-			&& (this._targetPiece === null || this._targetPiece.colour === this.colour.opposite)
+			&& (this.capturedPiece === null || this.capturedPiece.colour === this.colour.opposite)
 		);
 
 		this._isValid = false;
@@ -178,9 +177,8 @@ define(function(require) {
 				this._label.disambiguation = this._getDisambiguationString();
 			}
 
-			if(this._targetPiece !== null && this._targetPiece.colour === this.colour.opposite) {
+			if(this.capturedPiece !== null) {
 				this._label.sign = signs.CAPTURE;
-				this.capturedPiece = this._targetPiece;
 			}
 		}
 	}
@@ -231,7 +229,7 @@ define(function(require) {
 		}
 
 		if(isValidPromotion || !isPromotion) {
-			if(this._targetPiece === null) {
+			if(this.capturedPiece === null) {
 				if(this._isDoublePawnShape()) {
 					this._isValid = true;
 					
@@ -265,10 +263,6 @@ define(function(require) {
 				if(isEnPassant) {
 					this.positionAfter.setPiece(Position.getEpPawn(this.from, this.to), null);
 					this.capturedPiece = Piece.pieces[PieceType.pawn][this.colour.opposite];
-				}
-
-				else {
-					this.capturedPiece = this.position.board[this.to.squareNo];
 				}
 			}
 
