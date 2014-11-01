@@ -4,7 +4,8 @@ define(function(require) {
 	var PieceType = require("./PieceType");
 	var Piece = require("./Piece");
 	var Square = require("./Square");
-	var Position = require("./Position");
+	var getEpPawn = require("./getEpPawn");
+	var getEpTarget = require("./getEpTarget");
 	
 	var signs = {
 		CASTLE_KINGSIDE: "O-O",
@@ -262,13 +263,13 @@ define(function(require) {
 				this._label.sign = signs.CAPTURE;
 
 				if(isEnPassant) {
-					this.positionAfter.setPiece(Position.getEpPawn(this.from, this.to), null);
+					this.positionAfter.setPiece(getEpPawn(this.from, this.to), null);
 					this.capturedPiece = Piece.pieces[PieceType.pawn][this.colour.opposite];
 				}
 			}
 
 			if(isDouble) {
-				this.position.epTarget = Position.getEpTarget(this.from, this.to);
+				this.positionAfter.epTarget = getEpTarget(this.from, this.to);
 			}
 
 			this._label.to = this.to.algebraic;
