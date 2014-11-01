@@ -417,8 +417,8 @@ define(function(require) {
 
 				if(from === kingHomeSquare) {
 					squares = squares.concat([
-						Square.byCoords[from.coords.x + 2][kingHomeSquare.y],
-						Square.byCoords[from.coords.x - 2][kingHomeSquare.y]
+						Square.byCoords[from.coords.x + 2][kingHomeSquare.coords.y],
+						Square.byCoords[from.coords.x - 2][kingHomeSquare.coords.y]
 					]);
 				}
 
