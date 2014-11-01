@@ -23,10 +23,10 @@ define(function(require) {
 		this.promoteTo = promoteTo || PieceType.queen;
 		this.time = time();
 
-		this.capturedPiece = this.position.board[this.to.squareNo];
-		this.piece = this.position.board[this.from.squareNo];
+		this.capturedPiece = this.positionBefore.board[this.to.squareNo];
+		this.piece = this.positionBefore.board[this.from.squareNo];
 
-		this.colour = this.position.activeColour;
+		this.colour = this.positionBefore.activeColour;
 		this.fullmove = position.fullmove;
 		this.index = (this.fullmove - 1) * 2 + (this.colour === Colour.black ? 1 : 0);
 		
@@ -56,7 +56,7 @@ define(function(require) {
 		this.isEnPassant = false;
 
 		this._isUnobstructed = (
-			!this.position.moveIsBlocked(this.from, this.to)
+			!this.positionBefore.moveIsBlocked(this.from, this.to)
 			&& (this.capturedPiece === null || this.capturedPiece.colour === this.colour.opposite)
 		);
 
@@ -118,7 +118,7 @@ define(function(require) {
 				this._checkRegularMove();
 			}
 
-			this.isLegal = (this._isValid && !this.position.playerIsInCheck(this.colour));
+			this.isLegal = (this._isValid && !this.positionAfter.playerIsInCheck(this.colour));
 
 			if(this.isLegal) {
 				if(this.colour === Colour.black) {
@@ -168,8 +168,8 @@ define(function(require) {
 	Move.prototype._checkRegularMove = function() {
 		if(this._isRegularShape()) {
 			this._isValid = true;
-			this.position.setPiece(this.from, null);
-			this.position.setPiece(this.to, this.position.board[this.from.squareNo]);
+			this.positionAfter.setPiece(this.from, null);
+			this.positionAfter.setPiece(this.to, this.positionBefore.board[this.from.squareNo]);
 			this._label.piece = this.piece.type.sanString;
 			this._label.to = this.to.algebraic;
 
@@ -240,7 +240,7 @@ define(function(require) {
 					this._isValid = true;
 				}
 
-				else if(isCapturing && this.to === this.position.epTarget) {
+				else if(isCapturing && this.to === this.positionBefore.epTarget) {
 					this._isValid = true;
 					
 					isEnPassant = true;
@@ -271,15 +271,15 @@ define(function(require) {
 			}
 
 			this._label.to = this.to.algebraic;
-			this.position.setPiece(this.from, null);
+			this.positionAfter.setPiece(this.from, null);
 
 			if(isPromotion) {
-				this.position.setPiece(this.to, Piece.pieces[this.promoteTo][this.colour]);
+				this.positionAfter.setPiece(this.to, Piece.pieces[this.promoteTo][this.colour]);
 				this._label.special = signs.PROMOTION + this.promoteTo.sanString;
 			}
 
 			else {
-				this.position.setPiece(this.to, this.position.board[this.from.squareNo]);
+				this.positionAfter.setPiece(this.to, this.positionBefore.board[this.from.squareNo]);
 			}
 		}
 	}
@@ -317,30 +317,30 @@ define(function(require) {
 	Move.prototype._checkCastlingMove = function() {
 		var file = (this.to.squareNo < this.from.squareNo ? "a" : "h");
 		var homeRankY = (this.colour === Colour.white ? 0 : 7);
-		var rookOriginX = (file === "a" ? 0 : 7);
-		var rookDestinationX = (file === "a" ? 3 : 5);
-		var rookOrigin = Square.byCoords[rookOriginX][this.from.coords.y];
-		var rookDestination = Square.byCoords[rookDestinationX][this.from.coords.y];
+		var rookFromX = (file === "a" ? 0 : 7);
+		var rookToX = (file === "a" ? 3 : 5);
+		var rookFrom = Square.byCoords[rookFromX][this.from.coords.y];
+		var rookTo = Square.byCoords[rookToX][this.from.coords.y];
 		
 		if(
 			Math.abs(this.to.coords.x - this.from.coords.x) === 2
 			&& this.from.coords.y === homeRankY
 			&& this.to.coords.y === homeRankY
-			&& !this.positionBefore.moveIsBlocked(this.from, rookOrigin)
+			&& !this.positionBefore.moveIsBlocked(this.from, rookFrom)
 			&& this.positionBefore.getCastlingRights(this.colour, file)
-			&& this.positionBefore.board[rookOrigin.squareNo] === Piece.pieces[PieceType.rook][this.colour]
+			&& this.positionBefore.board[rookFrom.squareNo] === Piece.pieces[PieceType.rook][this.colour]
 			&& !this.positionBefore.playerIsInCheck(this.colour)
-			&& this.positionBefore.getAllAttackers(rookDestination, this.colour.opposite).length === 0
+			&& this.positionBefore.getAllAttackers(rookTo, this.colour.opposite).length === 0
 		) {
 			this._isValid = true;
 			this.isCastling = true;
-			this.castlingRookFrom = rookOrigin,
-			this.castlingRookTo = rookDestination;
+			this.castlingRookFrom = rookFrom,
+			this.castlingRookTo = rookTo;
 			this._label.special = (file === "a" ? signs.CASTLE_QUEENSIDE : signs.CASTLE_KINGSIDE);
 			this.positionAfter.setPiece(this.from, null);
 			this.positionAfter.setPiece(this.to, Piece.pieces[PieceType.king][this.colour]);
-			this.positionAfter.setPiece(rookOrigin, null);
-			this.positionAfter.setPiece(rookDestination, Piece.pieces[PieceType.rook][this.colour]);
+			this.positionAfter.setPiece(rookFrom, null);
+			this.positionAfter.setPiece(rookTo, Piece.pieces[PieceType.rook][this.colour]);
 		}
 	}
 
