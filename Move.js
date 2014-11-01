@@ -80,7 +80,7 @@ define(function(require) {
 	
 	Move.prototype.generateLabels = function() {
 		if(!this._hasLabels) {
-			this._checkCheckAndMate();
+			this.checkCheckAndMate();
 			
 			if(this.isMate) {
 				this._label.check = signs.MATE;
@@ -103,6 +103,8 @@ define(function(require) {
 				+ this.fullmove
 				+ (this.colour === Colour.white ? "." : "...") + " " 
 				+ this.label;
+			
+			this._hasLabels = true;
 		}
 	}
 
