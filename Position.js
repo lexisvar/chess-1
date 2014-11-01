@@ -46,7 +46,7 @@ define(function(require) {
 	Position.prototype.setPiece = function(square, piece) {
 		this.board[square.squareNo] = piece;
 		
-		if(piece.type === PieceType.king) {
+		if(piece && piece.type === PieceType.king) {
 			this.kingPositions[piece.colour] = square;
 		}
 	}
