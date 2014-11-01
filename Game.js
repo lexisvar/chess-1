@@ -99,31 +99,41 @@ define(function(require) {
 		if(this.isInProgress) {
 			move = new Move(this.position, from, to, promoteTo);
 			
-			var colour = move.colour;
-			
 			if(move.isLegal) {
-				this.position = move.positionAfter.getCopy();
-	
-				if(move.isMate()) {
-					this._gameOver(Result.win(colour, Result.types.CHECKMATE));
-				}
-	
-				else {
-					if(!this.position.playerCanMate(Colour.white) && !this.position.playerCanMate(Colour.black)) {
-						this._gameOver(Result.draw(Result.types.INSUFFICIENT));
-					}
-	
-					if(this.position.countLegalMoves(colour.opposite) === 0) {
-						this._gameOver(Result.draw(Result.types.NO_MOVES));
-					}
-				}
-	
-				this.history.push(move);
-				this.Move.fire(move);
+				move.checkCheckAndMate();
+				
+				this._addMove(move);
 			}
 		}
 		
 		return move;
+	}
+	
+	Game.prototype.addMove = function(move) {
+		if(this.isInProgress) {
+			this._addMove(move);
+		}
+	}
+	
+	Game.prototype._addMove = function(move) {
+		this.position = move.positionAfter.getCopy();
+		
+		if(move.isMate) {
+			this._gameOver(Result.win(colour, Result.types.CHECKMATE));
+		}
+
+		else {
+			if(!this.position.playerCanMate(Colour.white) && !this.position.playerCanMate(Colour.black)) {
+				this._gameOver(Result.draw(Result.types.INSUFFICIENT));
+			}
+
+			if(this.position.countLegalMoves() === 0) {
+				this._gameOver(Result.draw(Result.types.NO_MOVES));
+			}
+		}
+
+		this.history.push(move);
+		this.Move.fire(move);
 	}
 	
 	Game.prototype.resign = function(colour) {
