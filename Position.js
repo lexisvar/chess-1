@@ -304,7 +304,7 @@ define(function(require) {
 		if(distanceInSquares > 0) {
 			increment = difference / distanceInSquares;
 			
-			for(var squareNo = a.squareNo + increment; squareNo < b.squareNo; squareNo += increment) {
+			for(var squareNo = lower + increment; squareNo < upper; squareNo += increment) {
 				squares.push(Square.bySquareNo[squareNo]);
 			}
 			
@@ -425,8 +425,8 @@ define(function(require) {
 
 				if(from === kingHomeSquare) {
 					squares = squares.concat([
-						Square.byCoords[from.x + 2][castlingKs.y],
-						Square.byCoords[from.x - 2][castlingQs.y]
+						Square.byCoords[from.x + 2][kingHomeSquare.y],
+						Square.byCoords[from.x - 2][kingHomeSquare.y]
 					]);
 				}
 
