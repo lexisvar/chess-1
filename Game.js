@@ -4,7 +4,6 @@ define(function(require) {
 	var Position = require("./Position");
 	var Colour = require("./Colour");
 	var Move = require("./Move");
-	var Fen = require("./Fen");
 	var Result = require("./Result");
 	var Clock = require("./Clock");
 	var TimingStyle = require("./TimingStyle");
@@ -35,15 +34,14 @@ define(function(require) {
 		this.endTime = null;
 		this.isInProgress = true;
 		this.result = null;
-		this.startingPosition = new Position();
 		this.history = this._options.history.slice();
 		
 		if(this.history.length > 0) {
-			this.position = this.history[this.history.length - 1].positionAfter;
+			this.position = this.history[this.history.length - 1].positionAfter.getCopy();
 		}
 		
 		else {
-			this.position = new Position(this._options.startingFen);
+			this.position = new Position();
 		}
 		
 		if(this._options.isTimed) {
@@ -66,7 +64,7 @@ define(function(require) {
 	}
 	
 	Game.prototype.getTimingStyle = function() {
-		return (this._options.isTimed ? this._clock.getTimingStyle() : null);
+		return (this._options.isTimed ? this._clock.timingStyle : null);
 	}
 	
 	Game.prototype.timingHasStarted = function() {
@@ -80,13 +78,13 @@ define(function(require) {
 	Game.prototype.isThreefoldClaimable = function() {
 		var occurrences = 0;
 		
-		for(var i = 0; i < this.history.length; i++) {
+		for(var i = 0; i < this.history.length - 1; i++) {
 			if(this.position.isThreefoldRepeatOf(this.history[i].positionAfter)) {
 				occurrences++;
 			}
 		}
 
-		return (occurrences >= 3);
+		return (occurrences >= 2);
 	}
 	
 	Game.prototype.getLastMove = function() {
