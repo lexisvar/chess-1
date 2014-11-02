@@ -332,7 +332,7 @@ define(function(require) {
 			&& this.from.coords.y === homeRankY
 			&& this.to.coords.y === homeRankY
 			&& !this.positionBefore.moveIsBlocked(this.from, rookFrom)
-			&& this.positionBefore.getCastlingRights(this.colour, file)
+			&& this.positionBefore.getCastlingRights(this.colour, side)
 			&& this.positionBefore.board[rookFrom.squareNo] === Piece.pieces[PieceType.rook][this.colour]
 			&& !this.positionBefore.playerIsInCheck(this.colour)
 			&& this.positionBefore.getAllAttackers(rookTo, this.colour.opposite).length === 0
