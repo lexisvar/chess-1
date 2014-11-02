@@ -117,7 +117,7 @@ define(function(require) {
 		this.position = move.positionAfter.getCopy();
 		
 		if(move.isMate) {
-			this._gameOver(Result.win(colour, Result.types.CHECKMATE));
+			this._gameOver(Result.win(move.colour, Result.types.CHECKMATE));
 		}
 
 		else {
