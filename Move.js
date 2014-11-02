@@ -133,7 +133,7 @@ define(function(require) {
 				this.positionAfter.activeColour = this.colour.opposite;
 
 				if(this.capturedPiece !== null || this.piece.type === PieceType.pawn) {
-					this.positionAfter.fiftyMoveClock = 0;
+					this.positionAfter.fiftymoveClock = 0;
 				}
 
 				else {
