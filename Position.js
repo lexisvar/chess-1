@@ -39,7 +39,7 @@ define(function(require) {
 		this.castlingRights[Piece.pieces[side][colour].fenString] = allow;
 	}
 	
-	Position.prototype.getCastlingRights = function(colour, file) {
+	Position.prototype.getCastlingRights = function(colour, side) {
 		return this.castlingRights[Piece.pieces[side][colour].fenString];
 	}
 	
