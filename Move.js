@@ -8,13 +8,14 @@ define(function(require) {
 	var getEpTarget = require("./getEpTarget");
 	
 	var signs = {
-		CASTLE_KINGSIDE: "O-O",
-		CASTLE_QUEENSIDE: "O-O-O",
-		CAPTURE: "x",
-		CHECK: "+",
-		MATE: "#",
-		PROMOTION: "=",
-		BUGHOUSE_DROP: "@"
+		castling: {
+			K: "O-O",
+			Q: "O-O-O"
+		},
+		capture: "x",
+		check: "+",
+		mate: "#",
+		promotion: "="
 	};
 
 	function Move(position, from, to, promoteTo) {
@@ -83,11 +84,11 @@ define(function(require) {
 			this.checkCheckAndMate();
 			
 			if(this.isMate) {
-				this._label.check = signs.MATE;
+				this._label.check = signs.mate;
 			}
 			
 			else if(this.isCheck) {
-				this._label.check = signs.CHECK;
+				this._label.check = signs.check;
 			}
 			
 			this.label = ""
@@ -182,7 +183,7 @@ define(function(require) {
 			}
 
 			if(this.capturedPiece !== null) {
-				this._label.sign = signs.CAPTURE;
+				this._label.sign = signs.capture;
 			}
 		}
 	}
@@ -262,7 +263,7 @@ define(function(require) {
 			
 			if(isCapturing) {
 				this._label.disambiguation = this.from.file;
-				this._label.sign = signs.CAPTURE;
+				this._label.sign = signs.capture;
 
 				if(isEnPassant) {
 					this.positionAfter.setPiece(getEpPawn(this.from, this.to), null);
@@ -279,7 +280,7 @@ define(function(require) {
 
 			if(isPromotion) {
 				this.positionAfter.setPiece(this.to, Piece.pieces[this.promoteTo][this.colour]);
-				this._label.special = signs.PROMOTION + this.promoteTo.sanString;
+				this._label.special = signs.promotion + this.promoteTo.sanString;
 			}
 
 			else {
@@ -319,10 +320,10 @@ define(function(require) {
 	}
 
 	Move.prototype._checkCastlingMove = function() {
-		var file = (this.to.squareNo < this.from.squareNo ? "a" : "h");
+		var side = (this.to.squareNo < this.from.squareNo ? PieceType.queen : PieceType.king);
 		var homeRankY = (this.colour === Colour.white ? 0 : 7);
-		var rookFromX = (file === "a" ? 0 : 7);
-		var rookToX = (file === "a" ? 3 : 5);
+		var rookFromX = (side === PieceType.queen ? 0 : 7);
+		var rookToX = (side === PieceType.queen ? 3 : 5);
 		var rookFrom = Square.byCoords[rookFromX][this.from.coords.y];
 		var rookTo = Square.byCoords[rookToX][this.from.coords.y];
 		
@@ -340,7 +341,7 @@ define(function(require) {
 			this.isCastling = true;
 			this.castlingRookFrom = rookFrom,
 			this.castlingRookTo = rookTo;
-			this._label.special = (file === "a" ? signs.CASTLE_QUEENSIDE : signs.CASTLE_KINGSIDE);
+			this._label.special = signs.castling[side];
 			this.positionAfter.setPiece(this.from, null);
 			this.positionAfter.setPiece(this.to, Piece.pieces[PieceType.king][this.colour]);
 			this.positionAfter.setPiece(rookFrom, null);
