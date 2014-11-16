@@ -62,6 +62,7 @@ define(function(require) {
 	Result.descriptions[Result.types.THREEFOLD] = "draw by repetition";
 	Result.descriptions[Result.types.INSUFFICIENT] = "insufficient mating material";
 	Result.descriptions[Result.types.DRAW_AGREED] = "draw agreed";
+	Result.descriptions[Result.types.NO_MOVES] = "stalemate";
 	
 	for(var type in Result.descriptions) {
 		Result.descriptions[type] = {
