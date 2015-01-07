@@ -5,7 +5,6 @@ define(function(require, exports, module) {
 	var PieceType = require("../PieceType");
 	var Piece = require("../Piece");
 	var Colour = require("../Colour");
-	var Fen = require("../Fen");
 	
 	console.log("\033[1m" + module.id + "\033[0m");
 	
