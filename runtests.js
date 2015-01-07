@@ -9,8 +9,14 @@ requirejs.config({
 
 require("amdefine/intercept");
 
-var testsDir = "./tests";
+var Square = require("./Square");
 
+for(var i = 0; i < 64; i++) {
+	global[Square.bySquareNo[i].algebraic] = Square.bySquareNo[i];
+}
+
+//var testsDir = "./tests";
+//
 //requirejs(fs.readdirSync(testsDir).map(function(filename) {
 //	return testsDir + "/" + filename.substr(0, filename.indexOf("."));
 //}));
