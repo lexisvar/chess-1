@@ -66,6 +66,8 @@ define(function(require, exports, module) {
 	};
 	
 	runTests(module.id, tests, function() {
-		return [new Game()];
+		return [new Game({
+			isTimed: false
+		})];
 	});
 });
