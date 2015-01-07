@@ -73,12 +73,6 @@ define(function(require, exports, module) {
 			test.equal(position.moveIsBlocked(g1, h3), false);
 		},
 		
-		"en passant pawn is e4 for ep capture from d4 to e3":
-		
-		function() {
-			test.equal(Position.getEpPawn(d4, e3), e4);
-		},
-		
 		"getReachableSquares for a knight on e4 is [d2, d6, f2, f6, c5, c3, g5, g3]":
 		
 		function() {
