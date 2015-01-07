@@ -51,6 +51,8 @@ define(function(require, exports, module) {
 			game.move(b8, c6);
 			game.move(f3, g1);
 			game.move(c6, b8);
+			game.move(g1, f3);
+			game.move(b8, c6);
 			
 			test.equal(game.isThreefoldClaimable(), true);
 		}
