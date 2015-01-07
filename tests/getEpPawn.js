@@ -9,6 +9,12 @@ define(function(require, exports, module) {
 		
 		function() {
 			test.equal(getEpPawn(d4, e3), e4);
+		},
+		
+		"en passant pawn is on b5 for an en passant capture from a5 to b6":
+		
+		function() {
+			test.equal(getEpPawn(a5, b6), b5);
 		}
 	};
 	
