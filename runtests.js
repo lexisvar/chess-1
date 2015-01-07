@@ -20,5 +20,6 @@ requirejs([
 	"./tests/Time",
 	"./tests/Game",
 	"./tests/Move",
-	"./tests/Square"
+	"./tests/Square",
+	"./tests/getEpPawn"
 ]);
