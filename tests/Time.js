@@ -1,8 +1,8 @@
 define(function(require, exports, module) {
 	var same = require("chai").assert.equal;
 	var Time = require("../Time");
-	
-	console.log("\033[1m" + module.id + "\033[0m");
+	var runTests = require("test-runner/runTests");
+	require("./globalSquares");
 	
 	var tests = {
 		"Time from empty string is 0 seconds":
@@ -150,21 +150,5 @@ define(function(require, exports, module) {
 		}
 	};
 	
-	var passed = 0;
-	var failed = 0;
-	
-	for(var description in tests) {
-		try {
-			tests[description]();
-			console.log("\033[0;32mpassed:\033[0m " + description);
-			passed++;
-		} catch(error) {
-			console.log("\033[0;31mfailed:\033[0m " + description + ": " + error.message);
-			throw error;
-			failed++;
-		}
-	}
-	
-	console.log("\033[1m" + passed + " passed, " + failed + " failed\033[0m");
-	console.log("");
+	runTests(module.id, tests);
 });
