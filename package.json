@@ -11,7 +11,8 @@
 	"devDependencies": {
 		"chai": "*",
 		"requirejs": "*",
-		"amdefine": "*"
+		"amdefine": "*",
+		"test-runner": "https://github.com/gushogg-blake/test-runner/archive/master.tar.gz"
 	},
 	"repository": {
 		"type": "git",
