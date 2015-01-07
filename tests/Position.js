@@ -5,12 +5,8 @@ define(function(require, exports, module) {
 	var PieceType = require("../PieceType");
 	var Piece = require("../Piece");
 	var Colour = require("../Colour");
-	
-	console.log("\033[1m" + module.id + "\033[0m");
-	
-	for(var i = 0; i < 64; i++) {
-		global[Square.bySquareNo[i].algebraic] = Square.bySquareNo[i];
-	}
+	var runTests = require("test-runner/runTests");
+	require("./globalSquares");
 	
 	var tests = {
 		"getReachableSquares for a white pawn on a2 is a3, a4, b3":
@@ -98,24 +94,7 @@ define(function(require, exports, module) {
 		}
 	};
 	
-	var passed = 0;
-	var failed = 0;
-	
-	var position;
-	
-	for(var description in tests) {
-		try {
-			position = new Position();
-			tests[description](position);
-			console.log("\033[0;32mpassed:\033[0m " + description);
-			passed++;
-		} catch(error) {
-			console.log("\033[0;31mfailed:\033[0m " + description + ": " + error.message);
-			throw error;
-			failed++;
-		}
-	}
-	
-	console.log("\033[1m" + passed + " passed, " + failed + " failed\033[0m");
-	console.log("");
+	runTests(module.id, tests, function() {
+		return [new Position()];
+	});
 });

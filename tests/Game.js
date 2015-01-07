@@ -5,39 +5,46 @@ define(function(require, exports, module) {
 	var PieceType = require("../PieceType");
 	var Piece = require("../Piece");
 	var Colour = require("../Colour");
-	
-	console.log("\033[1m" + module.id + "\033[0m");
-	
-	for(var i = 0; i < 64; i++) {
-		global[Square.bySquareNo[i].algebraic] = Square.bySquareNo[i];
-	}
+	var runTests = require("test-runner/runTests");
+	require("./globalSquares");
 	
 	var tests = {
 		"white can move from d2 to d4 at the beginning of a standard game":
 		
 		function(game) {
-			game.move(Square.fromAlgebraic("d2"), Square.fromAlgebraic("d4"));
-			test.equal(game.getPosition().getPiece(Square.fromAlgebraic("d2")), null);
-			test.equal(game.getPosition().getPiece(Square.fromAlgebraic("d4")), Piece.get(PieceType.pawn, Colour.white));
-			test.equal(game.getPosition().getActiveColour(), Colour.black);
-			test.equal(game.getPosition().getFiftymoveClock(), 0);
-			test.equal(game.getPosition().getEpTarget(), Square.fromAlgebraic("d3"));
+			game.move(d2, d4);
+			
+			test.strictEqual(game.position.board[d2.squareNo], null);
+			test.strictEqual(game.position.board[d4.squareNo], Piece.pieces[PieceType.pawn][Colour.white]);
+		},
+		
+		"ep target is d3; fiftymoveClock is 0 and activeColour is black after 1. d4":
+		
+		function(game) {
+			game.move(d2, d4);
+			
+			test.strictEqual(game.position.activeColour, Colour.black);
+			test.strictEqual(game.position.fiftymoveClock, 0);
+			test.strictEqual(game.position.epTarget, d3);
 		},
 		
 		"e4, e5, Bc4, a6, Qf3, a5, Qxf7 is mate for black":
 		
 		function(game) {
-			test.equal(game.getPosition().countLegalMoves(Colour.white), 20);
+			test.strictEqual(game.position.countLegalMoves(), 20);
+			
 			game.move(e2, e4);
-			game.getPosition();
 			game.move(e7, e5);
 			game.move(f1, c4);
 			game.move(a7, a6);
 			game.move(d1, f3);
 			game.move(a6, a5);
+			
 			var move = game.move(f3, f7);
 			
-			test.equal(move.isMate(), true);
+			move.checkCheckAndMate();
+			
+			test.strictEqual(move.isMate, true);
 		},
 		
 		"threefold repetition after Nf3, Nc6, Ng1, Nb8, Nf3, Nc6, Ng1, Nb8":
@@ -54,25 +61,11 @@ define(function(require, exports, module) {
 			game.move(g1, f3);
 			game.move(b8, c6);
 			
-			test.equal(game.isThreefoldClaimable(), true);
+			test.strictEqual(game.isThreefoldClaimable(), true);
 		}
 	};
 	
-	var passed = 0;
-	var failed = 0;
-	
-	for(var description in tests) {
-		try {
-			tests[description](new Game());
-			console.log("\033[0;32mpassed:\033[0m " + description);
-			passed++;
-		} catch(error) {
-			console.log("\033[0;31mfailed:\033[0m " + description + ": " + error.message);
-			throw error;
-			failed++;
-		}
-	}
-	
-	console.log("\033[1m" + passed + " passed, " + failed + " failed\033[0m");
-	console.log("");
+	runTests(module.id, tests, function() {
+		return [new Game()];
+	});
 });
